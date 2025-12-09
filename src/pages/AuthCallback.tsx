@@ -27,8 +27,7 @@ export default function AuthCallback() {
                 return;
             }
 
-            console.log("Session saved → redirecting to dashboard");
-            window.location.replace("/dashboard");
+            window.location.replace("/");
         };
 
         run();

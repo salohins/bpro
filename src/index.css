@@ -1,1 +1,27 @@
 @import "tailwindcss";
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+.font-inter {
+    font-family: 'Inter', sans-serif;
+}
+
+
+html,
+body,
+#root,
+main {
+    min-height: 100vh;
+    overflow-x: hidden !important;
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 50%, #0a0a0a 100%);
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    color-scheme: dark;
+
+}
+
+body *>* {
+    font-family: 'Inter', sans-serif;
+}
