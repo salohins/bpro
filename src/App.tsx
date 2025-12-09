@@ -8,6 +8,7 @@ import Subscribe from "./pages/Subscribe";
 import Subscription from "./pages/Subscription";
 import ProfileSettings from "./pages/ProfileSettings";
 import Login from "./pages/Login";
+import BackgroundFX from "./components/BackgroundFX";
 
 function Layout() {
   const location = useLocation();
@@ -16,7 +17,9 @@ function Layout() {
   const hideTopBar = ["/success", "/auth/callback"].includes(location.pathname);
 
   return (
+
     <div className="fixed inset-0 flex flex-col bg-[#0f0f0f] text-gray-100">
+      <BackgroundFX />
       {/* TopBar */}
       {!hideTopBar && (
         <div className="flex-shrink-0">

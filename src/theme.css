@@ -1,0 +1,85 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* === BASE THEME === */
+:root {
+    --color-bg-primary: #0b0b0b;
+    --color-bg-secondary: #141414;
+    --color-emerald: #10b981;
+    --color-emerald-light: #34d399;
+    --color-emerald-dark: #059669;
+    --color-text-primary: #ffffff;
+    --color-text-secondary: #9ca3af;
+    --shadow-glow: 0 0 20px rgba(16, 185, 129, 0.35);
+    --shadow-strong: 0 0 40px rgba(16, 185, 129, 0.5);
+}
+
+/* === GLOBAL BACKGROUND === */
+html,
+body,
+#root {
+    background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 50%, #0a0a0a 100%);
+    background-attachment: fixed;
+    color: var(--color-text-primary);
+    min-height: 100vh;
+    font-family: 'Inter', sans-serif;
+    overflow-x: hidden;
+}
+
+/* === BUTTONS === */
+.btn {
+    @apply inline-flex items-center justify-center font-semibold rounded-xl px-6 py-3 transition-all duration-300;
+}
+
+.btn-primary {
+    background: linear-gradient(to right, var(--color-emerald), var(--color-emerald-light));
+    color: black;
+    border: 1px solid rgba(52, 211, 153, 0.3);
+    box-shadow: var(--shadow-glow);
+}
+
+.btn-primary:hover {
+    background: linear-gradient(to right, var(--color-emerald-light), var(--color-emerald));
+    box-shadow: var(--shadow-strong);
+    transform: scale(1.03);
+}
+
+.btn-outline {
+    background: transparent;
+    color: var(--color-emerald-light);
+    border: 1px solid rgba(52, 211, 153, 0.3);
+}
+
+.btn-outline:hover {
+    background: rgba(16, 185, 129, 0.05);
+    box-shadow: 0 0 15px rgba(16, 185, 129, 0.3);
+}
+
+/* === CARDS === */
+.card {
+    @apply bg-[#111111] border border-white/10 rounded-2xl shadow-lg p-6 transition-all duration-300;
+}
+
+.card:hover {
+    box-shadow: var(--shadow-glow);
+    transform: translateY(-2px);
+}
+
+/* === TEXT === */
+.text-gradient {
+    background: linear-gradient(to right, white, var(--color-emerald-light), var(--color-emerald-dark));
+    -webkit-background-clip: text;
+    color: transparent;
+}
+
+.text-secondary {
+    color: var(--color-text-secondary);
+}
+
+/* === GLOW SEPARATOR === */
+.separator {
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--color-emerald), transparent);
+    opacity: 0.3;
+    margin: 0.7rem 0;
+}

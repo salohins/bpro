@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
 import { useNavigate } from "react-router-dom";
+import { User, Lock, Shield, CreditCard, LifeBuoy, Copy } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
 
 export default function ProfileSettings() {
     const [profile, setProfile] = useState<any>(null);
@@ -11,8 +13,14 @@ export default function ProfileSettings() {
     const [message, setMessage] = useState("");
     const [error, setError] = useState("");
     const [saving, setSaving] = useState(false);
+    const [activeTab, setActiveTab] = useState<
+        "account" | "security" | "sessions" | "subscription" | "support"
+    >("account");
+    const [loadingPortal, setLoadingPortal] = useState(false);
+    const [copied, setCopied] = useState(false);
     const navigate = useNavigate();
 
+    // 🔐 Load profile
     useEffect(() => {
         const loadProfile = async () => {
             try {
@@ -40,6 +48,7 @@ export default function ProfileSettings() {
         loadProfile();
     }, []);
 
+    // Handlers
     const handleUpdateProfile = async () => {
         try {
             setSaving(true);
@@ -114,122 +123,272 @@ export default function ProfileSettings() {
         }
     };
 
+    const handleOpenBillingPortal = async () => {
+        try {
+            setLoadingPortal(true);
+            const res = await fetch(`${import.meta.env.VITE_API_URL}/create-billing-portal`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email: profile?.email }),
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error || "Failed to open billing portal");
+            window.location.href = data.url;
+        } catch (err: any) {
+            setError(err.message);
+        } finally {
+            setLoadingPortal(false);
+        }
+    };
+
+    const handleCopyEmail = () => {
+        navigator.clipboard.writeText("support@bpro.io");
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+    };
+
     if (loading)
         return (
-            <div className="min-h-screen flex justify-center items-center text-gray-400 bg-[#0f0f0f]">
+            <div className="min-h-screen flex justify-center items-center text-gray-400">
                 Loading…
             </div>
         );
 
-    return (
-        <div className="min-h-screen bg-gradient-to-b from-[#0f0f0f] to-[#1a1a1a] text-gray-200 px-4 py-16">
-            <div className="max-w-3xl mx-auto bg-[#141414]/60 backdrop-blur-xl border border-gray-800 rounded-2xl shadow-2xl overflow-hidden">
-                {/* Header */}
-                <div className="border-b border-gray-800 px-8 py-6 bg-[#111]">
-                    <h1 className="text-3xl font-semibold text-white">Profile Settings</h1>
-                    <p className="text-sm text-gray-400 mt-1">
-                        Manage your account, security, and sessions
-                    </p>
+    // --- Section Components ---
+    const AccountSection = () => (
+        <section>
+            <h2 className="text-xl font-semibold mb-6 flex items-center gap-2 text-emerald-400">
+                <User className="w-5 h-5" /> Account Info
+            </h2>
+            <div className="space-y-4">
+                <div>
+                    <label className="block text-gray-400 text-sm mb-1">Email</label>
+                    <input
+                        value={profile?.email || ""}
+                        disabled
+                        className="w-full border border-white/10 bg-[#1a1a1a] text-gray-400 rounded-lg px-4 py-2 cursor-not-allowed"
+                    />
                 </div>
 
-                {/* Body */}
-                <div className="p-8 space-y-10">
-                    {/* Account Info */}
-                    <section>
-                        <h2 className="text-lg font-semibold mb-4 text-white/90">Account Info</h2>
-                        <div className="space-y-4">
-                            <div>
-                                <label className="block text-gray-400 text-sm mb-1">Email</label>
-                                <input
-                                    value={profile?.email || ""}
-                                    disabled
-                                    className="w-full border border-gray-700 bg-[#1e1e1e] text-gray-400 rounded-lg px-4 py-2 cursor-not-allowed"
-                                />
-                            </div>
+                <div>
+                    <label className="block text-gray-400 text-sm mb-1">
+                        TradingView Username
+                    </label>
+                    <input
+                        value={tradingview}
+                        onChange={(e) => setTradingview(e.target.value)}
+                        placeholder="Enter your TradingView username"
+                        className="w-full border border-white/10 bg-[#1a1a1a] text-gray-100 rounded-lg px-4 py-2 focus:ring-2 focus:ring-emerald-500/30 outline-none transition"
+                    />
+                </div>
 
-                            <div>
-                                <label className="block text-gray-400 text-sm mb-1">
-                                    TradingView Username
-                                </label>
-                                <input
-                                    value={tradingview}
-                                    onChange={(e) => setTradingview(e.target.value)}
-                                    placeholder="Enter your TradingView username"
-                                    className="w-full border border-gray-700 bg-[#1e1e1e] text-gray-100 rounded-lg px-4 py-2 focus:ring-2 focus:ring-white/20 outline-none transition"
-                                />
-                            </div>
+                <button
+                    onClick={handleUpdateProfile}
+                    disabled={saving}
+                    className="w-full bg-emerald-500/20 hover:bg-emerald-500/30 text-white py-2 rounded-lg transition font-medium"
+                >
+                    {saving ? "Saving..." : "Save Changes"}
+                </button>
+            </div>
+        </section>
+    );
 
-                            <button
-                                onClick={handleUpdateProfile}
-                                disabled={saving}
-                                className="w-full bg-white/10 hover:bg-white/20 text-white py-2 rounded-lg transition font-medium"
-                            >
-                                {saving ? "Saving..." : "Save Changes"}
-                            </button>
-                        </div>
-                    </section>
+    const SecuritySection = () => (
+        <section>
+            <h2 className="text-xl font-semibold mb-6 flex items-center gap-2 text-emerald-400">
+                <Lock className="w-5 h-5" /> Security
+            </h2>
 
-                    <div className="border-t border-gray-800" />
+            <div className="space-y-4">
+                <input
+                    type="password"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    placeholder="New password"
+                    className="w-full border border-white/10 bg-[#1a1a1a] text-gray-100 rounded-lg px-4 py-2"
+                />
+                <input
+                    type="password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    placeholder="Confirm new password"
+                    className="w-full border border-white/10 bg-[#1a1a1a] text-gray-100 rounded-lg px-4 py-2"
+                />
 
-                    {/* Security */}
-                    <section>
-                        <h2 className="text-lg font-semibold mb-4 text-white/90">Security</h2>
-                        <div className="space-y-3">
-                            <label className="block text-gray-400 text-sm mb-1">New Password</label>
-                            <input
-                                type="password"
-                                value={newPassword}
-                                onChange={(e) => setNewPassword(e.target.value)}
-                                placeholder="New password"
-                                className="w-full border border-gray-700 bg-[#1e1e1e] text-gray-100 rounded-lg px-4 py-2"
-                            />
-                            <input
-                                type="password"
-                                value={confirmPassword}
-                                onChange={(e) => setConfirmPassword(e.target.value)}
-                                placeholder="Confirm new password"
-                                className="w-full border border-gray-700 bg-[#1e1e1e] text-gray-100 rounded-lg px-4 py-2 mb-2"
-                            />
+                <button
+                    onClick={handleChangePassword}
+                    className="w-full bg-white/10 hover:bg-white/20 text-white py-2 rounded-lg transition font-medium"
+                >
+                    Change Password
+                </button>
+            </div>
+        </section>
+    );
 
-                            <button
-                                onClick={handleChangePassword}
-                                className="w-full bg-white/10 hover:bg-white/20 text-white py-2 rounded-lg transition font-medium"
-                            >
-                                Change Password
-                            </button>
-                        </div>
-                    </section>
+    const SessionsSection = () => (
+        <section>
+            <h2 className="text-xl font-semibold mb-6 flex items-center gap-2 text-emerald-400">
+                <Shield className="w-5 h-5" /> Sessions
+            </h2>
 
-                    <div className="border-t border-gray-800" />
+            <div className="flex flex-col sm:flex-row gap-3">
+                <button
+                    onClick={handleLogout}
+                    className="flex-1 bg-white/10 hover:bg-white/20 text-white font-semibold py-2 rounded-lg transition"
+                >
+                    Logout
+                </button>
+                <button
+                    onClick={handleLogoutEverywhere}
+                    className="flex-1 bg-red-600 hover:bg-red-700 text-white font-semibold py-2 rounded-lg transition"
+                >
+                    Logout Everywhere
+                </button>
+            </div>
+        </section>
+    );
 
-                    {/* Sessions */}
-                    <section>
-                        <h2 className="text-lg font-semibold mb-4 text-white/90">Sessions</h2>
-                        <div className="flex flex-col sm:flex-row gap-3">
-                            <button
-                                onClick={handleLogout}
-                                className="flex-1 bg-[#272727] hover:bg-[#333] text-gray-200 py-2 rounded-lg transition"
-                            >
-                                Logout
-                            </button>
-                            <button
-                                onClick={handleLogoutEverywhere}
-                                className="flex-1 bg-red-600 hover:bg-red-700 text-white py-2 rounded-lg transition"
-                            >
-                                Logout Everywhere
-                            </button>
-                        </div>
-                    </section>
+    const SubscriptionSection = () => (
+        <section>
+            <h2 className="text-xl font-semibold mb-6 flex items-center gap-2 text-emerald-400">
+                <CreditCard className="w-5 h-5" /> Manage Subscription
+            </h2>
+            <p className="text-gray-400 mb-4">
+                You can update your payment method, view invoices, or cancel your plan anytime via the billing portal.
+            </p>
+            <button
+                onClick={handleOpenBillingPortal}
+                disabled={loadingPortal}
+                className="w-full bg-emerald-500/20 hover:bg-emerald-500/30 text-white py-3 rounded-lg transition font-medium"
+            >
+                {loadingPortal ? "Opening Portal..." : "Open Billing Portal"}
+            </button>
+        </section>
+    );
 
-                    {/* Feedback */}
+    const SupportSection = () => (
+        <section>
+            <h2 className="text-xl font-semibold mb-6 flex items-center gap-2 text-emerald-400">
+                <LifeBuoy className="w-5 h-5" /> Support
+            </h2>
+            <p className="text-gray-400 mb-4">
+                Need help? Contact our support team — we usually respond within 24 hours.
+            </p>
+            <div className="flex items-center justify-between bg-[#1a1a1a] border border-white/10 rounded-lg px-4 py-3">
+                <span className="text-gray-300 text-sm">support@bpro.io</span>
+                <button
+                    onClick={handleCopyEmail}
+                    className="text-emerald-400 hover:text-emerald-300 transition flex items-center gap-1 text-sm"
+                >
+                    <Copy className="w-4 h-4" />
+                    {copied ? "Copied!" : "Copy"}
+                </button>
+            </div>
+        </section>
+    );
+
+    return (
+        <div className="min-h-screen flex text-gray-100">
+            {/* Sidebar */}
+            <aside className="hidden md:flex flex-col w-64 border-r border-white/10 backdrop-blur-md pt-20">
+                <div className="px-6 py-6 border-b border-white/10">
+                    <h1 className="text-2xl font-bold bg-gradient-to-r from-emerald-400 to-emerald-600 bg-clip-text text-transparent">
+                        Settings
+                    </h1>
+                </div>
+
+                <nav className="flex flex-col mt-6">
+                    {[
+                        { key: "account", icon: <User className="w-4 h-4" />, label: "Account Info" },
+                        { key: "security", icon: <Lock className="w-4 h-4" />, label: "Security" },
+                        { key: "sessions", icon: <Shield className="w-4 h-4" />, label: "Sessions" },
+                        { key: "subscription", icon: <CreditCard className="w-4 h-4" />, label: "Subscription" },
+                        { key: "support", icon: <LifeBuoy className="w-4 h-4" />, label: "Support" },
+                    ].map(({ key, icon, label }) => (
+                        <button
+                            key={key}
+                            onClick={() => setActiveTab(key as any)}
+                            className={`flex items-center gap-3 px-6 py-3 transition-all duration-200
+                                ${activeTab === key
+                                    ? "bg-emerald-500/10 text-emerald-400 border-l-2 border-emerald-400"
+                                    : "text-gray-300 hover:text-white hover:bg-white/5"
+                                }`}
+                        >
+                            {icon}
+                            {label}
+                        </button>
+                    ))}
+                </nav>
+            </aside>
+
+            {/* Main content */}
+            <main className="flex-1 px-6 md:px-12 py-12 overflow-y-auto pt-24 md:pt-12 relative">
+                <div className="max-w-3xl mx-auto space-y-12 relative">
+                    <div>
+                        <h1 className="text-4xl font-extrabold bg-gradient-to-r from-white via-emerald-400 to-emerald-500 bg-clip-text text-transparent tracking-tight">
+                            Profile Settings
+                        </h1>
+                        <p className="text-gray-400 mt-2">
+                            Manage your account, billing, and support options.
+                        </p>
+                    </div>
+
+                    {/* --- Desktop Animated Tabs (fixed layout) --- */}
+                    <div className="relative min-h-[450px] hidden md:block">
+                        <AnimatePresence mode="wait">
+                            {activeTab === "account" && (
+                                <motion.div key="account" {...animProps} className="absolute w-full">
+                                    <AccountSection />
+                                </motion.div>
+                            )}
+                            {activeTab === "security" && (
+                                <motion.div key="security" {...animProps} className="absolute w-full">
+                                    <SecuritySection />
+                                </motion.div>
+                            )}
+                            {activeTab === "sessions" && (
+                                <motion.div key="sessions" {...animProps} className="absolute w-full">
+                                    <SessionsSection />
+                                </motion.div>
+                            )}
+                            {activeTab === "subscription" && (
+                                <motion.div key="subscription" {...animProps} className="absolute w-full">
+                                    <SubscriptionSection />
+                                </motion.div>
+                            )}
+                            {activeTab === "support" && (
+                                <motion.div key="support" {...animProps} className="absolute w-full">
+                                    <SupportSection />
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
+                    </div>
+
+                    {/* --- Mobile: stacked --- */}
+                    <div className="space-y-12 md:hidden">
+                        <AccountSection />
+                        <SecuritySection />
+                        <SessionsSection />
+                        <SubscriptionSection />
+                        <SupportSection />
+                    </div>
+
                     {(message || error) && (
-                        <div className="mt-4 text-center">
-                            {message && <p className="text-green-400 text-sm">{message}</p>}
+                        <div className="text-center pt-6">
+                            {message && <p className="text-emerald-400 text-sm">{message}</p>}
                             {error && <p className="text-red-400 text-sm">{error}</p>}
                         </div>
                     )}
                 </div>
-            </div>
+            </main>
         </div>
     );
 }
+
+// Animation props (smooth transitions)
+const animProps = {
+    initial: { opacity: 0, x: -20 },
+    animate: { opacity: 1, x: 0 },
+    exit: { opacity: 0, x: 20 },
+    transition: { duration: 0.3 },
+};
