@@ -19,7 +19,6 @@ function Layout() {
   return (
 
     <div className="fixed inset-0 flex flex-col bg-[#0f0f0f] text-gray-100">
-      <BackgroundFX />
       {/* TopBar */}
       {!hideTopBar && (
         <div className="flex-shrink-0">
