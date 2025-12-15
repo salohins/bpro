@@ -10,18 +10,26 @@ import Footer from "../components/Footer";
 import AdaptiveTrendCloud from "../components/landing/AdaptiveTrendCloutd";
 import FutureTargets from "../components/landing/FutureTargets";
 import WhatIsBProSection from "../components/landing/WhatIsBProSection";
+import ProfitCases from "../components/landing/profitCases";
+import CoreEngines from "../components/landing/CoreEngines";
+import WhyBuyBPro from "../components/landing/WhyBuyBPro";
+import WorkflowBPro from "../components/landing/WorkflowBPro";
 
 export default function Landing() {
     return (
         <div className="w-full min-h-screen bg-[#0b0b0b] text-white overflow-x-hidden">
             <HeroSection />
-            <WhatIsBProSection />
+            <CoreEngines />
+            <TradeModes />
             <AdaptiveTrendCloud />
-            <BreakoutFramework />
             <FutureTargets />
             <FilterEngine />
+            <BreakoutFramework />
+            
+            
             <ScoringSystem />
-            <TradeModes />
+            <ProfitCases />
+            <WorkflowBPro />
             <CTABreakoutPro />
             <FAQSection />
             <Footer />

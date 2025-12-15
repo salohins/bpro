@@ -13,12 +13,13 @@ export default function HeroSection() {
         []
     );
 
+    // ✅ TEXT UPDATED ONLY (labels/subs)
     const engines = useMemo(
         () => [
-            { icon: Map, label: "Market Structure Engine", sub: "Trend, regime, HTF alignment, forward targets." },
-            { icon: Filter, label: "Confluence & Sentiment Engine", sub: "9-layer permission gates that adapt to conditions." },
-            { icon: Target, label: "Signal & Execution Engine", sub: "Breakouts first. Divergences second. Context always." },
-            { icon: ShieldCheck, label: "Trade Lifecycle & Risk Engine", sub: "Stops, invalidations, exits — rules from entry to close." },
+            { icon: Map, label: "Market Structure Engine", sub: "3-EMA cloud, regime + HTF alignment." },
+            { icon: Filter, label: "Confluence & Filters Engine", sub: "Adaptive permission gates for higher-quality entries." },
+            { icon: Target, label: "Signals & Execution Engine", sub: "Breakouts + confirmations with clear entry context." },
+            { icon: ShieldCheck, label: "Risk & Trade Management", sub: "Stops, invalidations, exits — rules end-to-end." },
         ],
         []
     );
@@ -105,32 +106,32 @@ export default function HeroSection() {
 
             {/* ===================== Content ===================== */}
             <div className="relative z-10 w-full">
-                <div className="mx-auto max-w-[1760px] px-6 sm:px-10 lg:px-16 2xl:px-20">
+                <div className="mx-auto max-w-[1760px] px-6 sm:px-10 lg:px-16 2xl:px-20 pt-17">
                     {/* ↓ Reduced vertical padding so it fits 2K without scroll */}
                     <div className="py-14 sm:py-16 md:py-20 lg:py-20 2xl:py-24">
                         {/* ↓ Reduced spacing between blocks */}
                         <div className="max-w-[920px] space-y-7 md:space-y-8 font-[var(--font-body)]">
-
-
-                            {/* HEADLINE */}
+                            {/* HEADLINE (TEXT UPDATED ONLY) */}
+                            {/* HEADLINE (TEXT ONLY) */}
                             <motion.h1
                                 variants={item}
                                 className="font-[var(--font-display)] font-semibold tracking-[-0.05em] leading-[0.95]
-                text-[clamp(40px,4.4vw,76px)] text-white"
-                            >
-                                <span className={`bproMark ${reduceMotion ? "bproMarkStatic" : "bproMarkAnim"}`}>B:PRO</span>{" "}
-                                <span className="text-white/92 leading-tight pl-5">The first trading tool that thinks like a pro.</span>
-                            </motion.h1>
+                                text-[clamp(40px,4.4vw,76px)] text-white"
+                                >
+                                <span className="text-white/92 leading-tight">
+                                    B:PRO - One Indicator. Clear Trade decisions.
+                                </span>
+                                </motion.h1>
 
-                            {/* SUBCOPY */}
-                            <motion.p
+                                {/* SUBCOPY (TEXT ONLY) */}
+                                <motion.p
                                 variants={item}
                                 className="heroSubcopy text-white/70 text-[clamp(15px,1.08vw,18px)] leading-[1.6] max-w-[860px]"
-                            >
-                                <strong>Breakout Pro (B:PRO)</strong> is a <strong>TradingView indicator</strong> that helps traders identify{" "}
-                                <strong>high-quality breakouts</strong>, stay aligned with the broader trend, and avoid low-probability chop.
-                                It combines structure, filters, and execution tools into one system — designed for{" "}
-                                <strong>consistent decision-making</strong>.
+                                >
+                                <strong>B:PRO (Breakout PRO)</strong> is an <strong>all-in-one TradingView indicator</strong> that unifies a{" "}
+                                <strong>dynamic 3-EMA trend cloud</strong>, <strong>adaptive multi-factor filters</strong>, and{" "}
+                                <strong>trade-quality scoring</strong>—so you can confirm trend, spot clean breakouts, and avoid low-quality setups
+                                with more confidence.
                             </motion.p>
 
                             {/* LABEL PILLS */}
@@ -216,19 +217,12 @@ export default function HeroSection() {
                                 </motion.a>
                             </motion.div>
 
-                            {/* Fine print */}
+                            {/* Fine print (TEXT UPDATED ONLY) */}
                             <motion.div variants={item} className="pt-1 space-y-2">
                                 <p className="text-[12.5px] text-white/45">
                                     7-day free trial. <span className="text-emerald-300/70">Cancel anytime.</span>
                                 </p>
-                                <div className="flex flex-wrap items-center gap-3 text-[12px] text-white/35">
-                                    <span className="inline-flex items-center gap-2">
-                                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-300/60" />
-                                        Instant TradingView access
-                                    </span>
-                                    <span className="text-white/20">•</span>
-                                    <span>Built for clean discretionary execution</span>
-                                </div>
+                                
                             </motion.div>
                         </div>
                     </div>
