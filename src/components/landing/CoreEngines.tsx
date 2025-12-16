@@ -9,6 +9,8 @@ import {
   Brain,
 } from "lucide-react";
 
+import bproScreenshot from "../../assets/bpro.png"; // ✅ added screenshot
+
 /**
  * Core Engines section
  * - Center device becomes BIG + ABSOLUTE (lg+) behind left/right stacks
@@ -102,34 +104,34 @@ export default function CoreEngines() {
       <div className="relative z-10 mx-auto max-w-[1760px] px-6 sm:px-10 lg:px-16 2xl:px-20">
         {/* header */}
         <motion.div
-  initial={{ opacity: 0, y: 18, filter: "blur(10px)" }}
-  whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-  transition={reduceMotion ? { duration: 0.01 } : { duration: 0.85, ease: easePremium }}
-  viewport={{ once: false, amount: 0.35 }}
-  className="w-full"
->
-  <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6 lg:gap-12">
-    {/* LEFT: headline */}
-    <div className="max-w-[920px]">
-      <h2 className="font-semibold tracking-[-0.04em] leading-[1.02] text-[clamp(34px,3.2vw,56px)] pb-0 mb-0">
-        <span className="block bg-gradient-to-r from-white via-emerald-200 to-emerald-500 bg-clip-text text-transparent">
-          Five engines.
-        </span>
-        <span className="block bg-gradient-to-r from-white via-emerald-200 to-emerald-500 bg-clip-text text-transparent">
-          One decision framework.
-        </span>
-      </h2>
-    </div>
+          initial={{ opacity: 0, y: 18, filter: "blur(10px)" }}
+          whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+          transition={reduceMotion ? { duration: 0.01 } : { duration: 0.85, ease: easePremium }}
+          viewport={{ once: false, amount: 0.35 }}
+          className="w-full"
+        >
+          <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6 lg:gap-12">
+            {/* LEFT: headline */}
+            <div className="max-w-[920px]">
+              <h2 className="font-semibold tracking-[-0.04em] leading-[1.02] text-[clamp(34px,3.2vw,56px)] pb-0 mb-0">
+                <span className="block bg-gradient-to-r from-white via-emerald-200 to-emerald-500 bg-clip-text text-transparent">
+                  Five engines.
+                </span>
+                <span className="block bg-gradient-to-r from-white via-emerald-200 to-emerald-500 bg-clip-text text-transparent">
+                  One decision framework.
+                </span>
+              </h2>
+            </div>
 
-    {/* RIGHT: subheading pinned to far right */}
-    <div className="lg:ml-auto lg:max-w-[520px] t lg:pt-2">
-      <p className="text-white/70 text-[clamp(15px,1.05vw,18px)] leading-relaxed">
-        B:PRO is built like a system — structure → confluence → execution → management → grading.
-        Everything stays on-chart, so you see the “why” instantly.
-      </p>
-    </div>
-  </div>
-</motion.div>
+            {/* RIGHT: subheading pinned to far right */}
+            <div className="lg:ml-auto lg:max-w-[520px] t lg:pt-2">
+              <p className="text-white/70 text-[clamp(15px,1.05vw,18px)] leading-relaxed">
+                B:PRO is built like a system — structure → confluence → execution → management → grading.
+                Everything stays on-chart, so you see the “why” instantly.
+              </p>
+            </div>
+          </div>
+        </motion.div>
 
         {/* layout */}
         <div className="relative grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-start lg:items-center overflow-visible lg:min-h-[700px]">
@@ -276,53 +278,61 @@ function DeviceFrame({ title, subtitle, bullets, footer, size = "md" }) {
           <div className={["relative", isXL ? "p-7 md:p-8" : "p-6 md:p-7"].join(" ")}>
             <div
               className={[
-                "relative rounded-3xl border border-white/10 bg-white/[0.02]",
+                "relative rounded-3xl border border-white/10 ",
                 isXL ? "h-[420px] xl:h-[480px] 2xl:h-[520px]" : "h-[320px] sm:h-[380px] lg:h-[440px]",
               ].join(" ")}
             >
               {/* Replace this with your real screenshot */}
-              {/* <img src={yourScreenshot} alt="B:PRO chart preview" className="absolute inset-0 w-full h-full object-cover" /> */}
+              {/* ✅ cinematic screenshot */}
+              <img
+                src={bproScreenshot}
+                alt="B:PRO chart preview"
+                className="absolute rounded-3xl inset-0 w-full h-full object-cover brightness-[1.05] contrast-[1.1] saturate-[1.15]"
+              />
+
+
+              {/* overlay callout untouched */}
 
 
               {/* overlay callout */}
-            <div className="absolute left-5 right-5 -bottom-20 flex justify-center">
-            <div
-  className="w-full max-w-[520px] rounded-[24px] p-[1px] bg-gradient-to-b from-emerald-400/18 via-white/10 to-emerald-500/12"
-    >
-    <div
-        className={[
-        "rounded-[24px] bg-[#070707]/75 border border-white/10 backdrop-blur-2xl",
-        isXL ? "p-5" : "p-4",
-        ].join(" ")}
-    >
-        <div className="flex items-start gap-3">
-        <span className="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.03]">
-            <Target className="h-5 w-5 text-emerald-300" />
-        </span>
+              <div className="absolute left-5 right-5 -bottom-20 flex justify-center">
+                <div
+                  className="w-full max-w-[520px] rounded-[24px] p-[1px] bg-gradient-to-b from-emerald-400/18 via-white/10 to-emerald-500/12"
+                >
+                  <div
+                    className={[
+                      "rounded-[24px] bg-[#070707]/75 border border-white/10 backdrop-blur-2xl",
+                      isXL ? "p-5" : "p-4",
+                    ].join(" ")}
+                  >
+                    <div className="flex items-start gap-3">
+                      <span className="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.03]">
+                        <Target className="h-5 w-5 text-emerald-300" />
+                      </span>
 
-        <div className="min-w-0">
-            <div className="text-sm font-semibold text-white/90 leading-tight">{title}</div>
-            <div className="mt-1 text-sm text-white/65 leading-tight">{subtitle}</div>
-        </div>
-        </div>
+                      <div className="min-w-0">
+                        <div className="text-sm font-semibold text-white/90 leading-tight">{title}</div>
+                        <div className="mt-1 text-sm text-white/65 leading-tight">{subtitle}</div>
+                      </div>
+                    </div>
 
-    <ul className="mt-4 space-y-2 text-sm text-white/70">
-    {bullets.map((b) => (
-        <li key={b} className="flex gap-2 min-w-0">
-        <span className="text-emerald-300/80">✓</span>
-        <span className="truncate" title={b}>
-            {b}
-        </span>
-        </li>
-    ))}
-</ul>
+                    <ul className="mt-4 space-y-2 text-sm text-white/70">
+                      {bullets.map((b) => (
+                        <li key={b} className="flex gap-2 min-w-0">
+                          <span className="text-emerald-300/80">✓</span>
+                          <span className="truncate" title={b}>
+                            {b}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
 
 
-    <div className="mt-3 text-xs text-white/45">{footer}</div>
-  </div>
-</div>
+                    <div className="mt-3 text-xs text-white/45">{footer}</div>
+                  </div>
+                </div>
 
-            </div>
+              </div>
 
             </div>
 

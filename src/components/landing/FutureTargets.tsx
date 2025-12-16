@@ -1,10 +1,19 @@
-import React from "react";
-import { motion, useReducedMotion } from "framer-motion";
-import { Sparkles, Target, Shield, Layers, ArrowRight } from "lucide-react";
+import React, { useEffect, useMemo, useState } from "react";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import {
+  Sparkles,
+  Target,
+  Shield,
+  Layers,
+  ArrowRight,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 
 import futureTargetsImg from "../../assets/future-target-lines.png";
+import futureTargetsImg2 from "../../assets/future-target-lines2.png";
 
-const easePremium: any = [0.16, 1, 0.3, 1];
+const easePremium = [0.16, 1, 0.3, 1];
 
 export default function FutureTargets() {
   const reduceMotion = useReducedMotion();
@@ -12,9 +21,93 @@ export default function FutureTargets() {
   const enter = (dir = 1, d = 0) => ({
     initial: { opacity: 0, y: 16 * dir, filter: "blur(10px)" },
     whileInView: { opacity: 1, y: 0, filter: "blur(0px)" },
-    transition: reduceMotion ? { duration: 0.01 } : { duration: 0.85, delay: d, ease: easePremium },
+    transition: reduceMotion
+      ? { duration: 0.01 }
+      : { duration: 0.85, delay: d, ease: easePremium },
     viewport: { once: false, amount: 0.35 },
   });
+
+  const shots = useMemo(
+    () => [
+      {
+        key: "t1t2-1",
+        src: futureTargetsImg,
+        alt: "Example showing T1/T2 target EMA lines as dynamic support and resistance",
+        tags: ["T1 / T2 rails", "EMA-based targets"],
+        captionTitle: "How to read it",
+        caption:
+          "Watch rejection / acceptance at T1 and T2. Acceptance = continuation. Rejection = weakness / potential reversal pressure.",
+      },
+      {
+        key: "t1t2-2",
+        src: futureTargetsImg2,
+        alt: "Second example showing T1/T2 rails interaction after breakout",
+        tags: ["T1 → T2 flow", "Continuation / failure"],
+        captionTitle: "What to look for",
+        caption:
+          "After T1 taps, track whether price holds above the rail. Clean holds = continuation. Failed holds = exit or defend.",
+      },
+    ],
+    []
+  );
+
+  const [shotIdx, setShotIdx] = useState(0);
+  const [dir, setDir] = useState(1);
+
+  // ✅ autoplay
+  const [autoplay, setAutoplay] = useState(true);
+  const [paused, setPaused] = useState(false);
+
+  const wrap = (n) => (n + shots.length) % shots.length;
+
+  const next = () => {
+    setDir(1);
+    setShotIdx((p) => wrap(p + 1));
+  };
+
+  const prev = () => {
+    setDir(-1);
+    setShotIdx((p) => wrap(p - 1));
+  };
+
+  // ✅ autoplay loop
+  useEffect(() => {
+    if (reduceMotion) return;
+    if (!autoplay || paused || shots.length <= 1) return;
+
+    const t = setInterval(() => {
+      next();
+    }, 4500);
+
+    return () => clearInterval(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoplay, paused, reduceMotion, shots.length, shotIdx]);
+
+  const variants = {
+    enter: (d) => ({
+      opacity: 0,
+      x: reduceMotion ? 0 : d * 16,
+      filter: "blur(10px)",
+    }),
+    center: {
+      opacity: 1,
+      x: 0,
+      filter: "blur(0px)",
+      transition: reduceMotion
+        ? { duration: 0.01 }
+        : { duration: 0.55, ease: easePremium },
+    },
+    exit: (d) => ({
+      opacity: 0,
+      x: reduceMotion ? 0 : d * -16,
+      filter: "blur(10px)",
+      transition: reduceMotion
+        ? { duration: 0.01 }
+        : { duration: 0.45, ease: easePremium },
+    }),
+  };
+
+  const current = shots[shotIdx];
 
   return (
     <section className="relative w-full py-20 md:py-24 bg-transparent text-white">
@@ -29,24 +122,82 @@ export default function FutureTargets() {
       {/* match your global section width */}
       <div className="relative z-10 mx-auto max-w-[1760px] px-6 sm:px-10 lg:px-16 2xl:px-20">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
-          {/* LEFT — copy */}
+          {/* LEFT — screenshot slider */}
           <motion.div {...enter(1, 0.05)} className="lg:col-span-7">
             <div className="rounded-[30px] p-[1px] bg-gradient-to-b from-emerald-400/22 via-white/10 to-emerald-500/14 shadow-[0_0_70px_rgba(16,185,129,0.10)]">
               <div className="relative rounded-[30px] overflow-hidden bg-[#070707]/75 border border-white/10 backdrop-blur-2xl">
                 {/* header bar */}
                 <div className="relative z-10 px-6 py-4 border-b border-white/10 flex items-center justify-between">
                   <div className="text-sm font-semibold text-white/85">T1 / T2 in-action</div>
-                  <div className="text-[11px] text-white/45 tracking-widest uppercase">screenshot</div>
+
+                  <div className="flex items-center gap-2">
+                    <div className="text-[11px] text-white/45 tracking-widest uppercase">
+                      {shotIdx + 1} / {shots.length}
+                    </div>
+
+                    {/* optional toggle (nice for demos) */}
+                    <button
+                      type="button"
+                      onClick={() => setAutoplay((v) => !v)}
+                      className="hidden sm:inline-flex items-center px-3 py-1.5 rounded-full border border-white/10 bg-white/[0.03] hover:bg-white/[0.05] transition text-[11px] tracking-widest uppercase text-white/55"
+                    >
+                      {autoplay ? "Autoplay: On" : "Autoplay: Off"}
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={prev}
+                      aria-label="Previous screenshot"
+                      className="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.03] hover:bg-white/[0.05] transition"
+                    >
+                      <ChevronLeft className="h-5 w-5 text-white/70" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={next}
+                      aria-label="Next screenshot"
+                      className="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.03] hover:bg-white/[0.05] transition"
+                    >
+                      <ChevronRight className="h-5 w-5 text-white/70" />
+                    </button>
+                  </div>
                 </div>
 
-                <div className="relative h-[300px] sm:h-[380px] lg:h-[460px]">
-                  <img
-                    src={futureTargetsImg}
-                    alt="Example showing T1/T2 target EMA lines as dynamic support and resistance"
-                    className="absolute inset-0 w-full h-full object-cover object-center"
-                    draggable={false}
-                    loading="eager"
-                  />
+                {/* slider viewport (✅ hover pause + ✅ swipe) */}
+                <motion.div
+                  className="relative h-[300px] sm:h-[380px] lg:h-[460px] touch-pan-y"
+                  onMouseEnter={() => setPaused(true)}
+                  onMouseLeave={() => setPaused(false)}
+                  drag={reduceMotion ? false : "x"}
+                  dragConstraints={{ left: 0, right: 0 }}
+                  dragElastic={0.10}
+                  onDragStart={() => setPaused(true)}
+                  onDragEnd={(_, info) => {
+                    setPaused(false);
+                    if (reduceMotion) return;
+                    if (info.offset.x < -70) next();
+                    if (info.offset.x > 70) prev();
+                  }}
+                >
+                  <AnimatePresence initial={false} custom={dir} mode="popLayout">
+                    <motion.div
+                      key={current.key}
+                      custom={dir}
+                      variants={variants}
+                      initial="enter"
+                      animate="center"
+                      exit="exit"
+                      className="absolute inset-0"
+                    >
+                      <img
+                        src={current.src}
+                        alt={current.alt}
+                        className="absolute inset-0 w-full h-full object-cover object-center"
+                        draggable={false}
+                        loading="eager"
+                      />
+                    </motion.div>
+                  </AnimatePresence>
 
                   {/* grading + aura */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/15 to-black/10" />
@@ -63,17 +214,18 @@ export default function FutureTargets() {
 
                   {/* tags */}
                   <div className="absolute left-4 top-4 flex flex-wrap gap-2">
-                    <TagChip>T1 / T2 rails</TagChip>
-                    <TagChip tone="emerald">EMA-based targets</TagChip>
+                    <TagChip>{current.tags[0]}</TagChip>
+                    <TagChip tone="emerald">{current.tags[1]}</TagChip>
                   </div>
 
                   {/* bottom caption */}
                   <div className="absolute left-5 right-5 bottom-5">
                     <Glass className="rounded-2xl bg-black/35 px-4 py-3">
-                      <div className="text-sm font-semibold text-white/90 leading-tight">How to read it</div>
+                      <div className="text-sm font-semibold text-white/90 leading-tight">
+                        {current.captionTitle}
+                      </div>
                       <div className="mt-1 text-sm text-white/65 leading-relaxed">
-                        Watch <span className="text-white/80">rejection / acceptance</span> at T1 and T2.
-                        Acceptance = continuation. Rejection = weakness / potential reversal pressure.
+                        {current.caption}
                       </div>
                     </Glass>
                   </div>
@@ -88,6 +240,30 @@ export default function FutureTargets() {
                   />
 
                   <div className="absolute inset-0 ring-1 ring-white/10" />
+                </motion.div>
+
+                {/* dots */}
+                <div className="px-6 py-4 border-t border-white/10">
+                  <div className="flex items-center justify-between">
+                    <div className="text-xs text-white/45">Swipe or use arrows</div>
+                    <div className="flex items-center gap-2">
+                      {shots.map((s, i) => (
+                        <button
+                          key={s.key}
+                          type="button"
+                          onClick={() => {
+                            setDir(i > shotIdx ? 1 : -1);
+                            setShotIdx(i);
+                          }}
+                          aria-label={`Go to screenshot ${i + 1}`}
+                          className={`h-2.5 rounded-full transition-all ${i === shotIdx
+                              ? "w-8 bg-emerald-300/70"
+                              : "w-2.5 bg-white/15 hover:bg-white/25"
+                            }`}
+                        />
+                      ))}
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -96,6 +272,8 @@ export default function FutureTargets() {
               Tip: keep screenshots clean (minimal indicators) so T1/T2 stand out instantly.
             </div>
           </motion.div>
+
+          {/* RIGHT — copy */}
           <motion.div {...enter(1)} className="lg:col-span-5 space-y-6">
             <div className="flex flex-wrap items-center gap-2">
               <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full border border-emerald-400/20 bg-white/[0.03] backdrop-blur-md w-fit">
@@ -118,14 +296,23 @@ export default function FutureTargets() {
             </h2>
 
             <p className="text-white/70 text-lg leading-relaxed max-w-xl">
-              After a breakout, price often interacts with <span className="text-white/85 font-semibold">T1</span>{" "}
-              first, then <span className="text-white/85 font-semibold">T2</span>. These adaptive EMA rails act as
-              forward structure — giving you clean reaction zones for partials, continuation, or failure.
+              After a breakout, price often interacts with{" "}
+              <span className="text-white/85 font-semibold">T1</span> first, then{" "}
+              <span className="text-white/85 font-semibold">T2</span>. These adaptive EMA rails act as forward
+              structure — giving you clean reaction zones for partials, continuation, or failure.
             </p>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <Chip icon={<Target className="w-4 h-4 text-emerald-200/90" />} title="T1 reaction" desc="first touch zone" />
-              <Chip icon={<Shield className="w-4 h-4 text-emerald-200/90" />} title="T2 decision" desc="continue or fail" />
+              <Chip
+                icon={<Target className="w-4 h-4 text-emerald-200/90" />}
+                title="T1 reaction"
+                desc="first touch zone"
+              />
+              <Chip
+                icon={<Shield className="w-4 h-4 text-emerald-200/90" />}
+                title="T2 decision"
+                desc="continue or fail"
+              />
               <Chip tone="emerald" title="EMA-based rails" desc="dynamic, not static" />
               <Chip title="Cleaner exits" desc="less guessing" />
             </div>
@@ -135,9 +322,6 @@ export default function FutureTargets() {
               Correlation: breakouts trigger → rails manage the move → exits become objective.
             </div>
           </motion.div>
-
-          {/* RIGHT — cinematic image */}
-          
         </div>
       </div>
     </section>
@@ -146,7 +330,7 @@ export default function FutureTargets() {
 
 /* ---------- tiny atoms (self-contained) ---------- */
 
-function Glass({ className = "", children }: any) {
+function Glass({ className = "", children }) {
   return (
     <div
       className={[
@@ -160,27 +344,31 @@ function Glass({ className = "", children }: any) {
   );
 }
 
-function TagChip({ children, tone = "neutral" }: any) {
+function TagChip({ children, tone = "neutral" }) {
   const tones =
     tone === "emerald"
       ? "text-emerald-100 border-emerald-400/20 bg-emerald-400/10"
       : "text-white/85 border-white/10 bg-black/30";
   return (
-    <span className={`text-[11px] tracking-[0.18em] uppercase px-3 py-1.5 rounded-full border backdrop-blur-md ${tones}`}>
+    <span
+      className={`text-[11px] tracking-[0.18em] uppercase px-3 py-1.5 rounded-full border backdrop-blur-md ${tones}`}
+    >
       {children}
     </span>
   );
 }
 
-function Chip({ icon, title, desc, tone = "neutral" }: any) {
-  const base =
-    "flex items-center gap-3 px-4 py-3 rounded-2xl border backdrop-blur-md";
+function Chip({ icon, title, desc, tone = "neutral" }) {
+  const base = "flex items-center gap-3 px-4 py-3 rounded-2xl border backdrop-blur-md";
   const toneCls =
     tone === "emerald"
       ? "border-emerald-400/20 bg-emerald-400/10"
       : "border-white/10 bg-white/[0.03]";
   return (
-    <div className={`${base} ${toneCls}`} style={{ boxShadow: "0 0 0 1px rgba(255,255,255,0.02)" }}>
+    <div
+      className={`${base} ${toneCls}`}
+      style={{ boxShadow: "0 0 0 1px rgba(255,255,255,0.02)" }}
+    >
       <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/[0.03]">
         {icon ? icon : <span className="w-2 h-2 rounded-full bg-emerald-300/70" />}
       </span>

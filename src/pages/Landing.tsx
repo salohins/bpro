@@ -1,5 +1,4 @@
-import BreakoutFramework from "../components/landing/BreakoutFramework";
-import CorePillars from "../components/landing/CorePillars";
+
 import CTABreakoutPro from "../components/landing/CTABreakoutPRO";
 import FilterEngine from "../components/landing/FilterEngine";
 import HeroSection from "../components/landing/HeroSection";
@@ -9,11 +8,11 @@ import FAQSection from "../components/landing/FAQSection";
 import Footer from "../components/Footer";
 import AdaptiveTrendCloud from "../components/landing/AdaptiveTrendCloutd";
 import FutureTargets from "../components/landing/FutureTargets";
-import WhatIsBProSection from "../components/landing/WhatIsBProSection";
 import ProfitCases from "../components/landing/profitCases";
 import CoreEngines from "../components/landing/CoreEngines";
-import WhyBuyBPro from "../components/landing/WhyBuyBPro";
 import WorkflowBPro from "../components/landing/WorkflowBPro";
+import PrecisionEntryDetection from "../components/landing/PercisionEntryDetection";
+import SignalLanguageSection from "../components/landing/SignalLanguageSection";
 
 export default function Landing() {
     return (
@@ -24,9 +23,8 @@ export default function Landing() {
             <AdaptiveTrendCloud />
             <FutureTargets />
             <FilterEngine />
-            <BreakoutFramework />
-            
-            
+            <PrecisionEntryDetection />
+            <SignalLanguageSection />
             <ScoringSystem />
             <ProfitCases />
             <WorkflowBPro />
