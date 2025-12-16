@@ -3,12 +3,15 @@ import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import {
   ArrowUpRight,
   ArrowDownRight,
+  ArrowUp,
+  ArrowDown,
   Sparkles,
   Target,
   Shield,
   Plus,
   Circle,
   X,
+  Diamond,
   ChevronLeft,
   ChevronRight,
   Layers,
@@ -17,11 +20,109 @@ import {
 import breakoutImg from "../../assets/breakout.png";
 import breakoutLogicImg from "../../assets/breakoutLogic.png";
 
-const easePremium: any = [0.16, 1, 0.3, 1];
+const easePremium = [0.16, 1, 0.3, 1];
 
 export default function BreakoutFramework() {
   const reduceMotion = useReducedMotion();
   const [idx, setIdx] = useState(0);
+
+  // ✅ full signal legend (colors exactly as you listed)
+  const signalLegend = useMemo(
+    () => [
+      {
+        key: "open-long",
+        title: "Open Long",
+        desc: "Long entry trigger",
+        tone: "emerald",
+        icon: <ArrowUpRight className="h-4 w-4 text-emerald-300" />,
+      },
+      {
+        key: "open-short",
+        title: "Open Short",
+        desc: "Short entry trigger",
+        tone: "red",
+        icon: <ArrowDownRight className="h-4 w-4 text-red-300" />,
+      },
+      {
+        key: "breakout",
+        title: "Breakout",
+        desc: "Breaks out of range",
+        tone: "neutral",
+        icon: <ArrowUp className="h-4 w-4 text-white/80" />,
+      },
+      {
+        key: "breakdown",
+        title: "Breakdown",
+        desc: "Breaks down from range",
+        tone: "yellow",
+        icon: <ArrowDown className="h-4 w-4 text-yellow-300" />,
+      },
+      {
+        key: "close-long",
+        title: "Close Long",
+        desc: "Long exit / take profit",
+        tone: "blue",
+        icon: <Diamond className="h-4 w-4 text-blue-300" />,
+      },
+      {
+        key: "close-short",
+        title: "Close Short",
+        desc: "Short exit / take profit",
+        tone: "orange",
+        icon: <Diamond className="h-4 w-4 text-orange-300" />,
+      },
+      {
+        key: "cross-up",
+        title: "Cross Up",
+        desc: "Bullish cross marker",
+        tone: "emerald",
+        icon: <X className="h-4 w-4 text-emerald-300" />,
+      },
+      {
+        key: "cross-down",
+        title: "Cross Down",
+        desc: "Bearish cross marker",
+        tone: "red",
+        icon: <X className="h-4 w-4 text-red-300" />,
+      },
+      {
+        key: "squeeze-down",
+        title: "Squeeze Down",
+        desc: "Compression / move loading",
+        tone: "neutral",
+        icon: <Plus className="h-4 w-4 text-white/80" />,
+      },
+      {
+        key: "bull-cont",
+        title: "Bull Continuation",
+        desc: "Trend continuation (bull)",
+        tone: "emerald",
+        icon: <Circle className="h-4 w-4 text-emerald-300" />,
+      },
+      {
+        key: "bear-cont",
+        title: "Bear Continuation",
+        desc: "Trend continuation (bear)",
+        tone: "red",
+        icon: <Circle className="h-4 w-4 text-red-300" />,
+      },
+      {
+        key: "long-invalid",
+        title: "Long Invalidated",
+        desc: "Long setup invalidation",
+        tone: "purple",
+        icon: <Circle className="h-4 w-4 text-purple-200" />,
+      },
+      {
+        key: "short-invalid",
+        title: "Short Invalidated",
+        desc: "Short setup invalidation",
+        tone: "purple",
+        icon: <Circle className="h-4 w-4 text-purple-200" />,
+      },
+    ],
+    []
+  );
 
   const slides = useMemo(
     () => [
@@ -142,51 +243,37 @@ export default function BreakoutFramework() {
               </div>
             </div>
 
-            {/* RIGHT — compact legend */}
+            {/* RIGHT — FULL legend */}
             <div className="lg:col-span-5 w-full space-y-4 lg:pl-6 lg:border-l lg:border-white/10">
               <div className="text-sm text-white/70 leading-relaxed">
-                These aren’t “signals”. They’re{" "}
-                <span className="text-white/85 font-semibold">context markers</span> that explain what’s happening
-                so you can act faster — or skip.
+                This is your complete{" "}
+                <span className="text-white/85 font-semibold">signal language</span>. Same icons, same colors —
+                so you can read the chart instantly.
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-3">
-                <LegendRow
-                  icon={
-                    <IconBox>
-                      <Plus className="h-4 w-4 text-white/80" />
-                    </IconBox>
-                  }
-                  title='White “+”'
-                  desc="Volatility squeeze (move loading)"
-                />
-                <LegendRow
-                  icon={
-                    <IconBox tone="purple">
-                      <Circle className="h-4 w-4 text-purple-200" />
-                    </IconBox>
-                  }
-                  title="Purple circle"
-                  desc="Invalidation (reversal warning)"
-                />
-                <LegendRow
-                  icon={
-                    <IconBox tone="emerald">
-                      <X className="h-4 w-4 text-emerald-200" />
-                    </IconBox>
-                  }
-                  title="Green cross"
-                  desc="Continuation after correction"
-                />
-                <LegendRow
-                  icon={
-                    <IconBox>
-                      <Target className="h-4 w-4 text-emerald-200/90" />
-                    </IconBox>
-                  }
-                  title="Pivot zones"
-                  desc="Reaction / decision areas"
-                />
+              <div className="rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-md overflow-hidden">
+                <div className="px-4 py-3 border-b border-white/10 flex items-center justify-between">
+                  <div className="text-sm font-semibold text-white/90">Signal Legend</div>
+                  <div className="text-[11px] text-white/45 tracking-widest uppercase">All signals</div>
+                </div>
+
+                <div className="p-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-3">
+                    {signalLegend.map((s) => (
+                      <LegendRow
+                        key={s.key}
+                        icon={<IconBox tone={s.tone}>{s.icon}</IconBox>}
+                        title={s.title}
+                        desc={s.desc}
+                      />
+                    ))}
+                  </div>
+
+                  <div className="mt-4 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+                  <div className="mt-3 text-xs text-white/45">
+                    Tip: if the icon prints away from reaction zones, ignore it. Context &gt; symbols.
+                  </div>
+                </div>
               </div>
 
               <Glass className="rounded-2xl p-5">
@@ -206,18 +293,16 @@ export default function BreakoutFramework() {
         ),
       },
     ],
-    [reduceMotion]
+    [reduceMotion, signalLegend]
   );
 
   const current = slides[idx];
 
-  const wrap = (n: number) => (n + slides.length) % slides.length;
-  const go = (dir: number) => setIdx((v) => wrap(v + dir));
+  const wrap = (n) => (n + slides.length) % slides.length;
+  const go = (dir) => setIdx((v) => wrap(v + dir));
 
   return (
-    // ✅ no overflow-hidden so FX can bleed if you want to add connector glows outside
     <section className="relative w-full py-20 md:py-24 bg-transparent text-white">
-      {/* subtle connector that bleeds a bit (consistent with your other sections) */}
       <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
         <div className="absolute left-0 right-0 -top-32 -bottom-32 bg-[radial-gradient(circle_at_55%_12%,rgba(16,185,129,0.10),transparent_60%)]" />
         <div className="absolute inset-0 opacity-[0.05] [mask-image:radial-gradient(ellipse_at_center,black,transparent_72%)]">
@@ -297,7 +382,6 @@ export default function BreakoutFramework() {
                 animate={reduceMotion ? { opacity: 1 } : { opacity: 1, y: 0, filter: "blur(0px)" }}
                 exit={reduceMotion ? { opacity: 1 } : { opacity: 0, y: -10, filter: "blur(10px)" }}
                 transition={reduceMotion ? { duration: 0.01 } : { duration: 0.65, ease: easePremium }}
-                // swipe support
                 drag={reduceMotion ? false : "x"}
                 dragConstraints={{ left: 0, right: 0 }}
                 dragElastic={0.12}
@@ -325,7 +409,7 @@ export default function BreakoutFramework() {
 
 /* ===================== Atoms ===================== */
 
-function SectionShell({ children }: any) {
+function SectionShell({ children }) {
   return (
     <div className="w-full rounded-[34px] p-[1px] bg-gradient-to-b from-emerald-400/22 via-white/10 to-emerald-500/14">
       <div className="w-full rounded-[34px] overflow-hidden bg-[#0b0b0b]/72 backdrop-blur-xl border border-white/10">
@@ -335,7 +419,7 @@ function SectionShell({ children }: any) {
   );
 }
 
-function Glass({ className = "", children }: any) {
+function Glass({ className = "", children }) {
   return (
     <div
       className={[
@@ -357,7 +441,7 @@ function MediaFrame({
   loading = "lazy",
   reduceMotion = false,
   children,
-}: any) {
+}) {
   const imgClass = fit === "contain" ? "object-contain p-3" : "object-cover object-center";
 
   return (
@@ -397,7 +481,7 @@ function MediaFrame({
   );
 }
 
-function CinematicImage({ src, alt, tags = [], caption, reduceMotion }: any) {
+function CinematicImage({ src, alt, tags = [], caption, reduceMotion }) {
   return (
     <div className="relative w-full overflow-hidden rounded-[26px] border border-white/10">
       <div className="relative h-[300px] sm:h-[360px] lg:h-[460px]">
@@ -413,7 +497,7 @@ function CinematicImage({ src, alt, tags = [], caption, reduceMotion }: any) {
         />
 
         <div className="absolute left-5 top-5 flex flex-wrap gap-2">
-          {tags.map((t: any, i: number) => (
+          {tags.map((t, i) => (
             <TagChip key={i} tone={t.tone || "neutral"}>
               {t.text}
             </TagChip>
@@ -441,7 +525,7 @@ function CinematicImage({ src, alt, tags = [], caption, reduceMotion }: any) {
   );
 }
 
-function Kicker({ children }: any) {
+function Kicker({ children }) {
   return (
     <div className="inline-flex items-center justify-center px-4 py-2 rounded-full border border-emerald-400/20 bg-white/[0.03] backdrop-blur-md w-fit">
       <span className="text-emerald-300 text-xs tracking-[0.24em] font-semibold uppercase">{children}</span>
@@ -449,7 +533,7 @@ function Kicker({ children }: any) {
   );
 }
 
-function TagChip({ children, tone = "neutral" }: any) {
+function TagChip({ children, tone = "neutral" }) {
   const tones =
     tone === "emerald"
       ? "text-emerald-100 border-emerald-400/20 bg-emerald-400/10"
@@ -461,7 +545,7 @@ function TagChip({ children, tone = "neutral" }: any) {
   );
 }
 
-function Pill({ icon, children }: any) {
+function Pill({ icon, children }) {
   return (
     <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5 text-xs text-white/70">
       {icon}
@@ -470,12 +554,15 @@ function Pill({ icon, children }: any) {
   );
 }
 
-function IconBox({ children, tone = "neutral" }: any) {
-  const toneMap: any = {
+function IconBox({ children, tone = "neutral" }) {
+  const toneMap = {
     neutral: "bg-white/[0.03] border-white/10",
     emerald: "bg-emerald-400/10 border-emerald-400/20",
     red: "bg-red-500/10 border-red-400/20",
     purple: "bg-purple-400/10 border-purple-400/20",
+    yellow: "bg-yellow-400/10 border-yellow-400/20",
+    blue: "bg-blue-400/10 border-blue-400/20",
+    orange: "bg-orange-400/10 border-orange-400/20",
   };
   return (
     <span className={`inline-flex h-9 w-9 items-center justify-center rounded-xl border ${toneMap[tone] || toneMap.neutral}`}>
@@ -484,7 +571,7 @@ function IconBox({ children, tone = "neutral" }: any) {
   );
 }
 
-function FeatureCard({ reduceMotion, delay = 0, tone = "emerald", icon, title, items }: any) {
+function FeatureCard({ reduceMotion, delay = 0, tone = "emerald", icon, title, items }) {
   const checkColor = tone === "red" ? "text-red-300/80" : "text-emerald-300/80";
   const iconTone = tone === "red" ? "red" : "emerald";
 
@@ -493,11 +580,7 @@ function FeatureCard({ reduceMotion, delay = 0, tone = "emerald", icon, title, i
       initial={{ opacity: 0, y: 14, filter: "blur(10px)" }}
       whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
       viewport={{ once: false, amount: 0.35 }}
-      transition={
-        reduceMotion
-          ? { duration: 0.01 }
-          : { duration: 0.7, delay, ease: easePremium }
-      }
+      transition={reduceMotion ? { duration: 0.01 } : { duration: 0.7, delay, ease: easePremium }}
       className="h-full rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-md p-6 hover:bg-white/[0.05] transition-colors duration-300"
     >
       <div className="flex items-center gap-3 mb-3">
@@ -506,7 +589,7 @@ function FeatureCard({ reduceMotion, delay = 0, tone = "emerald", icon, title, i
       </div>
 
       <ul className="text-white/70 space-y-2 text-sm leading-relaxed">
-        {items.map((t: string) => (
+        {items.map((t) => (
           <li key={t} className="flex gap-2">
             <span className={checkColor}>✓</span> {t}
           </li>
@@ -516,7 +599,7 @@ function FeatureCard({ reduceMotion, delay = 0, tone = "emerald", icon, title, i
   );
 }
 
-function LegendRow({ icon, title, desc }: any) {
+function LegendRow({ icon, title, desc }) {
   return (
     <div className="flex items-start gap-3 rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3">
       <span className="mt-0.5 shrink-0">{icon}</span>

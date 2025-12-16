@@ -12,6 +12,8 @@ import {
   ChevronRight,
 } from "lucide-react";
 
+import oneMinLong from "../../assets/1minLong.png";
+
 const easePremium: [number, number, number, number] = [0.16, 1, 0.3, 1];
 
 export default function ProfitCases() {
@@ -29,15 +31,23 @@ export default function ProfitCases() {
   const cases = useMemo(
     () => [
       {
-        pct: "125%",
-        tag: "Breakout",
-        symbol: "RNDR / USD",
-        tf: "1D",
-        dates: "Oct 27–29, 2023",
-        headline: "Pump in ~2 weeks",
-        bullets: ["Bull bias held", "Pressure built", "Clean trigger", "Targets on HTF rails"],
-        note: "Structure + squeeze → breakout. Managed with rails + invalidation.",
+        pct: "1.2%",
+        tag: "Open Long",
+        symbol: "BTC / USDT",
+        tf: "1m",
+        dates: "Example (scalp)",
+        headline: "Fast TF Mode long",
+        bullets: [
+          "Mode 1m (fast TF)",
+          "Entry: Open Long at Fast Line",
+          "SL: slightly below Midtrend Line",
+          "TP: Close Short / Fast Line / Midtrend Line",
+        ],
+        note:
+          "1m fast mode scalp: long trigger at fast line, stop tucked under midtrend, take profit into close-short / fastline / midtrend.",
+        img: oneMinLong,
       },
+
       {
         pct: "23.5%",
         tag: "Open Long",
@@ -144,7 +154,7 @@ export default function ProfitCases() {
           </div>
         </motion.div>
 
-        {/* ✅ Slider (4 per slide on xl) */}
+        {/* Slider */}
         <motion.div {...enter(1, 0.05)} className="mt-10">
           <CasesSlider cases={cases} reduceMotion={reduceMotion} />
         </motion.div>
@@ -166,10 +176,10 @@ function usePerSlide() {
   useEffect(() => {
     const calc = () => {
       const w = window.innerWidth;
-      if (w < 640) return 1;       // mobile
-      if (w < 1024) return 2;      // tablet
-      if (w < 1280) return 3;      // small desktop
-      return 4;                    // xl+
+      if (w < 640) return 1; // mobile
+      if (w < 1024) return 2; // tablet
+      if (w < 1280) return 3; // small desktop
+      return 4; // xl+
     };
     const update = () => setPerSlide(calc());
     update();
@@ -194,7 +204,6 @@ function CasesSlider({ cases, reduceMotion }: { cases: any[]; reduceMotion: bool
   const [dir, setDir] = useState(1);
 
   useEffect(() => {
-    // keep index valid when perSlide changes
     setIdx((p) => Math.min(p, Math.max(0, slides.length - 1)));
   }, [slides.length]);
 
@@ -218,17 +227,13 @@ function CasesSlider({ cases, reduceMotion }: { cases: any[]; reduceMotion: bool
       opacity: 1,
       x: 0,
       filter: "blur(0px)",
-      transition: reduceMotion
-        ? { duration: 0.01 }
-        : { duration: 0.55, ease: easePremium },
+      transition: reduceMotion ? { duration: 0.01 } : { duration: 0.55, ease: easePremium },
     },
     exit: (d: number) => ({
       opacity: 0,
       x: reduceMotion ? 0 : d * -18,
       filter: "blur(10px)",
-      transition: reduceMotion
-        ? { duration: 0.01 }
-        : { duration: 0.45, ease: easePremium },
+      transition: reduceMotion ? { duration: 0.01 } : { duration: 0.45, ease: easePremium },
     }),
   };
 
@@ -342,19 +347,28 @@ function CaseTile({ item }: { item: any }) {
       <div className="relative rounded-[26px] overflow-hidden bg-[#070707]/75 border border-white/10 backdrop-blur-2xl">
         {/* Screenshot */}
         <div className="relative h-[200px] bg-white/[0.02]">
-          {/* Replace with:
-              <img src={...} alt="Profit case" className="absolute inset-0 w-full h-full object-cover" />
-          */}
+          {item.img ? (
+            <img
+              src={item.img}
+              alt={`${item.symbol} profit case`}
+              className="absolute inset-0 w-full h-full object-cover"
+            />
+          ) : null}
+
           <div className="absolute inset-0 opacity-[0.10]">
             <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,.12)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,.12)_1px,transparent_1px)] bg-[size:52px_52px]" />
           </div>
+
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/15 to-black/10" />
-          <div className="absolute inset-0 flex items-center justify-center p-4 text-center">
-            <div className="text-white/70 text-sm">
-              Screenshot placeholder
-              <div className="text-white/45 text-xs mt-1">Drop the trade proof here</div>
+
+          {!item.img && (
+            <div className="absolute inset-0 flex items-center justify-center p-4 text-center">
+              <div className="text-white/70 text-sm">
+                Screenshot placeholder
+                <div className="text-white/45 text-xs mt-1">Drop the trade proof here</div>
+              </div>
             </div>
-          </div>
+          )}
 
           <div className="absolute left-3 top-3 flex flex-wrap gap-2">
             <Pill tone="emerald">{item.tag}</Pill>
@@ -420,7 +434,9 @@ function Pill({ children, tone = "neutral" }: { children: React.ReactNode; tone?
       ? "text-emerald-100 border-emerald-400/20 bg-emerald-400/10"
       : "text-white/75 border-white/10 bg-white/[0.03]";
   return (
-    <span className={`inline-flex items-center px-3 py-1.5 rounded-full border text-[10px] tracking-widest uppercase ${tones}`}>
+    <span
+      className={`inline-flex items-center px-3 py-1.5 rounded-full border text-[10px] tracking-widest uppercase ${tones}`}
+    >
       {children}
     </span>
   );

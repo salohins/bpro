@@ -106,7 +106,7 @@ function ModeCard({ mode, index, reduceMotion }) {
           </div>
 
           <div className="flex flex-col items-end">
-            <span className="text-[11px] text-white/45 tracking-widest uppercase">Velocity</span>
+            <span className="text-[11px] text-white/45 tracking-widest uppercase">Aggressivness</span>
             <div className="mt-2 h-1.5 w-24 rounded-full bg-white/10 overflow-hidden">
               <motion.div
                 className={`h-full rounded-full ${mode.intensityBar}`}
@@ -167,7 +167,7 @@ export default function TradeModes() {
       {
         titleText: "Short Mode",
         subtitle: "Scalp velocity",
-        timeframe: "5m–30m",
+        timeframe: "1m–30m",
         title: "from-red-300 via-red-200 to-pink-200",
         frame: "from-red-500/30 via-white/8 to-pink-500/22",
         bloom: "bg-red-500/26",
@@ -228,45 +228,41 @@ export default function TradeModes() {
 
       {/* ✅ same width system as your other sections */}
       <div className="relative z-10 mx-auto max-w-[1760px] px-6 sm:px-10 lg:px-16 2xl:px-20">
-        {/* Header (shorter + correlated) */}
         <motion.div
-          initial={{ opacity: 0, y: 18, filter: "blur(10px)" }}
-          whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-          transition={reduceMotion ? { duration: 0.01 } : { duration: 0.85, ease: [0.16, 1, 0.3, 1] }}
-          viewport={{ once: false, amount: 0.35 }}
-          className="max-w-3xl"
-        >
-          <div className="flex flex-wrap items-center gap-2">
-            <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full border border-emerald-400/20 bg-white/[0.03] backdrop-blur-md w-fit">
-              <Sparkles className="w-4 h-4 text-emerald-300" />
-              <span className="text-emerald-300 text-xs tracking-[0.24em] font-semibold uppercase">
-                Trade Modes
-              </span>
-            </div>
+  initial={{ opacity: 0, y: 18, filter: "blur(10px)" }}
+  whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+  transition={reduceMotion ? { duration: 0.01 } : { duration: 0.85, ease: [0.16, 1, 0.3, 1] }}
+  viewport={{ once: false, amount: 0.35 }}
+  className="mx-auto max-w-[920px] text-center"
+>
+  <div className="flex flex-wrap items-center justify-center gap-2">
+    <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full border border-emerald-400/20 bg-white/[0.03] backdrop-blur-md">
+      <Sparkles className="w-4 h-4 text-emerald-300" />
+      <span className="text-emerald-300 text-xs tracking-[0.24em] font-semibold uppercase">
+        Trade Modes
+      </span>
+    </div>
+  </div>
 
-            <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/10 bg-white/[0.02] backdrop-blur-md text-[11px] tracking-[0.18em] uppercase text-white/55">
-              <Layers className="w-3.5 h-3.5 text-emerald-300/80" />
-              Same engine, different pacing
-            </span>
-          </div>
+  <h2 className="mt-5 text-4xl md:text-5xl font-extrabold tracking-tight leading-[1.06]">
+    <span className="bg-gradient-to-r from-white via-emerald-200 to-emerald-500 bg-clip-text text-transparent drop-shadow-[0_0_24px_rgba(16,185,129,0.22)]">
+      Pick the tempo.
+    </span>
+    <br />
+    <span className="text-white/80">B:PRO adapts the logic.</span>
+  </h2>
 
-          <h2 className="mt-5 text-4xl md:text-5xl font-extrabold tracking-tight leading-[1.06]">
-            <span className="bg-gradient-to-r from-white via-emerald-200 to-emerald-500 bg-clip-text text-transparent drop-shadow-[0_0_24px_rgba(16,185,129,0.22)]">
-              Pick the tempo.
-            </span>{" "}
-            <span className="text-white/80">B:PRO adapts the logic.</span>
-          </h2>
+  <p className="mt-4 text-white/70 text-lg leading-relaxed mx-auto max-w-[600px]">
+    Correlation: after structure + filters + scoring, choose a mode to match your timeframe —
+    without changing your process.
+  </p>
 
-          <p className="mt-4 text-white/70 text-lg leading-relaxed">
-            Correlation: after structure + filters + scoring, choose a mode to match your timeframe —
-            without changing your process.
-          </p>
+  <div className="mt-4 text-xs text-white/45 flex items-center justify-center gap-2">
+    <ArrowRight className="w-3.5 h-3.5 text-emerald-300/70" />
+    Short = faster signals • Mid = default • Long = stability
+  </div>
+</motion.div>
 
-          <div className="mt-4 text-xs text-white/45 flex items-center gap-2">
-            <ArrowRight className="w-3.5 h-3.5 text-emerald-300/70" />
-            Short = faster signals • Mid = default • Long = stability
-          </div>
-        </motion.div>
 
         {/* Cards */}
         <div className="mt-10 grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">

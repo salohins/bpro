@@ -111,8 +111,7 @@ export default function HeroSection() {
                     <div className="py-14 sm:py-16 md:py-20 lg:py-20 2xl:py-24">
                         {/* ↓ Reduced spacing between blocks */}
                         <div className="max-w-[920px] space-y-7 md:space-y-8 font-[var(--font-body)]">
-                            {/* HEADLINE (TEXT UPDATED ONLY) */}
-                            {/* HEADLINE (TEXT ONLY) */}
+
                             <motion.h1
                                 variants={item}
                                 className="font-[var(--font-display)] font-semibold tracking-[-0.05em] leading-[0.95]
@@ -134,7 +133,7 @@ export default function HeroSection() {
                                 with more confidence.
                             </motion.p>
 
-                            {/* LABEL PILLS */}
+                            {/* LABEL PILLS 
                             <motion.div variants={item} className="flex flex-wrap items-center gap-2">
                                 {labels.map((t) => (
                                     <motion.div
@@ -147,7 +146,7 @@ export default function HeroSection() {
                                         <span className="text-[11.5px] sm:text-[12px] text-white/72 tracking-tight">{t}</span>
                                     </motion.div>
                                 ))}
-                            </motion.div>
+                            </motion.div> */}
 
                             {/* ENGINES (more compact + 1-line sub) */}
                             <motion.div variants={item} className="pt-1 grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3 max-w-[920px]">

@@ -81,7 +81,7 @@ export default function AdaptiveTrendCloud() {
               <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full border border-emerald-400/20 bg-white/[0.03] backdrop-blur-md w-fit">
                 <Sparkles className="w-4 h-4 text-emerald-300" />
                 <span className="text-emerald-300 text-xs tracking-[0.24em] font-semibold uppercase">
-                  Engine 1 • Market Structure
+                    Market Structure Engine
                 </span>
               </div>
 

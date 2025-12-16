@@ -11,9 +11,9 @@ import {
 
 /**
  * Core Engines section
- * - Center: phone/tablet frame screenshot placeholder
- * - Sides: 5 engines (short + catchy)
- * - Animations: left fades from left, right fades from right, center zooms in
+ * - Center device becomes BIG + ABSOLUTE (lg+) behind left/right stacks
+ * - Centered inside the relative layout container
+ * - Mobile keeps normal flow (left -> device -> right)
  *
  * Replace the <img /> inside DeviceFrame with your screenshot.
  */
@@ -95,33 +95,62 @@ export default function CoreEngines() {
   const center = engines.find((e) => e.side === "center");
 
   return (
-    <section className="relative w-full py-24 md:py-28 overflow-hidden bg-transparent text-white" id="core-engines">
-
+    <section
+      className="relative w-full py-24 md:py-28 bg-transparent text-white"
+      id="core-engines"
+    >
       <div className="relative z-10 mx-auto max-w-[1760px] px-6 sm:px-10 lg:px-16 2xl:px-20">
         {/* header */}
         <motion.div
-          initial={{ opacity: 0, y: 18, filter: "blur(10px)" }}
-          whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-          transition={reduceMotion ? { duration: 0.01 } : { duration: 0.85, ease: easePremium }}
-          viewport={{ once: false, amount: 0.35 }}
-          className="max-w-[980px] space-y-5"
-        >
-          <Kicker>Core Engines</Kicker>
-          <h2 className="font-semibold tracking-[-0.04em] leading-[1.02] text-[clamp(34px,3.2vw,56px)]">
-            <span className="bg-gradient-to-r from-white via-emerald-200 to-emerald-500 bg-clip-text text-transparent">
-              Five engines. One decision framework.
-            </span>
-          </h2>
-          <p className="text-white/70 text-[clamp(15px,1.05vw,18px)] leading-relaxed max-w-[920px]">
-            B:PRO is built like a system — structure → confluence → execution → management → grading.
-            Everything stays on-chart, so you see the “why” instantly.
-          </p>
-        </motion.div>
+  initial={{ opacity: 0, y: 18, filter: "blur(10px)" }}
+  whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+  transition={reduceMotion ? { duration: 0.01 } : { duration: 0.85, ease: easePremium }}
+  viewport={{ once: false, amount: 0.35 }}
+  className="w-full"
+>
+  <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6 lg:gap-12">
+    {/* LEFT: headline */}
+    <div className="max-w-[920px]">
+      <h2 className="font-semibold tracking-[-0.04em] leading-[1.02] text-[clamp(34px,3.2vw,56px)] pb-0 mb-0">
+        <span className="block bg-gradient-to-r from-white via-emerald-200 to-emerald-500 bg-clip-text text-transparent">
+          Five engines.
+        </span>
+        <span className="block bg-gradient-to-r from-white via-emerald-200 to-emerald-500 bg-clip-text text-transparent">
+          One decision framework.
+        </span>
+      </h2>
+    </div>
+
+    {/* RIGHT: subheading pinned to far right */}
+    <div className="lg:ml-auto lg:max-w-[520px] t lg:pt-2">
+      <p className="text-white/70 text-[clamp(15px,1.05vw,18px)] leading-relaxed">
+        B:PRO is built like a system — structure → confluence → execution → management → grading.
+        Everything stays on-chart, so you see the “why” instantly.
+      </p>
+    </div>
+  </div>
+</motion.div>
 
         {/* layout */}
-        <div className="mt-12 grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
-          {/* LEFT stack */}
-          <div className="lg:col-span-4 space-y-4">
+        <div className="relative grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-start lg:items-center overflow-visible lg:min-h-[700px]">
+          {/* ABSOLUTE CENTER DEVICE (lg+) behind everything */}
+          <motion.div
+            {...enterCenter}
+            className=" lg:block absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-0 w-[min(900px,92vw)] pointer-events-none"
+          >
+            <div className="pointer-events-none">
+              <DeviceFrame
+                title={center.title}
+                subtitle={center.tagline}
+                bullets={center.points}
+                footer={center.footer}
+                size="xl"
+              />
+            </div>
+          </motion.div>
+
+          {/* LEFT stack (above device) */}
+          <div className="lg:col-span-4 space-y-4 relative z-20">
             {left.map((e, idx) => (
               <motion.div key={e.title} {...enterSide("left", idx * 0.06)}>
                 <EngineCard {...e} />
@@ -129,18 +158,22 @@ export default function CoreEngines() {
             ))}
           </div>
 
-          {/* CENTER device */}
-          <motion.div {...enterCenter} className="lg:col-span-4">
+          {/* CENTER device in normal flow for mobile only */}
+          <motion.div {...enterCenter} className="lg:hidden relative z-10">
             <DeviceFrame
               title={center.title}
               subtitle={center.tagline}
               bullets={center.points}
               footer={center.footer}
+              size="md"
             />
           </motion.div>
 
-          {/* RIGHT stack */}
-          <div className="lg:col-span-4 space-y-4">
+          {/* spacer column for lg grid symmetry (keeps right stack in place) */}
+          <div className="hidden lg:block lg:col-span-4" />
+
+          {/* RIGHT stack (above device) */}
+          <div className="lg:col-span-4 space-y-4 relative z-20">
             {right.map((e, idx) => (
               <motion.div key={e.title} {...enterSide("right", idx * 0.06)}>
                 <EngineCard {...e} />
@@ -198,14 +231,37 @@ function EngineCard({ icon: Icon, title, tagline, points, footer }) {
   );
 }
 
-function DeviceFrame({ title, subtitle, bullets, footer }) {
+/**
+ * size:
+ * - "md" = mobile/in-flow sizes
+ * - "xl" = big absolute behind stacks on lg+
+ */
+function DeviceFrame({ title, subtitle, bullets, footer, size = "md" }) {
+  const isXL = size === "xl";
+
   return (
     <div className="relative">
       {/* outer glow */}
-      <div aria-hidden className="absolute -inset-6 bg-emerald-500/10 blur-[80px] rounded-full" />
+      <div
+        aria-hidden
+        className={[
+          "absolute rounded-full",
+          isXL ? "-inset-16 bg-emerald-500/12 blur-[110px]" : "-inset-6 bg-emerald-500/10 blur-[80px]",
+        ].join(" ")}
+      />
 
-      <div className="rounded-[34px] p-[1px] bg-gradient-to-b from-emerald-400/28 via-white/10 to-emerald-500/18 shadow-[0_0_70px_rgba(16,185,129,0.12)]">
-        <div className="rounded-[34px] overflow-hidden bg-[#070707]/75 border border-white/10 backdrop-blur-2xl">
+      <div
+        className={[
+          "rounded-[34px] p-[1px] bg-gradient-to-b from-emerald-400/28 via-white/10 to-emerald-500/18",
+          isXL ? "shadow-[0_0_120px_rgba(16,185,129,0.16)]" : "shadow-[0_0_70px_rgba(16,185,129,0.12)]",
+        ].join(" ")}
+      >
+        <div
+          className={[
+            "rounded-[34px] bg-[#070707]/70 border border-white/10 backdrop-blur-2xl",
+            isXL ? "ring-1 ring-white/[0.06]" : "",
+          ].join(" ")}
+        >
           {/* fake device top bar */}
           <div className="px-6 py-4 border-b border-white/10 flex items-center justify-between">
             <div className="flex items-center gap-2">
@@ -213,50 +269,64 @@ function DeviceFrame({ title, subtitle, bullets, footer }) {
               <span className="w-2.5 h-2.5 rounded-full bg-yellow-400/70" />
               <span className="w-2.5 h-2.5 rounded-full bg-emerald-400/70" />
             </div>
-            <div className="text-[11px] text-white/45 tracking-widest uppercase">
-              on-chart preview
-            </div>
+            <div className="text-[11px] text-white/45 tracking-widest">TradingView</div>
           </div>
 
           {/* screenshot area */}
-          <div className="relative p-6 md:p-7">
-            <div className="relative rounded-3xl overflow-hidden border border-white/10 bg-white/[0.02] h-[320px] sm:h-[380px] lg:h-[440px]">
+          <div className={["relative", isXL ? "p-7 md:p-8" : "p-6 md:p-7"].join(" ")}>
+            <div
+              className={[
+                "relative rounded-3xl border border-white/10 bg-white/[0.02]",
+                isXL ? "h-[420px] xl:h-[480px] 2xl:h-[520px]" : "h-[320px] sm:h-[380px] lg:h-[440px]",
+              ].join(" ")}
+            >
               {/* Replace this with your real screenshot */}
               {/* <img src={yourScreenshot} alt="B:PRO chart preview" className="absolute inset-0 w-full h-full object-cover" /> */}
 
-              <div className="absolute inset-0 opacity-[0.10]">
-                <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,.12)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,.12)_1px,transparent_1px)] bg-[size:64px_64px]" />
-              </div>
 
-              <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/15 to-black/10" />
-              <div className="absolute inset-0 ring-1 ring-white/10" />
+              {/* overlay callout */}
+            <div className="absolute left-5 right-5 -bottom-20 flex justify-center">
+            <div
+  className="w-full max-w-[520px] rounded-[24px] p-[1px] bg-gradient-to-b from-emerald-400/18 via-white/10 to-emerald-500/12"
+    >
+    <div
+        className={[
+        "rounded-[24px] bg-[#070707]/75 border border-white/10 backdrop-blur-2xl",
+        isXL ? "p-5" : "p-4",
+        ].join(" ")}
+    >
+        <div className="flex items-start gap-3">
+        <span className="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.03]">
+            <Target className="h-5 w-5 text-emerald-300" />
+        </span>
 
-              {/* overlay callout (kept short, non-cluttered) */}
-              <div className="absolute left-5 right-5 bottom-5">
-                <div className="rounded-2xl border border-white/10 bg-black/35 backdrop-blur-md px-4 py-3">
-                  <div className="text-sm font-semibold text-white/90">{title}</div>
-                  <div className="mt-1 text-sm text-white/65">{subtitle}</div>
+        <div className="min-w-0">
+            <div className="text-sm font-semibold text-white/90 leading-tight">{title}</div>
+            <div className="mt-1 text-sm text-white/65 leading-tight">{subtitle}</div>
+        </div>
+        </div>
 
-                  <div className="mt-3 grid grid-cols-1 sm:grid-cols-3 gap-2">
-                    {bullets.map((b) => (
-                      <div
-                        key={b}
-                        className="rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2 text-[12px] text-white/70"
-                      >
-                        {b}
-                      </div>
-                    ))}
-                  </div>
+    <ul className="mt-4 space-y-2 text-sm text-white/70">
+    {bullets.map((b) => (
+        <li key={b} className="flex gap-2 min-w-0">
+        <span className="text-emerald-300/80">✓</span>
+        <span className="truncate" title={b}>
+            {b}
+        </span>
+        </li>
+    ))}
+</ul>
 
-                  <div className="mt-3 text-xs text-white/45">{footer}</div>
-                </div>
-              </div>
+
+    <div className="mt-3 text-xs text-white/45">{footer}</div>
+  </div>
+</div>
+
             </div>
 
-            {/* subtle caption */}
-            <div className="mt-4 text-xs text-white/45">
-              Drop a clean chart screenshot here. Keep labels minimal — the side cards do the explaining.
             </div>
+
+
           </div>
         </div>
       </div>

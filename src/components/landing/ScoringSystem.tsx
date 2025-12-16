@@ -34,7 +34,10 @@ export default function ScoringSystem() {
   const showHudPanel = true;
 
   return (
-    <section className="relative w-full py-22 md:py-24 bg-transparent text-white" id="scoring-system">
+    <section
+      className="relative w-full py-22 md:py-24 bg-transparent text-white"
+      id="scoring-system"
+    >
       {/* ✅ background that can bleed into neighbor sections (no abrupt cut) */}
       <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
         <div className="absolute -top-28 -bottom-28 left-0 right-0 bg-[radial-gradient(circle_at_55%_14%,rgba(16,185,129,0.12),transparent_62%)]" />
@@ -50,7 +53,9 @@ export default function ScoringSystem() {
           <motion.div
             initial={{ opacity: 0, x: -18, y: 6, filter: "blur(10px)" }}
             whileInView={{ opacity: 1, x: 0, y: 0, filter: "blur(0px)" }}
-            transition={reduceMotion ? { duration: 0.01 } : { duration: 0.85, ease: easePremium }}
+            transition={
+              reduceMotion ? { duration: 0.01 } : { duration: 0.85, ease: easePremium }
+            }
             viewport={{ once: false, amount: 0.35 }}
             className="lg:col-span-5 space-y-6"
           >
@@ -74,7 +79,8 @@ export default function ScoringSystem() {
 
             <p className="text-white/70 text-lg leading-relaxed max-w-xl">
               After structure + filters give permission, B:PRO grades the setup with two
-              quick scores: <span className="text-white/90 font-medium">Safety</span> (risk gates) and{" "}
+              quick scores:{" "}
+              <span className="text-white/90 font-medium">Safety</span> (risk gates) and{" "}
               <span className="text-white/90 font-medium">Quality</span> (confluence clarity).
             </p>
 
@@ -114,51 +120,12 @@ export default function ScoringSystem() {
             </div>
           </motion.div>
 
-          {/* RIGHT — single hero panel (cleaner) */}
+          {/* RIGHT — premium HUD (replaces scoreboard) */}
           <motion.div className="lg:col-span-7 space-y-5">
-            <PanelTilt reduceMotion={reduceMotion}>
-              <GlassPanel reduceMotion={reduceMotion}>
-                <div className="flex items-start justify-between gap-4">
-                  <div className="leading-tight">
-                    <h3 className="text-lg md:text-xl font-semibold text-white/90">
-                      Setup Scoreboard
-                    </h3>
-                    <p className="text-xs text-white/50">One glance: risk vs reward-quality</p>
-                  </div>
-                  <div className="text-[11px] text-white/50 tracking-widest uppercase">Live</div>
-                </div>
-
-                <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-4 place-items-center">
-                  <AnimatedScoreRing title="Safety" color="#10b981" score={92} reduceMotion={reduceMotion} />
-                  <AnimatedScoreRing title="Quality" color="#facc15" score={78} reduceMotion={reduceMotion} />
-                </div>
-
-                <div className="my-7 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-
-                {/* fewer bars (less noise) */}
-                <div className="space-y-4">
-                  <AnimatedBar label="Trend Alignment" value={90} reduceMotion={reduceMotion} />
-                  <AnimatedBar label="Volatility Control" value={80} reduceMotion={reduceMotion} />
-                  <AnimatedBar label="Execution Clarity" value={95} reduceMotion={reduceMotion} />
-                </div>
-
-                <div className="mt-7 flex items-center justify-between text-xs text-white/45">
-                  <span>Computed from multi-factor confluence</span>
-                  <span className="text-emerald-300/70">v2</span>
-                </div>
-              </GlassPanel>
-            </PanelTilt>
-
-            {/* HUD — smaller + calmer */}
             {showHudPanel && (
-              <motion.div
-                initial={{ opacity: 0, y: 10, filter: "blur(6px)" }}
-                whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                transition={reduceMotion ? { duration: 0.01 } : { duration: 0.7, ease: easePremium }}
-                viewport={{ once: false, amount: 0.35 }}
-              >
-                <SignalsHudCard items={lastSignals} />
-              </motion.div>
+              <PanelTilt reduceMotion={reduceMotion}>
+                <SignalsHudCard items={lastSignals} reduceMotion={reduceMotion} />
+              </PanelTilt>
             )}
           </motion.div>
         </div>
@@ -169,7 +136,13 @@ export default function ScoringSystem() {
 
 /* ---------------- atoms ---------------- */
 
-function Badge({ icon, children }: { icon: React.ReactNode; children: React.ReactNode }) {
+function Badge({
+  icon,
+  children,
+}: {
+  icon: React.ReactNode;
+  children: React.ReactNode;
+}) {
   return (
     <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full border border-emerald-400/20 bg-white/[0.03] backdrop-blur-md w-fit">
       {icon}
@@ -181,7 +154,11 @@ function Badge({ icon, children }: { icon: React.ReactNode; children: React.Reac
 }
 
 function Pill({ children }: { children: React.ReactNode }) {
-  return <span className="px-2 py-1 rounded-full border border-white/10 bg-white/[0.03]">{children}</span>;
+  return (
+    <span className="px-2 py-1 rounded-full border border-white/10 bg-white/[0.03]">
+      {children}
+    </span>
+  );
 }
 
 function MiniScoreCard({
@@ -237,25 +214,15 @@ function MiniScoreCard({
   );
 }
 
-/* ---------------- panels ---------------- */
+/* ---------------- tilt wrapper ---------------- */
 
-function GlassPanel({ children, reduceMotion }: { children: React.ReactNode; reduceMotion: boolean }) {
-  return (
-    <div className="relative rounded-[30px] p-[1px] bg-gradient-to-b from-emerald-400/25 via-white/10 to-emerald-500/15 shadow-[0_0_60px_rgba(16,185,129,0.10)]">
-      <div className="relative rounded-[30px] overflow-hidden bg-[#070707]/75 border border-white/10 backdrop-blur-xl p-6 md:p-7">
-        <motion.div
-          aria-hidden="true"
-          className="absolute -inset-1 bg-gradient-to-r from-emerald-400/25 via-emerald-500/10 to-transparent blur-3xl opacity-20"
-          animate={reduceMotion ? {} : { opacity: [0.10, 0.26, 0.10] }}
-          transition={reduceMotion ? { duration: 0.01 } : { repeat: Infinity, duration: 6.5, ease: "easeInOut" }}
-        />
-        <div className="relative">{children}</div>
-      </div>
-    </div>
-  );
-}
-
-function PanelTilt({ children, reduceMotion }: { children: React.ReactNode; reduceMotion: boolean }) {
+function PanelTilt({
+  children,
+  reduceMotion,
+}: {
+  children: React.ReactNode;
+  reduceMotion: boolean;
+}) {
   const ref = useRef<HTMLDivElement | null>(null);
   const mx = useMotionValue(0);
   const my = useMotionValue(0);
@@ -295,106 +262,156 @@ function PanelTilt({ children, reduceMotion }: { children: React.ReactNode; redu
   );
 }
 
-/* ---------------- visuals ---------------- */
+/* ---------------- HUD card (premium) ---------------- */
 
-function AnimatedScoreRing({
-  title,
-  color,
-  score,
+function SignalsHudCard({
+  items,
   reduceMotion,
 }: {
-  title: string;
-  color: string;
-  score: number;
+  items: { type: string; safety: string; quality: string }[];
   reduceMotion: boolean;
 }) {
-  const strokeWidth = 10;
-  const radius = 50;
-  const circumference = 2 * Math.PI * radius;
-  const offset = circumference - (score / 100) * circumference;
+  const toPct = (v: string) => {
+    // "3/3" -> 100, "2/3" -> 66
+    const [a, b] = v.split("/").map((n) => parseFloat(n));
+    if (!b || Number.isNaN(a) || Number.isNaN(b)) return 0;
+    return Math.round((a / b) * 100);
+  };
 
   return (
-    <div className="flex flex-col items-center">
-      <div className="relative">
-        <div aria-hidden className="absolute inset-0 rounded-full blur-2xl opacity-15" style={{ backgroundColor: color }} />
-        <svg width="132" height="132" className="relative" role="img" aria-label={`${title} score ${score}%`}>
-          <circle cx="66" cy="66" r={radius} stroke="white" strokeOpacity="0.10" strokeWidth={strokeWidth} fill="none" />
-          <motion.circle
-            cx="66"
-            cy="66"
-            r={radius}
-            stroke={color}
-            strokeWidth={strokeWidth}
-            fill="none"
-            strokeLinecap="round"
-            strokeDasharray={circumference}
-            strokeDashoffset={circumference}
-            whileInView={{ strokeDashoffset: offset }}
-            viewport={{ once: false, amount: 0.35 }}
-            transition={reduceMotion ? { duration: 0.01 } : { duration: 1.4, ease: "easeInOut" }}
-          />
-          <text x="66" y="72" textAnchor="middle" className="text-2xl font-semibold fill-white tabular-nums">
-            {score}%
-          </text>
-        </svg>
-      </div>
-      <p className="text-sm text-white/55 mt-2">{title}</p>
-    </div>
-  );
-}
-
-function AnimatedBar({ label, value, reduceMotion }: { label: string; value: number; reduceMotion: boolean }) {
-  return (
-    <div>
-      <div className="flex justify-between text-xs text-white/55 mb-2">
-        <span>{label}</span>
-        <span className="text-white/45 tabular-nums">{value}%</span>
-      </div>
-      <div className="w-full h-2.5 bg-white/5 rounded-full overflow-hidden">
-        <motion.div
-          initial={{ width: 0 }}
-          whileInView={{ width: `${value}%` }}
-          viewport={{ once: false, amount: 0.35 }}
-          transition={reduceMotion ? { duration: 0.01 } : { duration: 0.9, ease: "easeOut" }}
-          className="h-full bg-gradient-to-r from-emerald-400 to-emerald-200 rounded-full"
+    <div className="group relative rounded-[30px] p-[1px] bg-gradient-to-b from-emerald-400/25 via-white/10 to-emerald-500/15 shadow-[0_0_60px_rgba(16,185,129,0.10)]">
+      <div className="relative rounded-[30px] overflow-hidden bg-[#070707]/75 border border-white/10 backdrop-blur-xl">
+        {/* blooms */}
+        <div
+          aria-hidden="true"
+          className="absolute -top-24 -right-24 h-[340px] w-[340px] rounded-full bg-emerald-500/18 blur-[95px] opacity-30"
         />
-      </div>
-    </div>
-  );
-}
+        <div
+          aria-hidden="true"
+          className="absolute -bottom-28 -left-24 h-[380px] w-[380px] rounded-full bg-cyan-500/10 blur-[110px] opacity-25"
+        />
 
-/* HUD card */
-function SignalsHudCard({ items }: { items: { type: string; safety: string; quality: string }[] }) {
-  return (
-    <div className="relative rounded-[26px] p-[1px] bg-gradient-to-b from-white/10 via-white/5 to-white/10">
-      <div className="relative rounded-[26px] overflow-hidden border border-white/10 bg-[#070707]/65 backdrop-blur-xl">
-        <div className="relative px-6 py-4 border-b border-white/10 flex items-center justify-between">
-          <div className="leading-tight">
-            <div className="text-sm font-semibold tracking-wide uppercase text-white/90">Last 5 events</div>
-            <div className="text-xs text-white/50">S (Safety) + Q (Quality)</div>
-          </div>
-          <div className="text-[11px] text-white/50 tracking-widest uppercase">HUD</div>
+        {/* micro grid */}
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 opacity-[0.07] [mask-image:radial-gradient(ellipse_at_center,black,transparent_72%)]"
+        >
+          <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,.12)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,.12)_1px,transparent_1px)] bg-[size:56px_56px]" />
         </div>
 
-        <div className="relative px-6 py-5">
-          <div className="grid grid-cols-[1fr_56px_56px] gap-x-3 text-[11px] tracking-widest uppercase text-white/55">
-            <span>Type</span>
-            <span className="text-center">S</span>
-            <span className="text-center">Q</span>
+        {/* sheen */}
+        <motion.div
+          aria-hidden="true"
+          className="absolute top-0 left-[-120%] w-[240%] h-full bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100"
+          animate={reduceMotion ? {} : { x: ["-120%", "120%"] }}
+          transition={
+            reduceMotion
+              ? { duration: 0.01 }
+              : { duration: 7.5, repeat: Infinity, ease: "linear" }
+          }
+        />
+
+        {/* header */}
+        <div className="relative px-6 py-5 border-b border-white/10 flex items-start justify-between gap-4">
+          <div className="leading-tight">
+            <div className="text-sm font-semibold tracking-wide uppercase text-white/90">
+              Last 5 events
+            </div>
+            <div className="text-xs text-white/50">S (Safety) + Q (Quality)</div>
           </div>
 
-          <ul className="mt-3 space-y-2">
-            {items.map((row, idx) => (
-              <li key={`${row.type}-${idx}`} className="grid grid-cols-[1fr_56px_56px] gap-x-3 text-sm">
-                <span className="text-white/85">{row.type}</span>
-                <span className="text-center text-emerald-200/80">{row.safety}</span>
-                <span className="text-center text-yellow-200/80">{row.quality}</span>
-              </li>
-            ))}
-          </ul>
+          <div className="flex items-center gap-2">
+            <span className="text-[11px] text-white/50 tracking-widest uppercase">HUD</span>
+            <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-emerald-400/20 bg-white/[0.03] text-[11px] tracking-widest uppercase text-emerald-200/80">
+              Live
+            </span>
+          </div>
+        </div>
 
-          <div className="mt-4 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-          <div className="mt-3 flex items-center justify-between text-xs text-white/45">
+        {/* table */}
+        <div className="relative px-6 py-5">
+          <div className="grid grid-cols-[1fr_120px_120px] gap-x-4 text-[11px] tracking-widest uppercase text-white/55">
+            <span>Type</span>
+            <span className="text-center">Safety</span>
+            <span className="text-center">Quality</span>
+          </div>
+
+          <motion.ul
+            className="mt-4 space-y-3"
+            initial={reduceMotion ? false : "hidden"}
+            whileInView={reduceMotion ? undefined : "show"}
+            viewport={{ once: false, amount: 0.35 }}
+            variants={{
+              hidden: {},
+              show: { transition: { staggerChildren: 0.06 } },
+            }}
+          >
+            {items.map((row, idx) => {
+              const sp = toPct(row.safety);
+              const qp = toPct(row.quality);
+
+              return (
+                <motion.li
+                  key={`${row.type}-${idx}`}
+                  variants={{
+                    hidden: { opacity: 0, y: 10, filter: "blur(8px)" },
+                    show: { opacity: 1, y: 0, filter: "blur(0px)" },
+                  }}
+                  transition={
+                    reduceMotion
+                      ? { duration: 0.01 }
+                      : { duration: 0.55, ease: [0.16, 1, 0.3, 1] }
+                  }
+                  className="relative grid grid-cols-[1fr_120px_120px] gap-x-4 items-center rounded-2xl border border-white/10 bg-white/[0.02] backdrop-blur-md px-4 py-3"
+                >
+                  <span className="text-white/88 text-sm">{row.type}</span>
+
+                  {/* Safety */}
+                  <div className="text-center">
+                    <div className="text-sm text-emerald-200/85 tabular-nums">
+                      {row.safety}
+                    </div>
+                    <div className="mt-2 h-1.5 w-full rounded-full bg-white/10 overflow-hidden">
+                      <motion.div
+                        className="h-full rounded-full bg-gradient-to-r from-emerald-400/80 to-emerald-200/70"
+                        initial={{ width: 0 }}
+                        whileInView={{ width: `${sp}%` }}
+                        viewport={{ once: false, amount: 0.35 }}
+                        transition={
+                          reduceMotion
+                            ? { duration: 0.01 }
+                            : { duration: 0.9, ease: "easeOut" }
+                        }
+                      />
+                    </div>
+                  </div>
+
+                  {/* Quality */}
+                  <div className="text-center">
+                    <div className="text-sm text-yellow-200/85 tabular-nums">
+                      {row.quality}
+                    </div>
+                    <div className="mt-2 h-1.5 w-full rounded-full bg-white/10 overflow-hidden">
+                      <motion.div
+                        className="h-full rounded-full bg-gradient-to-r from-yellow-400/75 to-yellow-200/70"
+                        initial={{ width: 0 }}
+                        whileInView={{ width: `${qp}%` }}
+                        viewport={{ once: false, amount: 0.35 }}
+                        transition={
+                          reduceMotion
+                            ? { duration: 0.01 }
+                            : { duration: 0.9, ease: "easeOut" }
+                        }
+                      />
+                    </div>
+                  </div>
+                </motion.li>
+              );
+            })}
+          </motion.ul>
+
+          <div className="mt-5 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+          <div className="mt-4 flex items-center justify-between text-xs text-white/45">
             <span>Make it stricter in Settings</span>
             <span className="text-white/35">Phone-ready</span>
           </div>
