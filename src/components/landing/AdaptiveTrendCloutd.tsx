@@ -3,6 +3,7 @@ import { motion, useReducedMotion } from "framer-motion";
 import { Sparkles, Layers, ArrowRight } from "lucide-react";
 
 import trendCloudImg from "../../assets/adaptive-trend-cloud.png";
+import cloudBg from "../../assets/cloud.svg";
 
 const easePremium: any = [0.16, 1, 0.3, 1];
 
@@ -58,34 +59,22 @@ export default function AdaptiveTrendCloud() {
   };
 
   return (
-    // no overflow-hidden — let the clouds bleed into neighbours
+    // allow background to bleed full width
     <section className="relative w-full py-20 md:py-24 bg-transparent text-white">
-      {/* CLOUD BACKGROUND – mimics chart: dark base + red→green cloud */}
+      {/* FULL-WIDTH CLOUD BACKGROUND IMAGE */}
+      {/* FULL-WIDTH CLOUD BACKGROUND IMAGE */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 -z-10"
+        className="pointer-events-none absolute inset-x-0 top-[-160px] h-[calc(100%+320px)]"
       >
-        {/* base dark gradient like a chart canvas */}
-        <div className="absolute inset-0 bg-gradient-to-br from-[#020617] via-[#020617] to-black" />
-
-        {/* left/bottom red cloud */}
-        <div className="absolute -left-[15%] bottom-[-15%] w-[55%] h-[80%] blur-3xl opacity-80">
-          <div className="w-full h-full bg-[radial-gradient(circle_at_20%_80%,rgba(220,38,38,0.55),transparent_65%)]" />
-        </div>
-
-        {/* right/top green cloud */}
-        <div className="absolute -right-[18%] -top-[18%] w-[60%] h-[85%] blur-3xl opacity-90">
-          <div className="w-full h-full bg-[radial-gradient(circle_at_80%_20%,rgba(16,185,129,0.75),transparent_65%)]" />
-        </div>
-
-        {/* subtle middle neutral bridge so transition feels smooth */}
-        <div className="absolute inset-x-[-10%] top-[10%] h-[70%] blur-2xl opacity-60">
-          <div className="w-full h-full bg-[radial-gradient(circle_at_50%_50%,rgba(15,118,110,0.6),transparent_70%)]" />
-        </div>
-
-        {/* soft vignette so edges fall into darkness like on the chart */}
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_40%,rgba(0,0,0,0.85))]" />
+        <img
+          src={cloudBg}
+          alt=""
+          className="w-full h-full object-cover"
+          draggable={false}
+        />
       </div>
+
 
       <div className="relative z-10 mx-auto max-w-[1760px] px-6 sm:px-10 lg:px-16 2xl:px-20">
         <motion.div
