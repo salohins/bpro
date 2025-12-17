@@ -1,4 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
+import { createPortal } from "react-dom";
+
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import {
   Sparkles,
@@ -10,9 +12,27 @@ import {
   ArrowUpRight,
   ChevronLeft,
   ChevronRight,
+  X
 } from "lucide-react";
 
 import oneMinLong from "../../assets/1minLong.png";
+import fiveMin from "../../assets/5min.png";
+import fifteenMin from "../../assets/15min.png";
+import thirtyMin from "../../assets/30min.png";
+import fourH19 from "../../assets/4h19.png";
+import fourH8 from "../../assets/4h8.png";
+import twoH5 from "../../assets/2h5.png";
+import oneH3 from "../../assets/1h3.png";
+import twoD29 from "../../assets/2d29.png";
+import week27 from "../../assets/week27.png";
+import day31 from "../../assets/day31.png";
+import day10 from "../../assets/day10.png";
+
+
+
+
+
+
 
 const easePremium: [number, number, number, number] = [0.16, 1, 0.3, 1];
 
@@ -49,75 +69,202 @@ export default function ProfitCases() {
       },
 
       {
-        pct: "23.5%",
+  pct: "1.92%",
+  tag: "Open Short",
+  symbol: "BTC / USDT",
+  tf: "5m",
+  dates: "Example (scalp)",
+  headline: "Fast TF Mode bear",
+  bullets: [
+    "Mode 5m (fast TF) — Bear mode",
+    "Entry: Open Short at Fast Line",
+    "SL: at Midtrend Line",
+    "TP: Fast Line / Close Short / Midtrend Line",
+  ],
+  note:
+    "5m fast mode (bear): short trigger at fast line, stop at midtrend, take profit into fastline or close-short / midtrend.",
+  img: fiveMin,
+},
+
+        {
+        pct: "1.2%",
         tag: "Open Long",
-        symbol: "POWR / USD",
+        symbol: "BTC / USDT",
+        tf: "15m",
+        dates: "Example (scalp)",
+        headline: "Standard mode long",
+        bullets: [
+            "Mode 15m (short TF) — Standard mode",
+            "Entry: Open Long at Fast Line",
+            "SL: at Midtrend Line",
+            "TP: Fast Line / Close Short / Midtrend Line",
+        ],
+        note:
+            "15m standard mode: long entry at fast line, stop at midtrend, take profit into fastline or close-short / midtrend.",
+        img: fifteenMin,
+        },
+
+      {
+        pct: "5.8%",
+        tag: "Open Long",
+        symbol: "BTC / USDT",
+        tf: "30m",
+        dates: "Example (scalp)",
+        headline: "Fast TF Mode — Standard long",
+        bullets: [
+            "Mode 30m (fast TF) — Standard mode",
+            "Entry: Open Long at Fast Line",
+            "SL: at Midtrend Line",
+            "TP: Fast Line / Close Short / Midtrend Line",
+        ],
+        note:
+            "30m fast TF standard mode: long entry at fast line, stop at midtrend, take profit into fastline or close-short / midtrend.",
+        img: thirtyMin,
+    },
+
+      {
+        pct: "19.9%",
+        tag: "Open Long",
+        symbol: "BTC / USDT",
         tf: "4H",
-        dates: "Feb 9–11, 2024",
-        headline: "Move in < 3 days",
-        bullets: ["Filters permissive", "Regime flipped", "Pullback entry", "Exit on momentum fade"],
-        note: "This is the clean trend-start archetype (permission → execution).",
-      },
+        dates: "Example (swing)",
+        headline: "Mid — Standard mode long",
+        bullets: [
+            "Mode 4H (mid TF) — Standard mode",
+            "Entry: Open Long at Fast Line",
+            "SL: at Midtrend Line",
+            "TP: Close Long / Fast Line / Midtrend Line",
+        ],
+        note:
+            "4H mid standard mode: long entry at fast line, stop at midtrend, take profit into close-long or fastline / midtrend.",
+        img: fourH19,
+        },
+
       {
-        pct: "31%",
-        tag: "Support",
-        symbol: "XMR / USD",
-        tf: "1D + 1W",
-        dates: "Feb 7, 2024",
-        headline: "HTF bounce",
-        bullets: ["Weekly level hit", "Bias held", "Risk defined", "Targets to HTF zones"],
-        note: "HTF confirmation turns a touch into a tradable reaction.",
-      },
+  pct: "8.1%",
+  tag: "Open Long",
+  symbol: "BTC / USDT",
+  tf: "4H",
+  dates: "Example (swing)",
+  headline: "Mid — Standard mode long",
+  bullets: [
+    "Mode 4H (mid TF) — Standard mode",
+    "Entry: Open Long at Fast Line",
+    "SL: Close Long / Fast Line / Midtrend Line",
+    "TP: (not specified)",
+  ],
+  note:
+    "4H mid standard mode: long entry at fast line; SL can be close-long, fastline, or midtrend (per your plan).",
+  img: fourH8,
+},
+
       {
-        pct: "73%",
-        tag: "Breakout",
-        symbol: "ORN / USD",
-        tf: "4H",
-        dates: "Feb 12–15, 2024",
-        headline: "Continuation",
-        bullets: ["Squeeze context", "Structure + filters", "State machine", "ATR invalidation"],
-        note: "Primary breakouts only print when the environment is favorable.",
-      },
+  pct: "5.62%",
+  tag: "Open Long",
+  symbol: "BTC / USDT",
+  tf: "2H",
+  dates: "Example",
+  headline: "Mid — Standard mode breakout long",
+  bullets: [
+    "Mode 2H (mid TF) — Standard mode",
+    "Breakout symbol: price may not touch Fast Line before continuing uptrend",
+    "SL: at Midtrend Line",
+    "TP: Fast Line / Midtrend Line",
+  ],
+  note:
+    "2H breakout case: continuation can happen without a fastline retest; risk at midtrend, targets into fastline/midtrend zones.",
+  img: twoH5,
+},
+
       {
-        pct: "12.9%",
-        tag: "Breakout",
-        symbol: "RNDR / USD",
-        tf: "4H",
-        dates: "Jan 30, 2024",
-        headline: "Pop in 1 day",
-        bullets: ["Compression built", "Bias aligned", "Trigger confirmed", "Clean follow-through"],
-        note: "Shorter timeframe version of the same framework.",
-      },
-      {
-        pct: "30%",
-        tag: "Support",
-        symbol: "WEST / USDT",
-        tf: "1D",
-        dates: "Feb 12–14, 2024",
-        headline: "Fast-line reaction",
-        bullets: ["Support tag", "Bias held", "Defined stop", "Targeted resistance"],
-        note: "Reaction trades only when structure is real.",
-      },
-      {
-        pct: "286%",
-        tag: "Breakout",
-        symbol: "AIOZ / USD",
-        tf: "1D",
-        dates: "Nov 11–15, 2023",
-        headline: "Explosive trend",
-        bullets: ["Trend map clean", "Pressure built", "Trigger printed", "Rails projected"],
-        note: "Great example for “permission gates” + targets.",
-      },
-      {
-        pct: "30.4%",
-        tag: "Close Short",
-        symbol: "AI / USDT",
-        tf: "4H",
-        dates: "Feb 9–12, 2024",
-        headline: "Pop < 4 days",
-        bullets: ["Close Short cluster", "Support bounce", "Open Long aligned", "Exit reason shown"],
-        note: "Signals behave as a system — not isolated arrows.",
-      },
+  pct: "3.1%",
+  tag: "Open Short",
+  symbol: "BTC / USDT",
+  tf: "1H",
+  dates: "Example",
+  headline: "Mid — Standard mode breakdown short",
+  bullets: [
+    "Mode 1H (mid TF) — Standard mode",
+    "Yellow breakdown symbol: price may not touch Fast Line before trend continues",
+    "SL: at Midtrend Line",
+    "TP: Close Short / Fast Line / Midtrend Line",
+  ],
+  note:
+    "1H breakdown case: continuation can happen without a fastline retest; stop at midtrend, take profit into close-short or fastline/midtrend.",
+  img: oneH3,
+},
+{
+  pct: "29.8%",
+  tag: "Open Long",
+  symbol: "BTC / USDT",
+  tf: "2D",
+  dates: "Example (trend)",
+  headline: "Standard mode long (no-fastline retest)",
+  bullets: [
+    "Mode 2D — Standard mode (long)",
+    "White label: trend may not touch Fast Line before continuing",
+    "SL: at Midtrend Line",
+    "TP: Fast Line / Midtrend Line / Close Short symbol",
+  ],
+  note:
+    "2D trend case: white label suggests continuation without fastline retest; risk at midtrend, targets into fastline/midtrend or close-short signal.",
+  img: twoD29,
+},
+{
+  pct: "27.5%",
+  tag: "Divergence",
+  symbol: "BTC / USDT",
+  tf: "1W",
+  dates: "Example (context)",
+  headline: "Standard mode — bearish divergence context",
+  bullets: [
+    "Weekly (long TF) — Standard mode",
+    "Not a direct setup: highlights bearish divergence you can build a trade on",
+    "SL: at previous B:PRO resistance",
+    "TP: at Fast Line",
+  ],
+  note:
+    "Weekly context: bearish divergence can be used to plan a separate setup; define risk at prior B:PRO resistance and target the fast line.",
+  img: week27,
+},
+{
+  pct: "31.5%",
+  tag: "Bear Continuation",
+  symbol: "BTC / USDT",
+  tf: "1D",
+  dates: "Example (trend)",
+  headline: "Standard mode — breakdown + bear continuation",
+  bullets: [
+    "Daily (long TF) — Standard mode",
+    "Breakdown + bear continuation print: price likely won’t touch Fast Line before continuing down",
+    "SL: at Fast Line",
+    "TP: Fast Line / Midtrend Line",
+  ],
+  note:
+    "Daily trend case: breakdown + bear continuation suggests continuation without a fastline retest; stop at fastline, targets into fastline/midtrend.",
+  img: day31,
+},
+{
+  pct: "10.3%",
+  tag: "Open Long",
+  symbol: "BTC / USDT",
+  tf: "1D",
+  dates: "Example (trend)",
+  headline: "Standard mode — bull continuation + breakout",
+  bullets: [
+    "Daily (long TF) — Standard mode",
+    "Bull continuation + breakout symbol: price may not touch B:PRO Fast Line before continuing up",
+    "SL: at Midtrend Line",
+    "TP: Close Long / Fast Line / Midtrend Line",
+  ],
+  note:
+    "Daily continuation case: breakout + bull continuation suggests continuation without a fastline retest; risk at midtrend, take profit into close-long or fastline/midtrend.",
+  img: day10,
+},
+
+
+
+
     ],
     []
   );
@@ -203,9 +350,48 @@ function CasesSlider({ cases, reduceMotion }: { cases: any[]; reduceMotion: bool
   const [idx, setIdx] = useState(0);
   const [dir, setDir] = useState(1);
 
+  // ✅ selected (expanded) card state
+  const [selected, setSelected] = useState<any | null>(null);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+
+  const makeId = (c: any) =>
+    `case-${String(`${c.symbol}-${c.tf}-${c.pct}-${c.dates}`).replace(/\W+/g, "-")}`;
+
+  const openCase = (c: any) => {
+    const id = makeId(c);
+    setSelected(c);
+    setSelectedId(id);
+  };
+
+  const closeCase = () => {
+    setSelected(null);
+    setSelectedId(null);
+  };
+
   useEffect(() => {
     setIdx((p) => Math.min(p, Math.max(0, slides.length - 1)));
   }, [slides.length]);
+
+  useEffect(() => {
+    if (!selected) return;
+
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") closeCase();
+    };
+
+    window.addEventListener("keydown", onKeyDown);
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      window.removeEventListener("keydown", onKeyDown);
+      document.body.style.overflow = prev;
+    };
+  }, [selected]);
+
+  const [mounted, setMounted] = useState(false);
+    useEffect(() => setMounted(true), []);
+
 
   const next = () => {
     setDir(1);
@@ -286,9 +472,17 @@ function CasesSlider({ cases, reduceMotion }: { cases: any[]; reduceMotion: bool
             className="relative p-4 sm:p-5 lg:p-6"
           >
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 lg:gap-5">
-              {slides[idx]?.map((c) => (
-                <CaseTile key={`${c.symbol}-${c.dates}-${c.pct}`} item={c} />
-              ))}
+              {slides[idx]?.map((c) => {
+                const id = makeId(c);
+                return (
+                  <CaseTile
+                    key={id}
+                    id={id}
+                    item={c}
+                    onSelect={() => openCase(c)}
+                  />
+                );
+              })}
             </div>
           </motion.div>
         </AnimatePresence>
@@ -310,9 +504,53 @@ function CasesSlider({ cases, reduceMotion }: { cases: any[]; reduceMotion: bool
           />
         ))}
       </div>
+
+      {/* ✅ Expanded overlay */}
+      {mounted &&
+  createPortal(
+    <AnimatePresence>
+      {selected && selectedId ? (
+        <motion.div
+          className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-8"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+        >
+          {/* backdrop */}
+          <button
+            aria-label="Close expanded case"
+            onClick={closeCase}
+            className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+          />
+
+          {/* centered content (viewport) */}
+          <motion.div
+            className="relative w-full max-w-[980px]"
+            initial={reduceMotion ? { scale: 1 } : { scale: 0.98 }}
+            animate={{ scale: 1 }}
+            exit={reduceMotion ? { scale: 1 } : { scale: 0.98 }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={closeCase}
+              aria-label="Close"
+              className="absolute -top-3 -right-3 z-10 inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.06] hover:bg-white/[0.10] transition"
+            >
+              <X className="h-5 w-5 text-white/80" />
+            </button>
+
+            <CaseTile item={selected} id={selectedId} expanded />
+          </motion.div>
+        </motion.div>
+      ) : null}
+    </AnimatePresence>,
+    document.body
+  )}
+
     </div>
   );
 }
+
 
 /* ---------------- UI ---------------- */
 
@@ -341,12 +579,39 @@ function MiniMetric({ icon, label }: { icon: React.ReactNode; label: string }) {
   );
 }
 
-function CaseTile({ item }: { item: any }) {
+function CaseTile({
+  item,
+  id,
+  onSelect,
+  expanded = false,
+}: {
+  item: any;
+  id: string;
+  onSelect?: () => void;
+  expanded?: boolean;
+}) {
+  const clickable = !!onSelect && !expanded;
+
   return (
-    <div className="group rounded-[26px] p-[1px] bg-gradient-to-b from-emerald-400/22 via-white/10 to-emerald-500/14">
+    <motion.div
+      layoutId={id}
+      onClick={clickable ? onSelect : undefined}
+      role={clickable ? "button" : undefined}
+      tabIndex={clickable ? 0 : undefined}
+      onKeyDown={
+        clickable
+          ? (e) => {
+              if (e.key === "Enter" || e.key === " ") onSelect?.();
+            }
+          : undefined
+      }
+      className={`group rounded-[26px] p-[1px] bg-gradient-to-b from-emerald-400/22 via-white/10 to-emerald-500/14 ${
+        clickable ? "cursor-pointer" : "cursor-default"
+      }`}
+    >
       <div className="relative rounded-[26px] overflow-hidden bg-[#070707]/75 border border-white/10 backdrop-blur-2xl">
         {/* Screenshot */}
-        <div className="relative h-[200px] bg-white/[0.02]">
+        <div className={`relative ${expanded ? "h-[340px] sm:h-[420px]" : "h-[200px]"} bg-white/[0.02]`}>
           {item.img ? (
             <img
               src={item.img}
@@ -386,7 +651,7 @@ function CaseTile({ item }: { item: any }) {
         </div>
 
         {/* Body */}
-        <div className="p-4 space-y-3">
+        <div className={`${expanded ? "p-5" : "p-4"} space-y-3`}>
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0">
               <div className="text-sm font-semibold text-white/90 leading-tight">{item.symbol}</div>
@@ -400,13 +665,19 @@ function CaseTile({ item }: { item: any }) {
           </div>
 
           <div className="space-y-2">
-            {item.bullets.slice(0, 3).map((b: string, i: number) => (
+            {(expanded ? item.bullets : item.bullets.slice(0, 3)).map((b: string, i: number) => (
               <div key={i} className="flex items-start gap-2 text-xs text-white/65">
                 <span className="text-emerald-300/80">✓</span>
                 <span className="leading-tight">{b}</span>
               </div>
             ))}
           </div>
+
+          {expanded && item.note ? (
+            <div className="pt-3 border-t border-white/10 text-sm text-white/60 leading-relaxed">
+              {item.note}
+            </div>
+          ) : null}
 
           <div className="pt-2 flex items-center justify-between text-[11px] text-white/45">
             <span className="inline-flex items-center gap-2">
@@ -424,9 +695,10 @@ function CaseTile({ item }: { item: any }) {
           style={{ boxShadow: "0 0 0 1px rgba(255,255,255,0.08), 0 0 38px rgba(16,185,129,0.12)" }}
         />
       </div>
-    </div>
+    </motion.div>
   );
 }
+
 
 function Pill({ children, tone = "neutral" }: { children: React.ReactNode; tone?: "neutral" | "emerald" }) {
   const tones =
