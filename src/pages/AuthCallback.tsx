@@ -27,7 +27,7 @@ export default function AuthCallback() {
                 return;
             }
 
-            window.location.replace("/");
+            window.location.replace("/profile");
         };
 
         run();

@@ -34,7 +34,6 @@ export default function FilterEngine() {
       { category: "Trend", items: ["Ichimoku Filter", "ADX Filter", "HTF Levels"] },
       { category: "Volume", items: ["Volume Filter", "OBV Filter"] },
       { category: "Positioning", items: ["VWAP Filter", "Market Sentiment"] },
-      { category: "Icons", items: ["Pump/Dump", "Continuation", "Reversal", "RSI Divergence Arrows"] },
     ],
     []
   );
@@ -253,7 +252,7 @@ export default function FilterEngine() {
 
             <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight leading-[1.05]">
               <span className="bg-gradient-to-r from-white via-emerald-200 to-emerald-500 bg-clip-text text-transparent drop-shadow-[0_0_24px_rgba(16,185,129,0.20)]">
-                The filter engine decides if trading is allowed.
+                Filter Engine Decides if Trading Conditions are Met.
               </span>
             </h2>
 

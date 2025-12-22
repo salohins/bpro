@@ -33,7 +33,7 @@ export default function FutureTargets() {
         key: "t1t2-1",
         src: futureTargetsImg,
         alt: "Example showing T1/T2 target EMA lines as dynamic support and resistance",
-        tags: ["T1 / T2 rails", "EMA-based targets"],
+        tags: ["T1 → T2 flow", "EMA-based targets"],
         captionTitle: "How to read it",
         caption:
           "Watch rejection / acceptance at T1 and T2. Acceptance = continuation. Rejection = weakness / potential reversal pressure.",
@@ -41,8 +41,8 @@ export default function FutureTargets() {
       {
         key: "t1t2-2",
         src: futureTargetsImg2,
-        alt: "Second example showing T1/T2 rails interaction after breakout",
-        tags: ["T1 → T2 flow", "Continuation / failure"],
+        alt: "Second example showing T1/T2 lines interaction after breakout",
+        tags: ["T1 / T2 lines", "Continuation / failure"],
         captionTitle: "What to look for",
         caption:
           "After T1 taps, track whether price holds above the rail. Clean holds = continuation. Failed holds = exit or defend.",
@@ -54,7 +54,6 @@ export default function FutureTargets() {
   const [shotIdx, setShotIdx] = useState(0);
   const [dir, setDir] = useState(1);
 
-  // ✅ autoplay
   const [autoplay, setAutoplay] = useState(true);
   const [paused, setPaused] = useState(false);
 
@@ -70,7 +69,6 @@ export default function FutureTargets() {
     setShotIdx((p) => wrap(p - 1));
   };
 
-  // ✅ autoplay loop
   useEffect(() => {
     if (reduceMotion) return;
     if (!autoplay || paused || shots.length <= 1) return;
@@ -110,8 +108,11 @@ export default function FutureTargets() {
   const current = shots[shotIdx];
 
   return (
-    <section className="relative w-full py-20 md:py-24 bg-transparent text-white">
-      {/* ✅ no overflow-hidden so glow can “bleed” into neighbors */}
+    <section
+      id="future-targets"
+      className="relative w-full bg-transparent text-white py-14 sm:py-16 md:py-24"
+    >
+      {/* background stays as you had it */}
       <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
         <div className="absolute left-0 right-0 -top-28 -bottom-28 bg-[radial-gradient(circle_at_60%_15%,rgba(16,185,129,0.10),transparent_60%)]" />
         <div className="absolute inset-0 opacity-[0.05] [mask-image:radial-gradient(ellipse_at_center,black,transparent_72%)]">
@@ -119,23 +120,79 @@ export default function FutureTargets() {
         </div>
       </div>
 
-      {/* match your global section width */}
-      <div className="relative z-10 mx-auto max-w-[1760px] px-6 sm:px-10 lg:px-16 2xl:px-20">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
-          {/* LEFT — screenshot slider */}
-          <motion.div {...enter(1, 0.05)} className="lg:col-span-7">
-            <div className="rounded-[30px] p-[1px] bg-gradient-to-b from-emerald-400/22 via-white/10 to-emerald-500/14 shadow-[0_0_70px_rgba(16,185,129,0.10)]">
-              <div className="relative rounded-[30px] overflow-hidden bg-[#070707]/75 border border-white/10 backdrop-blur-2xl">
+      <div className="relative z-10 mx-auto max-w-[1760px] px-4 sm:px-10 lg:px-16 2xl:px-20">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-10 lg:gap-14 items-start lg:items-center">
+          {/* ✅ RIGHT COPY (but on MOBILE it comes FIRST) */}
+          <motion.div
+            {...enter(1)}
+            className="lg:col-span-5 space-y-5 sm:space-y-6 order-1 lg:order-2"
+          >
+            <div className="flex flex-wrap items-center gap-2">
+              <div className="inline-flex items-center gap-2 px-4 sm:px-5 py-2 rounded-full border border-emerald-400/20 bg-white/[0.03] backdrop-blur-md w-fit">
+                <Sparkles className="w-4 h-4 text-emerald-300" />
+                <span className="text-emerald-300 text-[11px] sm:text-xs tracking-[0.24em] font-semibold uppercase">
+                  Market Structure Engine
+                </span>
+              </div>
+
+              <span className="inline-flex items-center gap-2 px-3.5 sm:px-4 py-2 rounded-full border border-white/10 bg-white/[0.02] backdrop-blur-md text-[10px] sm:text-[11px] tracking-[0.18em] uppercase text-white/55">
+                <Layers className="w-3.5 h-3.5 text-emerald-300/80" />
+                T1 / T2 Lines
+              </span>
+            </div>
+
+            <h2 className="font-extrabold tracking-tight leading-[1.05] text-[clamp(28px,7.6vw,52px)]">
+              <span className="bg-gradient-to-r from-white via-emerald-200 to-emerald-500 bg-clip-text text-transparent">
+                Future Target Lines
+              </span>
+            </h2>
+
+            <p className="text-white/70 leading-relaxed max-w-xl text-[14.5px] sm:text-lg">
+              After a breakout, price often interacts with{" "}
+              <span className="text-white/85 font-semibold">T1</span> first, then{" "}
+              <span className="text-white/85 font-semibold">T2</span>. These adaptive EMA lines act as forward
+              structure, giving you clean reaction zones for continuation, failure or partials.
+            </p>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <Chip
+                icon={<Target className="w-4 h-4 text-emerald-200/90" />}
+                title="T1 reaction"
+                desc="first touch zone"
+              />
+              <Chip
+                icon={<Shield className="w-4 h-4 text-emerald-200/90" />}
+                title="T2 decision"
+                desc="continue or fail"
+              />
+              <Chip tone="emerald" title="EMA-based lines" desc="dynamic, not static" />
+              <Chip title="Cleaner exits" desc="less guessing" />
+            </div>
+
+            <div className="pt-1 text-xs text-white/45 max-w-xl flex items-center gap-2">
+              <ArrowRight className="w-3.5 h-3.5 text-emerald-300/70" />
+              Correlation: breakouts trigger → lines manage the move → exits become objective.
+            </div>
+          </motion.div>
+
+          {/* ✅ LEFT SLIDER (but on MOBILE it comes SECOND) */}
+          <motion.div
+            {...enter(1, 0.05)}
+            className="lg:col-span-7 order-2 lg:order-1"
+          >
+            <div className="rounded-[26px] sm:rounded-[30px] p-[1px] bg-gradient-to-b from-emerald-400/22 via-white/10 to-emerald-500/14 shadow-[0_0_70px_rgba(16,185,129,0.10)]">
+              <div className="relative rounded-[26px] sm:rounded-[30px] overflow-hidden bg-[#070707]/75 border border-white/10 backdrop-blur-2xl">
                 {/* header bar */}
-                <div className="relative z-10 px-6 py-4 border-b border-white/10 flex items-center justify-between">
-                  <div className="text-sm font-semibold text-white/85">T1 / T2 in-action</div>
+                <div className="relative z-10 px-4 sm:px-6 py-3 sm:py-4 border-b border-white/10 flex items-center justify-between gap-3">
+                  <div className="text-[13px] sm:text-sm font-semibold text-white/85">
+                    T1 / T2 in-action
+                  </div>
 
                   <div className="flex items-center gap-2">
-                    <div className="text-[11px] text-white/45 tracking-widest uppercase">
+                    <div className="text-[10px] sm:text-[11px] text-white/45 tracking-widest uppercase">
                       {shotIdx + 1} / {shots.length}
                     </div>
 
-                    {/* optional toggle (nice for demos) */}
                     <button
                       type="button"
                       onClick={() => setAutoplay((v) => !v)}
@@ -148,7 +205,7 @@ export default function FutureTargets() {
                       type="button"
                       onClick={prev}
                       aria-label="Previous screenshot"
-                      className="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.03] hover:bg-white/[0.05] transition"
+                      className="inline-flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.03] hover:bg-white/[0.05] transition"
                     >
                       <ChevronLeft className="h-5 w-5 text-white/70" />
                     </button>
@@ -156,16 +213,16 @@ export default function FutureTargets() {
                       type="button"
                       onClick={next}
                       aria-label="Next screenshot"
-                      className="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.03] hover:bg-white/[0.05] transition"
+                      className="inline-flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.03] hover:bg-white/[0.05] transition"
                     >
                       <ChevronRight className="h-5 w-5 text-white/70" />
                     </button>
                   </div>
                 </div>
 
-                {/* slider viewport (✅ hover pause + ✅ swipe) */}
+                {/* viewport */}
                 <motion.div
-                  className="relative h-[300px] sm:h-[380px] lg:h-[460px] touch-pan-y"
+                  className="relative h-[240px] sm:h-[380px] lg:h-[460px] touch-pan-y"
                   onMouseEnter={() => setPaused(true)}
                   onMouseLeave={() => setPaused(false)}
                   drag={reduceMotion ? false : "x"}
@@ -199,11 +256,9 @@ export default function FutureTargets() {
                     </motion.div>
                   </AnimatePresence>
 
-                  {/* grading + aura */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/15 to-black/10" />
                   <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_15%,rgba(16,185,129,0.20),transparent_55%)]" />
 
-                  {/* grain */}
                   <div
                     className="absolute inset-0 opacity-[0.07] mix-blend-overlay pointer-events-none"
                     style={{
@@ -212,25 +267,22 @@ export default function FutureTargets() {
                     }}
                   />
 
-                  {/* tags */}
-                  <div className="absolute left-4 top-4 flex flex-wrap gap-2">
+                  <div className="absolute left-3 sm:left-4 top-3 sm:top-4 flex flex-wrap gap-2 max-w-[85%]">
                     <TagChip>{current.tags[0]}</TagChip>
                     <TagChip tone="emerald">{current.tags[1]}</TagChip>
                   </div>
 
-                  {/* bottom caption */}
-                  <div className="absolute left-5 right-5 bottom-5">
-                    <Glass className="rounded-2xl bg-black/35 px-4 py-3">
-                      <div className="text-sm font-semibold text-white/90 leading-tight">
+                  <div className="absolute left-3 right-3 sm:left-5 sm:right-5 bottom-3 sm:bottom-5">
+                    <Glass className="rounded-2xl bg-black/35 px-3 py-2 sm:px-4 sm:py-3">
+                      <div className="text-[13px] sm:text-sm font-semibold text-white/90 leading-tight line-clamp-1">
                         {current.captionTitle}
                       </div>
-                      <div className="mt-1 text-sm text-white/65 leading-relaxed">
+                      <div className="mt-1 text-[12.5px] sm:text-sm text-white/65 leading-relaxed line-clamp-3 sm:line-clamp-none">
                         {current.caption}
                       </div>
                     </Glass>
                   </div>
 
-                  {/* sheen */}
                   <motion.div
                     aria-hidden="true"
                     className="absolute top-0 left-[-120%] w-[240%] h-full bg-gradient-to-r from-transparent via-white/10 to-transparent"
@@ -242,10 +294,11 @@ export default function FutureTargets() {
                   <div className="absolute inset-0 ring-1 ring-white/10" />
                 </motion.div>
 
-                {/* dots */}
-                <div className="px-6 py-4 border-t border-white/10">
-                  <div className="flex items-center justify-between">
-                    <div className="text-xs text-white/45">Swipe or use arrows</div>
+                <div className="px-4 sm:px-6 py-3 sm:py-4 border-t border-white/10">
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="text-[11px] sm:text-xs text-white/45">
+                      Swipe or use arrows
+                    </div>
                     <div className="flex items-center gap-2">
                       {shots.map((s, i) => (
                         <button
@@ -256,70 +309,17 @@ export default function FutureTargets() {
                             setShotIdx(i);
                           }}
                           aria-label={`Go to screenshot ${i + 1}`}
-                          className={`h-2.5 rounded-full transition-all ${i === shotIdx
-                              ? "w-8 bg-emerald-300/70"
+                          className={`h-2.5 rounded-full transition-all ${
+                            i === shotIdx
+                              ? "w-7 sm:w-8 bg-emerald-300/70"
                               : "w-2.5 bg-white/15 hover:bg-white/25"
-                            }`}
+                          }`}
                         />
                       ))}
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
-
-            <div className="mt-4 text-xs text-white/45 max-w-3xl">
-              Tip: keep screenshots clean (minimal indicators) so T1/T2 stand out instantly.
-            </div>
-          </motion.div>
-
-          {/* RIGHT — copy */}
-          <motion.div {...enter(1)} className="lg:col-span-5 space-y-6">
-            <div className="flex flex-wrap items-center gap-2">
-              <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full border border-emerald-400/20 bg-white/[0.03] backdrop-blur-md w-fit">
-                <Sparkles className="w-4 h-4 text-emerald-300" />
-                <span className="text-emerald-300 text-xs tracking-[0.24em] font-semibold uppercase">
-                  Market Structure Engine
-                </span>
-              </div>
-
-              <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/10 bg-white/[0.02] backdrop-blur-md text-[11px] tracking-[0.18em] uppercase text-white/55">
-                <Layers className="w-3.5 h-3.5 text-emerald-300/80" />
-                T1 / T2 Rails
-              </span>
-            </div>
-
-            <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight leading-[1.05]">
-              <span className="bg-gradient-to-r from-white via-emerald-200 to-emerald-500 bg-clip-text text-transparent">
-                Future Target Lines
-              </span>
-            </h2>
-
-            <p className="text-white/70 text-lg leading-relaxed max-w-xl">
-              After a breakout, price often interacts with{" "}
-              <span className="text-white/85 font-semibold">T1</span> first, then{" "}
-              <span className="text-white/85 font-semibold">T2</span>. These adaptive EMA rails act as forward
-              structure — giving you clean reaction zones for partials, continuation, or failure.
-            </p>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <Chip
-                icon={<Target className="w-4 h-4 text-emerald-200/90" />}
-                title="T1 reaction"
-                desc="first touch zone"
-              />
-              <Chip
-                icon={<Shield className="w-4 h-4 text-emerald-200/90" />}
-                title="T2 decision"
-                desc="continue or fail"
-              />
-              <Chip tone="emerald" title="EMA-based rails" desc="dynamic, not static" />
-              <Chip title="Cleaner exits" desc="less guessing" />
-            </div>
-
-            <div className="pt-1 text-xs text-white/45 max-w-xl flex items-center gap-2">
-              <ArrowRight className="w-3.5 h-3.5 text-emerald-300/70" />
-              Correlation: breakouts trigger → rails manage the move → exits become objective.
             </div>
           </motion.div>
         </div>
@@ -328,7 +328,7 @@ export default function FutureTargets() {
   );
 }
 
-/* ---------- tiny atoms (self-contained) ---------- */
+/* ---------- tiny atoms ---------- */
 
 function Glass({ className = "", children }) {
   return (
@@ -351,7 +351,11 @@ function TagChip({ children, tone = "neutral" }) {
       : "text-white/85 border-white/10 bg-black/30";
   return (
     <span
-      className={`text-[11px] tracking-[0.18em] uppercase px-3 py-1.5 rounded-full border backdrop-blur-md ${tones}`}
+      className={[
+        "px-3 py-1.5 rounded-full border backdrop-blur-md",
+        "text-[10px] sm:text-[11px] tracking-[0.18em] uppercase",
+        tones,
+      ].join(" ")}
     >
       {children}
     </span>
@@ -364,17 +368,22 @@ function Chip({ icon, title, desc, tone = "neutral" }) {
     tone === "emerald"
       ? "border-emerald-400/20 bg-emerald-400/10"
       : "border-white/10 bg-white/[0.03]";
+
   return (
     <div
       className={`${base} ${toneCls}`}
       style={{ boxShadow: "0 0 0 1px rgba(255,255,255,0.02)" }}
     >
-      <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/[0.03]">
+      <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/[0.03] shrink-0">
         {icon ? icon : <span className="w-2 h-2 rounded-full bg-emerald-300/70" />}
       </span>
       <div className="min-w-0">
-        <div className="text-sm font-semibold text-white/85 leading-tight">{title}</div>
-        <div className="text-sm text-white/55 leading-tight">{desc}</div>
+        <div className="text-[13.5px] sm:text-sm font-semibold text-white/85 leading-tight">
+          {title}
+        </div>
+        <div className="text-[13px] sm:text-sm text-white/55 leading-tight">
+          {desc}
+        </div>
       </div>
     </div>
   );

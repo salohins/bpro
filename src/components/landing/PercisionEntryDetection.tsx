@@ -67,12 +67,12 @@ export default function PrecisionEntryDetection() {
 
                     <h2 className="text-4xl md:text-5xl xl:text-6xl font-extrabold tracking-tight leading-[1.05]">
                         <span className="bg-gradient-to-r from-white via-emerald-200 to-emerald-500 bg-clip-text text-transparent">
-                            Precision Entry Detection
+                            Precise Entry Detection
                         </span>
                     </h2>
 
                     <p className="text-white/70 text-lg leading-relaxed max-w-2xl">
-                        Structure gives direction. Filters give permission. This is where you execute — only on clean reactions.
+                        Structure gives direction and filters create clarity. This is where you execute only on clean reactions.
                     </p>
                 </div>
 
@@ -121,7 +121,7 @@ export default function PrecisionEntryDetection() {
                             </Glass>
 
                             <div className="text-xs text-white/45">
-                                Rule: if fast &amp; mid disagree — you wait. Skipping mid-quality setups is the edge.
+                                Pro Tip: As soon as price touches the fast line, the trade is triggered. Risk is defined by the mid-trend line, with the stop placed slightly below it. The same logic applies in reverse for short setups, with entries, risk, and invalidation mirrored to the downside.
                             </div>
                         </div>
 
@@ -146,7 +146,7 @@ export default function PrecisionEntryDetection() {
                                             {activeArchetype === "long" ? (
                                                 <>
                                                     <TagChip tone="emerald">Bull reaction</TagChip>
-                                                    <TagChip>Support zone</TagChip>
+                                                    <TagChip>FAST line</TagChip>
                                                 </>
                                             ) : (
                                                 <>
@@ -168,7 +168,7 @@ export default function PrecisionEntryDetection() {
                             <div className="mt-4 flex flex-wrap gap-2">
                                 <Pill icon={<Target className="w-4 h-4 text-emerald-200/90" />}>Bias aligned</Pill>
                                 <Pill icon={<Sparkles className="w-4 h-4 text-white/80" />}>Pressure context</Pill>
-                                <Pill icon={<Shield className="w-4 h-4 text-emerald-200/90" />}>Fast entry / mid stop</Pill>
+                                <Pill icon={<Shield className="w-4 h-4 text-emerald-200/90" />}>Fast-line entry / mid-trend stop</Pill>
                             </div>
                         </div>
                     </div>

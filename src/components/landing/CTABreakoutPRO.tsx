@@ -21,6 +21,7 @@ export default function CTABreakoutPro() {
       { icon: <Layers className="w-4 h-4 text-emerald-300" />, text: "Trend Cloud + HTF structure" },
       { icon: <SlidersHorizontal className="w-4 h-4 text-emerald-300" />, text: "Confluence filters + sentiment" },
       { icon: <ShieldCheck className="w-4 h-4 text-emerald-300" />, text: "Trade management + S/Q scoring" },
+      { icon: <ShieldCheck className="w-4 h-4 text-emerald-300" />, text: "Trade management + S/Q scoring" },
     ],
     []
   );
@@ -49,7 +50,7 @@ export default function CTABreakoutPro() {
 
           <h2 className="mt-5 font-semibold tracking-[-0.045em] leading-[1.02] text-[clamp(34px,3.1vw,56px)]">
             <span className="bg-gradient-to-r from-white via-emerald-200 to-emerald-500 bg-clip-text text-transparent">
-              Everything you need — nothing you don’t.
+              Stop Guessing. <br/>Trade with Structure.
             </span>
           </h2>
 
@@ -102,7 +103,7 @@ export default function CTABreakoutPro() {
                       Start trading with clarity.
                     </div>
                     <p className="mt-2 text-white/60 leading-relaxed">
-                      Instant TradingView access. Cancel anytime.
+                      Cancel anytime.
                     </p>
                   </div>
 
@@ -124,15 +125,6 @@ export default function CTABreakoutPro() {
                       <span className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-white/10" />
                     </motion.button>
 
-                    <motion.a
-                      href="#demo"
-                      whileHover={reduceMotion ? {} : { y: -2 }}
-                      className="w-full inline-flex items-center justify-center gap-2 px-8 py-4 rounded-2xl
-                        border border-white/12 bg-white/[0.02] hover:bg-white/[0.04] transition text-white/90"
-                    >
-                      <PlayCircle className="w-5 h-5 text-emerald-200" />
-                      See it in action
-                    </motion.a>
 
                     <div className="text-xs text-white/45 text-center">
                       No commitments • Works on any market
@@ -161,9 +153,6 @@ export default function CTABreakoutPro() {
                   ))}
                 </div>
 
-                <div className="mt-4 text-xs text-white/45">
-                  “B:PRO isn’t an indicator. It’s a trading decision engine.”
-                </div>
               </div>
             </div>
           </motion.div>

@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import {
   Plus,
@@ -8,9 +9,10 @@ import {
   Zap,
   SlidersHorizontal,
   Star,
+  ArrowLeft,
 } from "lucide-react";
 
-export default function FAQSection() {
+export default function FaqPage() {
   const reduceMotion = useReducedMotion();
 
   const faqs = useMemo(
@@ -62,15 +64,39 @@ export default function FAQSection() {
   };
 
   return (
-    <section className="relative w-full py-28 md:py-32 overflow-hidden text-white bg-transparent">
-      {/* ✅ match your global section width system */}
-      <div className="relative z-10 mx-auto max-w-[1760px] px-6 sm:px-10 lg:px-16 2xl:px-20">
+    <main className="relative min-h-screen w-full overflow-hidden text-white bg-transparent">
+      {/* optional soft background glows */}
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0">
+        <div className="absolute -top-40 -right-40 w-[520px] h-[520px] rounded-full bg-emerald-500/10 blur-[110px]" />
+        <div className="absolute -bottom-56 -left-56 w-[620px] h-[620px] rounded-full bg-emerald-500/10 blur-[120px]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_10%,rgba(16,185,129,0.10),transparent_40%),radial-gradient(circle_at_80%_40%,rgba(16,185,129,0.08),transparent_35%)]" />
+      </div>
+
+      {/* ✅ match your global width system */}
+      <div className="relative z-10 mx-auto max-w-[1760px] px-6 sm:px-10 lg:px-16 2xl:px-20 py-20 md:py-24">
+        {/* Top row */}
+        <div className="flex items-center justify-between gap-4 mb-10 md:mb-12">
+          <Link
+            to="/"
+            className="inline-flex items-center gap-2 text-sm text-white/70 hover:text-white transition"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Back
+          </Link>
+
+          <div className="hidden md:flex items-center gap-2 px-4 py-2 rounded-full border border-white/10 bg-white/[0.03] backdrop-blur-md">
+            <ShieldCheck className="w-4 h-4 text-emerald-300" />
+            <span className="text-xs tracking-[0.18em] uppercase text-white/60">
+              Support / FAQ
+            </span>
+          </div>
+        </div>
+
         {/* Header */}
         <motion.div
           variants={container}
           initial="hidden"
-          whileInView="show"
-          viewport={{ once: false, amount: 0.35 }}
+          animate="show"
           className="text-center mb-12 md:mb-16"
         >
           <div className="inline-flex items-center gap-2 px-6 py-2 rounded-full border border-emerald-400/20 bg-white/[0.03] backdrop-blur-md mb-4">
@@ -80,24 +106,23 @@ export default function FAQSection() {
             </span>
           </div>
 
-          <h2 className="text-4xl md:text-6xl font-extrabold tracking-tight leading-[1.05]">
+          <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight leading-[1.05]">
             <span className="bg-gradient-to-r from-white via-emerald-200 to-emerald-500 bg-clip-text text-transparent drop-shadow-[0_0_24px_rgba(16,185,129,0.25)]">
               Frequently Asked Questions.
             </span>
-          </h2>
+          </h1>
+
+          <p className="mt-4 text-white/60 max-w-[720px] mx-auto leading-relaxed">
+            Quick clarity on how the system behaves — integrity, scoring, compatibility, and learning curve.
+          </p>
         </motion.div>
 
-        {/* Layout */}
-        <div className="lg:col-span-7 mx-auto w-full max-w-[900px]">
-
-
-          {/* Right: Accordion */}
+        {/* Content */}
+        <div className="mx-auto w-full max-w-[900px]">
           <motion.div
-            initial={{ opacity: 0, x: 24, filter: "blur(8px)" }}
-            whileInView={{ opacity: 1, x: 0, filter: "blur(0px)" }}
+            initial={{ opacity: 0, y: 10, filter: "blur(8px)" }}
+            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
             transition={{ duration: 0.85, ease: [0.16, 1, 0.3, 1] }}
-            viewport={{ once: false, amount: 0.35 }}
-            className="lg:col-span-7"
           >
             <div className="relative rounded-3xl p-[1px] bg-gradient-to-b from-emerald-400/30 via-white/10 to-emerald-500/20 shadow-[0_0_40px_rgba(16,185,129,0.08)]">
               <div className="relative rounded-3xl overflow-hidden bg-[#070707]/75 border border-white/10 backdrop-blur-xl">
@@ -129,20 +154,53 @@ export default function FAQSection() {
                   })}
                 </div>
 
-                {/* footer */}
-                
+                {/* page footer */}
+                <div className="relative px-6 pb-6 pt-2">
+                  <div className="h-px w-full bg-gradient-to-r from-transparent via-white/10 to-transparent mb-5" />
+                  <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
+                    <div className="text-sm text-white/60">
+                      Still stuck? Hit support and we’ll point you to the right workflow.
+                    </div>
+                    <Link
+                      to="/pricing"
+                      className="inline-flex items-center justify-center px-4 py-2 rounded-xl border border-white/10 bg-white/[0.03] hover:bg-white/[0.06] transition text-sm"
+                    >
+                      View plans
+                    </Link>
+                  </div>
+                </div>
               </div>
             </div>
           </motion.div>
         </div>
       </div>
-    </section>
+    </main>
   );
 }
 
 /* ---------------- Components ---------------- */
 
-function FAQItem({ isOpen, onToggle, reduceMotion, icon, q, a, tag, dim, idx }) {
+function FAQItem({
+  isOpen,
+  onToggle,
+  reduceMotion,
+  icon,
+  q,
+  a,
+  tag,
+  dim,
+  idx,
+}: {
+  isOpen: boolean;
+  onToggle: () => void;
+  reduceMotion: boolean;
+  icon: React.ReactNode;
+  q: string;
+  a: string;
+  tag: string;
+  dim: boolean;
+  idx: number;
+}) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
@@ -153,7 +211,11 @@ function FAQItem({ isOpen, onToggle, reduceMotion, icon, q, a, tag, dim, idx }) 
         dim ? "opacity-80" : "opacity-100"
       }`}
     >
-      <button onClick={onToggle} className="w-full text-left group" aria-expanded={isOpen}>
+      <button
+        onClick={onToggle}
+        className="w-full text-left group"
+        aria-expanded={isOpen}
+      >
         <div className="relative">
           <div className="absolute inset-0 bg-white/[0.02] border border-white/10 rounded-2xl backdrop-blur-md transition-colors group-hover:bg-white/[0.04]" />
           <div className="relative px-5 py-4 flex items-center gap-3">
@@ -163,7 +225,9 @@ function FAQItem({ isOpen, onToggle, reduceMotion, icon, q, a, tag, dim, idx }) 
 
             <div className="flex-1">
               <div className="flex items-center justify-between gap-3">
-                <div className="text-sm md:text-base font-semibold text-white/90">{q}</div>
+                <div className="text-sm md:text-base font-semibold text-white/90">
+                  {q}
+                </div>
                 <span className="hidden md:inline-flex px-3 py-1 rounded-full border border-white/10 bg-white/[0.03] text-[11px] text-white/55 tracking-widest uppercase">
                   {tag}
                 </span>

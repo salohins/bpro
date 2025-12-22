@@ -1,234 +1,245 @@
-import React, { useMemo } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useMemo, useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { motion, useReducedMotion } from "framer-motion";
-import { ArrowRight, Play, Map, Filter, Target, ShieldCheck, Check } from "lucide-react";
+import { ArrowRight, Map, Filter, Target, ShieldCheck } from "lucide-react";
 import tradingVideo from "../../assets/trading.mp4";
 
+/** Simple media query hook (no deps) */
+function useMediaQuery(query: string) {
+  const [matches, setMatches] = useState(() => {
+    if (typeof window === "undefined") return true;
+    return window.matchMedia(query).matches;
+  });
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const m = window.matchMedia(query);
+    const onChange = () => setMatches(m.matches);
+    onChange();
+    m.addEventListener("change", onChange);
+    return () => m.removeEventListener("change", onChange);
+  }, [query]);
+
+  return matches;
+}
+
 export default function HeroSection() {
-    const navigate = useNavigate();
-    const reduceMotion = useReducedMotion();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const reduceMotion = useReducedMotion();
 
-    const labels = useMemo(
-        () => ["Crypto & futures", "Scalping, day & swing trading", "Manual & bot execution", "Beginner → advanced"],
-        []
-    );
+  // ✅ Define “desktop-ish” behavior boundary
+  const isMdUp = useMediaQuery("(min-width: 768px)");
+  const allowMotion = !reduceMotion && isMdUp; // ✅ key optimization: disable heavy motion on mobile
 
-    // ✅ TEXT UPDATED ONLY (labels/subs)
-    const engines = useMemo(
-        () => [
-            { icon: Map, label: "Market Structure Engine", sub: "3-EMA cloud, regime + HTF alignment." },
-            { icon: Filter, label: "Confluence & Filters Engine", sub: "Adaptive permission gates for higher-quality entries." },
-            { icon: Target, label: "Signals & Execution Engine", sub: "Breakouts + confirmations with clear entry context." },
-            { icon: ShieldCheck, label: "Risk & Trade Management", sub: "Stops, invalidations, exits — rules end-to-end." },
-        ],
-        []
-    );
+  const engines = useMemo(
+    () => [
+      { icon: Map, label: "Market Structure Engine", sub: "3-EMA cloud, regime + HTF alignment." },
+      { icon: Filter, label: "Confluence & Filters Engine", sub: "Adaptive permission gates for higher-quality entries." },
+      { icon: Target, label: "Signals & Execution Engine", sub: "Breakouts + confirmations with clear entry context." },
+      { icon: ShieldCheck, label: "Risk & Trade Management", sub: "Stops, invalidations, exits — rules end-to-end." },
+    ],
+    []
+  );
 
-    const wrap = { hidden: {}, show: {} };
+  const wrap = { hidden: {}, show: {} };
 
-    const item = {
-        hidden: { opacity: 0, y: 18 },
-        show: {
-            opacity: 1,
-            y: 0,
-            transition: reduceMotion
-                ? { duration: 0.4, ease: [0.16, 1, 0.3, 1] }
-                : { duration: 0.55, ease: [0.16, 1, 0.3, 1] },
-        },
-    };
+  const item = {
+    hidden: { opacity: 0, y: 18 },
+    show: {
+      opacity: 1,
+      y: 0,
+      transition: reduceMotion
+        ? { duration: 0.35, ease: [0.16, 1, 0.3, 1] }
+        : { duration: 0.55, ease: [0.16, 1, 0.3, 1] },
+    },
+  };
 
-    return (
-        <motion.section
-            initial="hidden"
-            animate="show"
-            variants={wrap}
-            className="relative w-full min-h-[100svh] overflow-hidden bg-[#060606] text-white flex items-center"
-            style={{
-                "--font-display": `"Space Grotesk", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial`,
-                "--font-body": `"Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial`,
-            }}
+  // ✅ Smooth scroll when URL contains #core-engines
+  useEffect(() => {
+    if (location.hash === "#core-engines") {
+      requestAnimationFrame(() => {
+        const el = document.getElementById("core-engines");
+        if (!el) return;
+
+        el.scrollIntoView({
+          behavior: reduceMotion ? "auto" : "smooth",
+          block: "start",
+        });
+      });
+    }
+  }, [location.hash, reduceMotion]);
+
+  const handleSeeItInAction = () => {
+    if (location.pathname === "/") {
+      navigate("#core-engines", { replace: false });
+      const el = document.getElementById("core-engines");
+      if (el) {
+        el.scrollIntoView({
+          behavior: reduceMotion ? "auto" : "smooth",
+          block: "start",
+        });
+      }
+      return;
+    }
+
+    navigate("/#core-engines");
+  };
+
+  return (
+    <motion.section
+      initial="hidden"
+      animate="show"
+      variants={wrap}
+      className="
+        relative w-full min-h-[100svh] overflow-hidden bg-[#060606] text-white flex
+        items-end md:items-center
+      "
+      style={{
+        "--font-display": `"Space Grotesk", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial`,
+        "--font-body": `"Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial`,
+      }}
+    >
+      {/* ===================== Background ===================== */}
+      <div className="absolute inset-0">
+        {/* ✅ Video: keep it, but remove animated scaling on mobile */}
+        <motion.div
+          aria-hidden="true"
+          className="absolute inset-0"
+          animate={allowMotion ? { scale: [1.02, 1.06, 1.02] } : undefined}
+          transition={allowMotion ? { duration: 18, repeat: Infinity, ease: "easeInOut" } : undefined}
         >
-            {/* ===================== Background Video ===================== */}
-            <div className="absolute inset-0">
-                <motion.div
-                    aria-hidden="true"
-                    className="absolute inset-0"
-                    animate={reduceMotion ? {} : { scale: [1.02, 1.06, 1.02] }}
-                    transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
-                >
-                    <video
-                        className="absolute inset-0 w-full h-full object-cover"
-                        src={tradingVideo}
-                        autoPlay
-                        loop
-                        muted
-                        playsInline
-                        preload="auto"
-                        controls={false}
-                    />
-                </motion.div>
+          <video
+            className="absolute inset-0 w-full h-full object-cover"
+            src={tradingVideo}
+            autoPlay
+            loop
+            muted
+            playsInline
+            // ✅ Mobile perf: don’t force full download immediately
+            preload={isMdUp ? "auto" : "metadata"}
+            controls={false}
+          />
+        </motion.div>
 
-                <div className="absolute inset-0 pointer-events-none md:hidden bg-black/72" />
+        {/* ✅ Mobile scrim: transparent in middle, dark at bottom for content contrast */}
+        <div
+          className="absolute inset-0 pointer-events-none md:hidden"
+          style={{
+            background:
+              "linear-gradient(180deg, rgba(0,0,0,0.10) 0%, rgba(0,0,0,0.00) 45%, rgba(0,0,0,0.18) 68%, rgba(0,0,0,0.78) 100%)",
+          }}
+        />
 
-                <div className="absolute inset-0 pointer-events-none hidden md:block">
-                    <div className="absolute inset-0 heroScrim" style={{ clipPath: "polygon(0% 0%, 60% 0%, 50% 100%, 0% 100%)" }} />
+        {/* Desktop-only scrim geometry (clipPath can be expensive) */}
+        <div className="absolute inset-0 pointer-events-none hidden md:block">
+          <div
+            className="absolute inset-0 heroScrim"
+            style={{ clipPath: "polygon(0% 0%, 60% 0%, 50% 100%, 0% 100%)" }}
+          />
 
-                    <motion.div
-                        aria-hidden="true"
-                        className="absolute inset-0 heroSeam"
-                        animate={reduceMotion ? {} : { opacity: [0.35, 0.75, 0.38] }}
-                        transition={{ duration: 5.8, repeat: Infinity, ease: "easeInOut" }}
-                        style={{ clipPath: "polygon(58% 0%, 60% 0%, 50% 100%, 48% 100%)" }}
-                    />
+          <motion.div
+            aria-hidden="true"
+            className="absolute inset-0 heroSeam"
+            animate={allowMotion ? { opacity: [0.35, 0.75, 0.38] } : undefined}
+            transition={allowMotion ? { duration: 5.8, repeat: Infinity, ease: "easeInOut" } : undefined}
+            style={{ clipPath: "polygon(58% 0%, 60% 0%, 50% 100%, 48% 100%)" }}
+          />
+        </div>
 
-                    <div className="absolute inset-0 bg-black/20 [mask-image:radial-gradient(ellipse_at_center,black,transparent_70%)]" />
-                </div>
+        {/* ✅ Big glow blob: hide on mobile (massive GPU cost) */}
+        <motion.div
+          aria-hidden="true"
+          className="absolute -top-[30rem] -left-[30rem] w-[1150px] h-[1150px] rounded-full bg-emerald-500/10 blur-[320px] hidden md:block"
+          animate={allowMotion ? { x: [0, 22, -10, 0], y: [0, 14, -10, 0], scale: [1, 1.06, 1.02, 1] } : undefined}
+          transition={allowMotion ? { duration: 18, repeat: Infinity, ease: "easeInOut" } : undefined}
+        />
 
-                <motion.div
-                    aria-hidden="true"
-                    className="absolute inset-0 pointer-events-none opacity-[0.05]"
-                    animate={reduceMotion ? {} : { backgroundPosition: ["0px 0px", "0px 240px"] }}
-                    transition={{ duration: 16, repeat: Infinity, ease: "linear" }}
-                    style={{
-                        backgroundImage:
-                            "linear-gradient(to right, rgba(255,255,255,.10) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,.10) 1px, transparent 1px)",
-                        backgroundSize: "96px 96px",
-                    }}
-                />
+        {/* ✅ Small + cheap mobile ambient glow */}
+        <div
+          aria-hidden="true"
+          className="absolute -top-24 -left-24 w-[520px] h-[520px] rounded-full bg-emerald-500/8 blur-[140px] md:hidden"
+        />
+      </div>
 
-                <motion.div
-                    aria-hidden="true"
-                    className="absolute -top-[30rem] -left-[30rem] w-[1150px] h-[1150px] rounded-full bg-emerald-500/10 blur-[320px]"
-                    animate={reduceMotion ? {} : { x: [0, 22, -10, 0], y: [0, 14, -10, 0], scale: [1, 1.06, 1.02, 1] }}
-                    transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
-                />
-            </div>
+      {/* ===================== Content ===================== */}
+      <div
+        className="relative z-10 w-full"
+        // ✅ helps on iPhone home-indicator area
+        style={{ paddingBottom: "calc(env(safe-area-inset-bottom) + 24px)" }}
+      >
+        <div className="mx-auto max-w-[1760px] px-6 sm:px-10 lg:px-16 2xl:px-20">
+          {/* ✅ Mobile: less vertical padding so video dominates; Desktop: keep spacious */}
+          <div className="pt-10 pb-10 sm:pt-12 sm:pb-12 md:py-20 lg:py-20 2xl:py-24">
+            <div className="max-w-[920px] space-y-6 md:space-y-8 font-[var(--font-body)]">
+              <motion.h1
+                variants={item}
+                className="font-[var(--font-display)] font-semibold tracking-[-0.05em] leading-[0.95]
+                text-[clamp(40px,4.4vw,76px)] text-white"
+              >
+                <span className="text-white/92 text-bold ">
+                  All-in-one
+                  <br /> breakout system.
+                </span>
+              </motion.h1>
 
-            {/* ===================== Content ===================== */}
-            <div className="relative z-10 w-full">
-                <div className="mx-auto max-w-[1760px] px-6 sm:px-10 lg:px-16 2xl:px-20 pt-17">
-                    {/* ↓ Reduced vertical padding so it fits 2K without scroll */}
-                    <div className="py-14 sm:py-16 md:py-20 lg:py-20 2xl:py-24">
-                        {/* ↓ Reduced spacing between blocks */}
-                        <div className="max-w-[920px] space-y-7 md:space-y-8 font-[var(--font-body)]">
+              <motion.p
+                variants={item}
+                className="heroSubcopy text-white/70 text-[clamp(20px,2vw,32px)] leading-[1.5] max-w-[600px]"
+              >
+                Built for traders who want clean confirmations and decisive entries.
+              </motion.p>
 
-                            <motion.h1
-                                variants={item}
-                                className="font-[var(--font-display)] font-semibold tracking-[-0.05em] leading-[0.95]
-                                text-[clamp(40px,4.4vw,76px)] text-white"
-                                >
-                                <span className="text-white/92 leading-tight">
-                                    B:PRO - One Indicator. Clear Trade decisions.
-                                </span>
-                                </motion.h1>
-
-                                {/* SUBCOPY (TEXT ONLY) */}
-                                <motion.p
-                                variants={item}
-                                className="heroSubcopy text-white/70 text-[clamp(15px,1.08vw,18px)] leading-[1.6] max-w-[860px]"
-                                >
-                                <strong>B:PRO (Breakout PRO)</strong> is an <strong>all-in-one TradingView indicator</strong> that unifies a{" "}
-                                <strong>dynamic 3-EMA trend cloud</strong>, <strong>adaptive multi-factor filters</strong>, and{" "}
-                                <strong>trade-quality scoring</strong>—so you can confirm trend, spot clean breakouts, and avoid low-quality setups
-                                with more confidence.
-                            </motion.p>
-
-                            {/* LABEL PILLS 
-                            <motion.div variants={item} className="flex flex-wrap items-center gap-2">
-                                {labels.map((t) => (
-                                    <motion.div
-                                        key={t}
-                                        whileHover={reduceMotion ? {} : { y: -2 }}
-                                        transition={reduceMotion ? { duration: 0.01 } : { type: "spring", stiffness: 320, damping: 22 }}
-                                        className="heroPill inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-white/10 bg-black/35 backdrop-blur-md"
-                                    >
-                                        <Check className="h-4 w-4 text-emerald-300" />
-                                        <span className="text-[11.5px] sm:text-[12px] text-white/72 tracking-tight">{t}</span>
-                                    </motion.div>
-                                ))}
-                            </motion.div> */}
-
-                            {/* ENGINES (more compact + 1-line sub) */}
-                            <motion.div variants={item} className="pt-1 grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3 max-w-[920px]">
-                                {engines.map((e) => {
-                                    const Icon = e.icon;
-                                    return (
-                                        <motion.div
-                                            key={e.label}
-                                            whileHover={reduceMotion ? {} : { y: -3, scale: 1.008 }}
-                                            whileTap={reduceMotion ? {} : { scale: 0.995 }}
-                                            transition={reduceMotion ? { duration: 0.01 } : { type: "spring", stiffness: 260, damping: 22 }}
-                                            className="engineCard group relative rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-md px-4 py-3 sm:px-5 sm:py-4"
-                                            style={{ boxShadow: "0 0 0 1px rgba(255,255,255,0.02)" }}
-                                        >
-                                            <div className="flex items-start gap-3">
-                                                <span className="engineIcon mt-0.5 inline-flex h-9 w-9 items-center justify-center rounded-xl border border-white/10 bg-white/[0.03]">
-                                                    <Icon className="h-4.5 w-4.5 text-emerald-300" />
-                                                </span>
-
-                                                <div className="min-w-0">
-                                                    <div className="text-[13px] sm:text-[14px] font-semibold text-white/90 leading-tight">{e.label}</div>
-                                                    <div className="engineSub mt-1 text-[12px] text-white/60 leading-snug">{e.sub}</div>
-                                                </div>
-
-                                                <div className="ml-auto text-emerald-200/70 opacity-0 group-hover:opacity-100 transition">↗</div>
-                                            </div>
-                                        </motion.div>
-                                    );
-                                })}
-                            </motion.div>
-
-                            {/* CTAs (slightly smaller) */}
-                            <motion.div variants={item} className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-1.5">
-                                <motion.button
-                                    whileHover={
-                                        reduceMotion
-                                            ? {}
-                                            : { scale: 1.02, backgroundPosition: "right center", boxShadow: "0 0 90px rgba(16,185,129,0.52)" }
-                                    }
-                                    whileTap={{ scale: 0.985 }}
-                                    onClick={() => navigate("/subscribe")}
-                                    className="group relative inline-flex items-center justify-center gap-3 px-8 py-[16px]
+              {/* CTAs */}
+              <motion.div variants={item} className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-1.5">
+                <motion.button
+                  whileHover={
+                    allowMotion
+                      ? { scale: 1.02, backgroundPosition: "right center", boxShadow: "0 0 90px rgba(16,185,129,0.52)" }
+                      : undefined
+                  }
+                  whileTap={{ scale: 0.985 }}
+                  onClick={() => navigate("/subscribe")}
+                  className="group relative inline-flex items-center justify-center gap-3 px-8 py-[16px]
                   text-[14.5px] sm:text-[15.5px] font-semibold rounded-2xl
                   bg-gradient-to-r from-emerald-500 via-emerald-400 to-emerald-300 bg-[length:220%_auto]
                   text-black shadow-[0_0_26px_rgba(16,185,129,0.20)] border border-emerald-300/30 transition-all duration-500 overflow-hidden"
-                                >
-                                    {!reduceMotion && (
-                                        <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                            <span className="absolute -left-1/2 top-0 h-full w-[200%] bg-[linear-gradient(90deg,transparent_0%,rgba(255,255,255,0.18)_45%,rgba(255,255,255,0.02)_55%,transparent_100%)] animate-[shine_1.6s_ease-in-out_infinite]" />
-                                        </span>
-                                    )}
-                                    Start 7-day trial
-                                    <ArrowRight className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1" />
-                                </motion.button>
+                >
+                  {/* ✅ Mobile perf: disable infinite shine animation on mobile */}
+                  {allowMotion && (
+                    <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      <span className="absolute -left-1/2 top-0 h-full w-[200%] bg-[linear-gradient(90deg,transparent_0%,rgba(255,255,255,0.18)_45%,rgba(255,255,255,0.02)_55%,transparent_100%)] animate-[shine_1.6s_ease-in-out_infinite]" />
+                    </span>
+                  )}
+                  Try 7 days for free
+                  <ArrowRight className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1" />
+                </motion.button>
 
-                                <motion.a
-                                    href="#demo"
-                                    whileHover={reduceMotion ? {} : { y: -2 }}
-                                    className="group inline-flex items-center justify-center gap-2 px-8 py-[16px]
+                <motion.button
+                  type="button"
+                  onClick={handleSeeItInAction}
+                  whileHover={allowMotion ? { y: -2 } : undefined}
+                  className="group inline-flex items-center justify-center gap-2 px-8 py-[16px]
                   rounded-2xl border border-white/12 bg-white/[0.02] hover:bg-white/[0.04] transition text-white/92"
-                                >
-                                    <Play className="w-[18px] h-[18px] text-emerald-200" />
-                                    <span className="relative">
-                                        See it in action
-                                        <span className="absolute left-0 -bottom-1 h-px w-0 bg-white/40 group-hover:w-full transition-all duration-300" />
-                                    </span>
-                                </motion.a>
-                            </motion.div>
+                >
+                  <span className="relative">
+                    See it in action
+                    <span className="absolute left-0 -bottom-1 h-px w-0 bg-white/40 group-hover:w-full transition-all duration-300" />
+                  </span>
+                </motion.button>
+              </motion.div>
 
-                            {/* Fine print (TEXT UPDATED ONLY) */}
-                            <motion.div variants={item} className="pt-1 space-y-2">
-                                <p className="text-[12.5px] text-white/45">
-                                    7-day free trial. <span className="text-emerald-300/70">Cancel anytime.</span>
-                                </p>
-                                
-                            </motion.div>
-                        </div>
-                    </div>
-                </div>
+              <motion.div variants={item} className="pt-1 space-y-2">
+                <p className="text-[12.5px] text-white/45">
+                  7-day free trial. <span className="text-emerald-300/70">Cancel anytime.</span>
+                </p>
+              </motion.div>
             </div>
+          </div>
+        </div>
+      </div>
 
-            <style>{`
+      <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap');
 
         .heroScrim{
@@ -258,22 +269,12 @@ export default function HeroSection() {
           letter-spacing: -0.01em;
         }
 
-        .heroPill{
-          transition: border-color .22s ease, background-color .22s ease, transform .22s ease, box-shadow .22s ease;
-          box-shadow: 0 0 0 1px rgba(255,255,255,0.02);
-        }
-        .heroPill:hover{
-          border-color: rgba(16,185,129,0.28);
-          background-color: rgba(255,255,255,0.05);
-          box-shadow:
-            0 0 0 1px rgba(16,185,129,0.10),
-            0 12px 40px rgba(0,0,0,0.40);
-        }
-
         .engineCard{
           transform: translateZ(0);
           transition: border-color .22s ease, box-shadow .22s ease, background-color .22s ease;
+          contain: paint;
         }
+
         .engineCard::before{
           content:"";
           position:absolute;
@@ -285,6 +286,7 @@ export default function HeroSection() {
             linear-gradient(120deg, rgba(16,185,129,0.10), transparent 46%);
           pointer-events:none;
         }
+
         .engineCard:hover{
           border-color: rgba(16,185,129,0.28);
           box-shadow:
@@ -292,10 +294,16 @@ export default function HeroSection() {
             0 18px 60px rgba(0,0,0,0.52);
           background-color: rgba(255,255,255,0.04);
         }
+
         .engineCard:hover::before{ opacity:1; }
 
         .engineIcon{
           box-shadow: 0 0 0 1px rgba(255,255,255,0.03);
+        }
+
+        /* ✅ MOBILE PERF: kill hover-overlay layer (no hover anyway) */
+        @media (max-width: 767px){
+          .engineCard::before{ display:none; }
         }
 
         /* Clamp engine sub to 1 line to keep hero compact */
@@ -305,80 +313,7 @@ export default function HeroSection() {
           -webkit-box-orient: vertical;
           overflow: hidden;
         }
-
-        /* ✅ NEW: B:PRO shiny LETTERS + glow behind (baseline-safe) */
-        .bproMark{
-          position: relative;
-          display: inline-block;
-          vertical-align: baseline;
-          line-height: inherit;
-          padding: 0 0.06em; /* horizontal only */
-          letter-spacing: -0.02em;
-          isolation: isolate;
-        }
-
-        .bproMark::before{
-          content:"";
-          position:absolute;
-          z-index:-1;
-          inset:-0.14em -0.18em -0.12em -0.18em;
-          border-radius: 0.38em;
-          background:
-            radial-gradient(140px 50px at 28% 45%, rgba(16,185,129,0.28), transparent 70%),
-            linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0.02));
-          box-shadow:
-            0 0 0 1px rgba(16,185,129,0.22),
-            0 18px 70px rgba(0,0,0,0.38),
-            0 0 46px rgba(16,185,129,0.12);
-          opacity: 0.95;
-        }
-
-        .bproMarkStatic{
-          color: rgba(255,255,255,0.98);
-          text-shadow:
-            0 0 18px rgba(16,185,129,0.22),
-            0 0 44px rgba(16,185,129,0.14);
-        }
-
-        .bproMarkAnim{
-          background-image:
-            linear-gradient(90deg,
-              #ffffff 0%,
-              #f0fdfa 14%,
-              #d1fae5 30%,
-              #34d399 52%,
-              #a7f3d0 68%,
-              #ffffff 92%
-            ),
-            linear-gradient(90deg,
-              rgba(255,255,255,0) 0%,
-              rgba(255,255,255,0.00) 44%,
-              rgba(255,255,255,0.70) 50%,
-              rgba(255,255,255,0.00) 56%,
-              rgba(255,255,255,0) 100%
-            );
-          background-size: 260% 260%, 180% 180%;
-          background-position: 0% 50%, -140% 50%;
-          -webkit-background-clip: text;
-          background-clip: text;
-          color: transparent;
-          -webkit-text-fill-color: transparent;
-          animation: bproDrift 10.2s ease-in-out infinite, bproShine 6.4s ease-in-out infinite;
-          filter: drop-shadow(0 0 22px rgba(16,185,129,0.18));
-          will-change: background-position;
-        }
-
-        @keyframes bproDrift{
-          0%   { background-position: 0% 50%, -140% 50%; }
-          50%  { background-position: 100% 50%, -140% 50%; }
-          100% { background-position: 0% 50%, -140% 50%; }
-        }
-        @keyframes bproShine{
-          0%   { background-position: 0% 50%, -140% 50%; }
-          62%  { background-position: 0% 50%, -140% 50%; }
-          100% { background-position: 0% 50%, 240% 50%; }
-        }
       `}</style>
-        </motion.section>
-    );
+    </motion.section>
+  );
 }

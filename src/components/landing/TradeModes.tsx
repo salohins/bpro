@@ -1,4 +1,4 @@
-import React, { useMemo, useRef } from "react";
+import React, { useMemo, useRef, useEffect, useState, useCallback } from "react";
 import {
   motion,
   useMotionValue,
@@ -6,22 +6,144 @@ import {
   useTransform,
   useReducedMotion,
 } from "framer-motion";
-import { Zap, Gauge, TrendingUp, Sparkles, ArrowRight, Layers } from "lucide-react";
+import { Zap, Gauge, TrendingUp, Sparkles, ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 
-function ModeCard({ mode, index, reduceMotion }) {
-  const ref = useRef(null);
+/**
+ * ✅ Stable in-view hook with hysteresis to prevent flicker at viewport edges.
+ * - enter: ratio to switch ON
+ * - exit: ratio to switch OFF (lower than enter)
+ */
+function useStableInView<T extends HTMLElement>(
+  ref: React.RefObject<T | null>,
+  {
+    root = null,
+    rootMargin = "0px 0px -18% 0px",
+    enter = 0.28,
+    exit = 0.06,
+  }: {
+    root?: Element | null;
+    rootMargin?: string;
+    enter?: number;
+    exit?: number;
+  } = {}
+) {
+  const [inView, setInView] = useState(false);
+  const inViewRef = useRef(false);
 
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const el = ref.current;
+    if (!el) return;
+
+    let raf = 0;
+
+    const thresholds = Array.from(
+      new Set([0, exit, enter, 0.15, 0.35, 0.55, 0.75, 1].filter((n) => n >= 0 && n <= 1))
+    ).sort((a, b) => a - b);
+
+    const obs = new IntersectionObserver(
+      (entries) => {
+        const e = entries[0];
+        const r = e.intersectionRatio;
+
+        // hysteresis: only toggle when clearly past enter/exit
+        let next = inViewRef.current;
+        if (r >= enter) next = true;
+        else if (r <= exit) next = false;
+
+        if (next !== inViewRef.current) {
+          inViewRef.current = next;
+          cancelAnimationFrame(raf);
+          raf = requestAnimationFrame(() => setInView(next));
+        }
+      },
+      { root, rootMargin, threshold: thresholds }
+    );
+
+    obs.observe(el);
+
+    return () => {
+      cancelAnimationFrame(raf);
+      obs.disconnect();
+    };
+  }, [ref, root, rootMargin, enter, exit]);
+
+  return inView;
+}
+
+function useIsLgUp() {
+  const [isLgUp, setIsLgUp] = useState(() => {
+    if (typeof window === "undefined") return true;
+    return window.matchMedia("(min-width: 1024px)").matches;
+  });
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const m = window.matchMedia("(min-width: 1024px)");
+    const onChange = () => setIsLgUp(m.matches);
+    onChange();
+    m.addEventListener?.("change", onChange);
+    return () => m.removeEventListener?.("change", onChange);
+  }, []);
+
+  return isLgUp;
+}
+
+type Mode = {
+  titleText: string;
+  subtitle: string;
+  timeframe: string;
+  title: string;
+  frame: string;
+  bloom: string;
+  bloom2: string;
+  iconBg: string;
+  iconGlow: string;
+  dot: string;
+  intensityBar: string;
+  intensityWidth: string;
+  icon: React.ReactNode;
+  bullets: string[];
+};
+
+function ModeCard({
+  mode,
+  index,
+  reduceMotion,
+  mobile,
+  active,
+}: {
+  mode: Mode;
+  index: number;
+  reduceMotion: boolean;
+  mobile: boolean;
+  active: boolean;
+}) {
+  const ref = useRef<HTMLElement | null>(null);
+
+  // ✅ Keep your stable in-view for desktop (replay), but on mobile slider we keep cards visible.
+  const inView = useStableInView(ref as any, {
+    root: null,
+    rootMargin: "0px 0px -18% 0px",
+    enter: 0.28,
+    exit: 0.06,
+  });
+
+  const shouldShow = mobile ? true : inView;
+  const barActive = mobile ? active : inView;
+
+  // ✅ Tilt only on desktop (mouse), never on mobile (no pointer jitter + cheaper)
   const mx = useMotionValue(0);
   const my = useMotionValue(0);
 
   const sx = useSpring(mx, { stiffness: 240, damping: 24, mass: 0.7 });
   const sy = useSpring(my, { stiffness: 240, damping: 24, mass: 0.7 });
 
-  const rotateY = useTransform(sx, [-0.5, 0.5], reduceMotion ? [0, 0] : [-7, 7]);
-  const rotateX = useTransform(sy, [-0.5, 0.5], reduceMotion ? [0, 0] : [7, -7]);
+  const rotateY = useTransform(sx, [-0.5, 0.5], reduceMotion || mobile ? [0, 0] : [-7, 7]);
+  const rotateX = useTransform(sy, [-0.5, 0.5], reduceMotion || mobile ? [0, 0] : [7, -7]);
 
-  const onMove = (e) => {
-    if (reduceMotion || !ref.current) return;
+  const onMove = (e: any) => {
+    if (reduceMotion || mobile || !ref.current) return;
     const r = ref.current.getBoundingClientRect();
     mx.set((e.clientX - r.left) / r.width - 0.5);
     my.set((e.clientY - r.top) / r.height - 0.5);
@@ -32,26 +154,40 @@ function ModeCard({ mode, index, reduceMotion }) {
     my.set(0);
   };
 
+  // ✅ NO blur here (you asked)
+  const cardVariants = {
+    hidden: { opacity: 0, y: 28 },
+    show: { opacity: 1, y: 0 },
+  };
+
   return (
     <motion.article
-      ref={ref}
-      initial={{ opacity: 0, y: 28, filter: "blur(10px)" }}
-      whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+      ref={ref as any}
+      initial="hidden"
+      animate={shouldShow ? "show" : "hidden"} // ✅ replay desktop, always visible on mobile slider
+      variants={cardVariants}
       transition={
         reduceMotion
           ? { duration: 0.01 }
-          : { duration: 0.8, delay: index * 0.08, ease: [0.16, 1, 0.3, 1] }
+          : { duration: 0.75, delay: mobile ? 0 : index * 0.08, ease: [0.16, 1, 0.3, 1] }
       }
-      viewport={{ once: false, amount: 0.35 }}
       onMouseMove={onMove}
       onMouseLeave={onLeave}
-      style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
-      whileHover={reduceMotion ? {} : { y: -4 }}
+      style={{
+        rotateX,
+        rotateY,
+        transformStyle: "preserve-3d",
+        backfaceVisibility: "hidden",
+        WebkitBackfaceVisibility: "hidden",
+        transform: "translateZ(0)",
+      }}
+      whileHover={reduceMotion || mobile ? {} : { y: -4 }}
       whileTap={{ scale: 0.985 }}
       className="group relative w-full overflow-hidden rounded-3xl"
     >
       {/* Frame */}
       <div className={`absolute inset-0 rounded-3xl bg-gradient-to-b ${mode.frame}`} />
+      {/* ✅ keep inner plate stable; backdrop blur stays (you want the look) */}
       <div className="absolute inset-[1px] rounded-3xl bg-[#070707]/80 backdrop-blur-xl border border-white/10" />
 
       {/* Blooms */}
@@ -76,16 +212,16 @@ function ModeCard({ mode, index, reduceMotion }) {
       <motion.div
         aria-hidden="true"
         className="absolute top-0 left-[-120%] w-[240%] h-full bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100"
-        animate={reduceMotion ? {} : { x: ["-120%", "120%"] }}
-        transition={reduceMotion ? { duration: 0.01 } : { duration: 7.5, repeat: Infinity, ease: "linear" }}
+        animate={reduceMotion || mobile ? {} : { x: ["-120%", "120%"] }}
+        transition={reduceMotion || mobile ? { duration: 0.01 } : { duration: 7.5, repeat: Infinity, ease: "linear" }}
       />
 
       {/* Content */}
-      <div className="relative z-10 p-7 md:p-8">
+      <div className="relative z-10 p-6 md:p-8">
         <div className="flex items-start justify-between gap-4">
           <div className="flex items-center gap-3">
             <motion.div
-              whileHover={reduceMotion ? {} : { rotate: 8, scale: 1.03 }}
+              whileHover={reduceMotion || mobile ? {} : { rotate: 8, scale: 1.03 }}
               transition={{ type: "spring", stiffness: 300, damping: 18 }}
               className={`relative grid place-items-center w-12 h-12 rounded-2xl border border-white/10 ${mode.iconBg}`}
             >
@@ -94,14 +230,10 @@ function ModeCard({ mode, index, reduceMotion }) {
             </motion.div>
 
             <div className="leading-tight">
-              <h3
-                className={`text-xl md:text-2xl font-semibold text-transparent bg-clip-text bg-gradient-to-r ${mode.title}`}
-              >
+              <h3 className={`text-xl md:text-2xl font-semibold text-transparent bg-clip-text bg-gradient-to-r ${mode.title}`}>
                 {mode.titleText}
               </h3>
-              <p className="text-[11px] text-white/50 tracking-widest uppercase mt-1">
-                {mode.subtitle}
-              </p>
+              <p className="text-[11px] text-white/50 tracking-widest uppercase mt-1">{mode.subtitle}</p>
             </div>
           </div>
 
@@ -111,13 +243,12 @@ function ModeCard({ mode, index, reduceMotion }) {
               <motion.div
                 className={`h-full rounded-full ${mode.intensityBar}`}
                 initial={{ width: 0 }}
-                whileInView={{ width: mode.intensityWidth }}
+                animate={{ width: barActive ? mode.intensityWidth : 0 }} // ✅ desktop: inView, mobile: active slide
                 transition={
                   reduceMotion
                     ? { duration: 0.01 }
-                    : { duration: 0.9, delay: 0.12 + index * 0.06, ease: [0.16, 1, 0.3, 1] }
+                    : { duration: 0.8, delay: mobile ? 0.05 : 0.12 + index * 0.06, ease: [0.16, 1, 0.3, 1] }
                 }
-                viewport={{ once: false, amount: 0.35 }}
               />
             </div>
           </div>
@@ -125,9 +256,8 @@ function ModeCard({ mode, index, reduceMotion }) {
 
         <div className="mt-6 h-px w-full bg-gradient-to-r from-transparent via-white/10 to-transparent" />
 
-        {/* tighter bullets (less “wall of text”) */}
         <ul className="mt-5 space-y-2.5 text-sm text-white/70">
-          {mode.bullets.map((point, i) => (
+          {mode.bullets.map((point: string, i: number) => (
             <li key={i} className="flex items-start gap-3">
               <span className={`mt-2 inline-block w-1.5 h-1.5 rounded-full ${mode.dot}`} />
               <span className="leading-relaxed">{point}</span>
@@ -138,12 +268,6 @@ function ModeCard({ mode, index, reduceMotion }) {
         <div className="mt-6 flex items-center justify-between">
           <span className="text-xs text-white/45">
             Best for <span className="text-white/70">{mode.timeframe}</span>
-          </span>
-
-          <span
-            className={`text-xs font-semibold tracking-widest uppercase text-transparent bg-clip-text bg-gradient-to-r ${mode.title}`}
-          >
-            Explore →
           </span>
         </div>
       </div>
@@ -161,8 +285,27 @@ function ModeCard({ mode, index, reduceMotion }) {
 
 export default function TradeModes() {
   const reduceMotion = useReducedMotion();
+  const isLgUp = useIsLgUp();
+  const mobile = !isLgUp;
 
-  const modes = useMemo(
+  const headerRef = useRef<HTMLDivElement | null>(null);
+  const footerRef = useRef<HTMLDivElement | null>(null);
+
+  const headerInView = useStableInView(headerRef, {
+    root: null,
+    rootMargin: "0px 0px -18% 0px",
+    enter: 0.22,
+    exit: 0.05,
+  });
+
+  const footerInView = useStableInView(footerRef, {
+    root: null,
+    rootMargin: "0px 0px -12% 0px",
+    enter: 0.18,
+    exit: 0.04,
+  });
+
+  const modes = useMemo<Mode[]>(
     () => [
       {
         titleText: "Short Mode",
@@ -216,9 +359,89 @@ export default function TradeModes() {
     []
   );
 
+  const headerVariants = {
+    hidden: { opacity: 0, y: 18 },
+    show: { opacity: 1, y: 0 },
+  };
+
+  const footerVariants = {
+    hidden: { opacity: 0, y: 12 },
+    show: { opacity: 1, y: 0 },
+  };
+
+  /* ---------------- Mobile slider logic ---------------- */
+  const scrollerRef = useRef<HTMLDivElement | null>(null);
+  const slideRefs = useRef<Array<HTMLDivElement | null>>([]);
+  const [activeSlide, setActiveSlide] = useState(0);
+
+  const pickActiveSlide = useCallback(() => {
+    const scroller = scrollerRef.current;
+    if (!scroller) return;
+
+    const center = scroller.scrollLeft + scroller.clientWidth / 2;
+
+    let best = 0;
+    let bestDist = Number.POSITIVE_INFINITY;
+
+    for (let i = 0; i < slideRefs.current.length; i++) {
+      const el = slideRefs.current[i];
+      if (!el) continue;
+
+      const elCenter = el.offsetLeft + el.clientWidth / 2;
+      const dist = Math.abs(elCenter - center);
+
+      if (dist < bestDist) {
+        bestDist = dist;
+        best = i;
+      }
+    }
+
+    setActiveSlide(best);
+  }, []);
+
+  useEffect(() => {
+    if (!mobile) return;
+
+    const scroller = scrollerRef.current;
+    if (!scroller) return;
+
+    let raf = 0;
+    const onScroll = () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(pickActiveSlide);
+    };
+
+    scroller.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+
+    // initial
+    onScroll();
+
+    return () => {
+      cancelAnimationFrame(raf);
+      scroller.removeEventListener("scroll", onScroll as any);
+      window.removeEventListener("resize", onScroll as any);
+    };
+  }, [mobile, pickActiveSlide]);
+
+  const goToSlide = (i: number) => {
+    const scroller = scrollerRef.current;
+    const el = slideRefs.current[i];
+    if (!scroller || !el) return;
+
+    const target = el.offsetLeft - (scroller.clientWidth - el.clientWidth) / 2;
+    scroller.scrollTo({
+      left: target,
+      behavior: reduceMotion ? "auto" : "smooth",
+    });
+  };
+
+  const prev = () => goToSlide(Math.max(0, activeSlide - 1));
+  const next = () => goToSlide(Math.min(modes.length - 1, activeSlide + 1));
+
   return (
     <section className="relative w-full py-24 md:py-28 bg-transparent text-white" id="trade-modes">
-      {/* ✅ background can bleed into adjacent sections (no abrupt end) */}
+      {/* background can bleed into adjacent sections */}
       <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
         <div className="absolute -top-28 -bottom-28 left-0 right-0 bg-[radial-gradient(circle_at_50%_18%,rgba(16,185,129,0.10),transparent_62%)]" />
         <div className="absolute inset-0 opacity-[0.04] [mask-image:radial-gradient(ellipse_at_center,black,transparent_72%)]">
@@ -226,61 +449,162 @@ export default function TradeModes() {
         </div>
       </div>
 
-      {/* ✅ same width system as your other sections */}
       <div className="relative z-10 mx-auto max-w-[1760px] px-6 sm:px-10 lg:px-16 2xl:px-20">
         <motion.div
-  initial={{ opacity: 0, y: 18, filter: "blur(10px)" }}
-  whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-  transition={reduceMotion ? { duration: 0.01 } : { duration: 0.85, ease: [0.16, 1, 0.3, 1] }}
-  viewport={{ once: false, amount: 0.35 }}
-  className="mx-auto max-w-[920px] text-center"
->
-  <div className="flex flex-wrap items-center justify-center gap-2">
-    <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full border border-emerald-400/20 bg-white/[0.03] backdrop-blur-md">
-      <Sparkles className="w-4 h-4 text-emerald-300" />
-      <span className="text-emerald-300 text-xs tracking-[0.24em] font-semibold uppercase">
-        Trade Modes
-      </span>
-    </div>
-  </div>
-
-  <h2 className="mt-5 text-4xl md:text-5xl font-extrabold tracking-tight leading-[1.06]">
-    <span className="bg-gradient-to-r from-white via-emerald-200 to-emerald-500 bg-clip-text text-transparent drop-shadow-[0_0_24px_rgba(16,185,129,0.22)]">
-      Pick the tempo.
-    </span>
-    <br />
-    <span className="text-white/80">B:PRO adapts the logic.</span>
-  </h2>
-
-  <p className="mt-4 text-white/70 text-lg leading-relaxed mx-auto max-w-[600px]">
-    Correlation: after structure + filters + scoring, choose a mode to match your timeframe —
-    without changing your process.
-  </p>
-
-  <div className="mt-4 text-xs text-white/45 flex items-center justify-center gap-2">
-    <ArrowRight className="w-3.5 h-3.5 text-emerald-300/70" />
-    Short = faster signals • Mid = default • Long = stability
-  </div>
-</motion.div>
-
-
-        {/* Cards */}
-        <div className="mt-10 grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
-          {modes.map((mode, i) => (
-            <ModeCard key={mode.titleText} mode={mode} index={i} reduceMotion={reduceMotion} />
-          ))}
+          ref={headerRef}
+          initial="hidden"
+          animate={headerInView ? "show" : "hidden"} // ✅ replay + no flicker
+          variants={headerVariants}
+          transition={reduceMotion ? { duration: 0.01 } : { duration: 0.75, ease: [0.16, 1, 0.3, 1] }}
+          className="mx-auto max-w-[920px] text-center"
+        >
+          <div className="flex flex-wrap items-center justify-center gap-2 w-full">
+          <div
+            className="
+              inline-flex items-center gap-2
+              w-full sm:w-fit
+              justify-center
+              px-5 py-2
+              rounded-full
+              border border-emerald-400/20
+              bg-white/[0.03] backdrop-blur-md
+            "
+          >
+            <Sparkles className="w-4 h-4 text-emerald-300" />
+            <span className="text-emerald-300 text-xs tracking-[0.24em] font-semibold uppercase">
+              Trade Modes
+            </span>
+          </div>
         </div>
 
-        {/* Footer hint row (clean) */}
+
+          <h2 className="mt-5 text-3xl md:text-5xl font-extrabold tracking-tight leading-[1.06]">
+            <span className="bg-gradient-to-r from-white via-emerald-200 to-emerald-500 bg-clip-text text-transparent drop-shadow-[0_0_24px_rgba(16,185,129,0.22)]">
+              Pick the Timeframe.
+            </span>
+            <br />
+            <span className="text-white/80">B:Pro Adapts the Logic.</span>
+          </h2>
+
+          <p className="mt-4 text-white/70 text-md leading-relaxed mx-auto max-w-[600px]">
+            Correlation: after structure + filters + scoring, choose a mode to match your timeframe.
+          </p>
+
+          <div className="mt-4 text-xs text-white/45 flex items-center justify-center gap-2">
+            <ArrowRight className="w-3.5 h-3.5 text-emerald-300/70" />
+            Short = faster signals • Mid = default • Long = stability
+          </div>
+        </motion.div>
+
+        {/* ✅ Cards: slider on mobile, grid on desktop */}
+        {mobile ? (
+          <div className="mt-10 relative">
+            {/* slider */}
+            <div
+              ref={scrollerRef}
+              className={[
+                // edge-to-edge feel while keeping your container system
+                "-mx-6 sm:-mx-10",
+                "px-6 sm:px-10",
+                "flex gap-4 overflow-x-auto",
+                // ✅ SLIDER FIX: keep snap, remove smooth (smooth is for programmatic only)
+                "snap-x snap-mandatory",
+                // ✅ SLIDER FIX: prevent iOS overscroll + reduce crazy momentum influence
+                "overscroll-x-contain touch-pan-x",
+                "pb-4",
+                "[scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
+              ].join(" ")}
+              style={{
+                WebkitOverflowScrolling: "touch",
+                scrollPaddingLeft: "24px",
+                scrollPaddingRight: "24px",
+              }}
+            >
+              {modes.map((mode, i) => (
+                <div
+                  key={mode.titleText}
+                  ref={(el) => (slideRefs.current[i] = el)}
+                  // ✅ SLIDER FIX: stop snap from skipping multiple cards on flick
+                  className="snap-center [scroll-snap-stop:always] shrink-0 w-[86vw] sm:w-[70vw] md:w-[62vw]"
+                >
+                  <ModeCard
+                    mode={mode}
+                    index={i}
+                    reduceMotion={reduceMotion}
+                    mobile
+                    active={i === activeSlide}
+                  />
+                </div>
+              ))}
+            </div>
+
+            {/* nav + dots (mobile only) */}
+            <div className="mt-4 flex items-center justify-between">
+              <button
+                type="button"
+                onClick={prev}
+                disabled={activeSlide === 0}
+                className="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.03] disabled:opacity-40"
+                aria-label="Previous mode"
+              >
+                <ChevronLeft className="h-5 w-5 text-white/70" />
+              </button>
+
+              <div className="flex items-center gap-2">
+                {modes.map((_, i) => (
+                  <button
+                    key={i}
+                    type="button"
+                    onClick={() => goToSlide(i)}
+                    aria-label={`Go to mode ${i + 1}`}
+                    className={[
+                      "h-2.5 rounded-full transition-all",
+                      i === activeSlide ? "w-8 bg-emerald-300/70" : "w-2.5 bg-white/15 hover:bg-white/25",
+                    ].join(" ")}
+                  />
+                ))}
+              </div>
+
+              <button
+                type="button"
+                onClick={next}
+                disabled={activeSlide === modes.length - 1}
+                className="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.03] disabled:opacity-40"
+                aria-label="Next mode"
+              >
+                <ChevronRight className="h-5 w-5 text-white/70" />
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div className="mt-10 grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
+            {modes.map((mode, i) => (
+              <ModeCard
+                key={mode.titleText}
+                mode={mode}
+                index={i}
+                reduceMotion={reduceMotion}
+                mobile={false}
+                active={false}
+              />
+            ))}
+          </div>
+        )}
+
+        {/* Footer hint row */}
         <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={reduceMotion ? { duration: 0.01 } : { duration: 0.7, delay: 0.08, ease: [0.16, 1, 0.3, 1] }}
-          viewport={{ once: false, amount: 0.35 }}
+          ref={footerRef}
+          initial="hidden"
+          animate={footerInView ? "show" : "hidden"} // ✅ replay + no flicker
+          variants={footerVariants}
+          transition={
+            reduceMotion
+              ? { duration: 0.01 }
+              : { duration: 0.65, delay: 0.06, ease: [0.16, 1, 0.3, 1] }
+          }
           className="mt-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-3 text-xs text-white/45"
         >
-          <span>Tip: choose a mode that matches your patience — not your ego.</span>
-          <span className="text-white/55">Mode adjusts filters + exits automatically.</span>
+          <span>Tip: match the mode to your patience and execution will stay clean.</span>
         </motion.div>
       </div>
     </section>

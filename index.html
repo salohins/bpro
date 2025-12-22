@@ -2,10 +2,128 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link rel="icon" type="image/svg+xml" href="/M.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>my-app</title>
+
+    <!-- Primary SEO -->
+    <title>Moostrade | Pro Trading Tools for Discretionary Traders</title>
+    <meta
+      name="description"
+      content="Moostrade builds professional TradingView tools designed for clarity, structure, and execution. Explore B:PRO and other decision-focused trading indicators."
+    />
+    <meta
+      name="keywords"
+      content="Moostrade, B:PRO, Breakout PRO, TradingView indicator, trading tools, discretionary trading, confluence, trend structure, technical analysis"
+    />
+    <meta name="author" content="Moostrade" />
+    <meta name="application-name" content="Moostrade" />
+    <meta name="theme-color" content="#070707" />
+
+    <!-- Indexing -->
+    <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
+    <meta name="googlebot" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
+
+    <!-- Canonical (update if your canonical differs) -->
+    <link rel="canonical" href="https://moostrade.com/" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:site_name" content="Moostrade" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://moostrade.com/" />
+    <meta property="og:title" content="Moostrade | Pro Trading Tools for Discretionary Traders" />
+    <meta
+      property="og:description"
+      content="Professional TradingView tools built for clarity, structure, and execution. Explore B:PRO and decision-focused indicators."
+    />
+    <!-- Recommended: add a real social share image at this path (1200x630) -->
+    <meta property="og:image" content="https://moostrade.com/og-image.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Moostrade Pro Trading Tools" />
+    <meta property="og:locale" content="en_US" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Moostrade | Pro Trading Tools for Discretionary Traders" />
+    <meta
+      name="twitter:description"
+      content="Professional TradingView tools built for clarity, structure, and execution. Explore B:PRO and decision-focused indicators."
+    />
+    <meta name="twitter:image" content="https://moostrade.com/og-image.jpg" />
+    <meta name="twitter:site" content="@moostrade" />
+
+    <!-- PWA / Mobile -->
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="Moostrade" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <!-- Optional: add these files if you want iOS/Android icons -->
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+
+    <!-- Preconnect (speed) -->
+    <link rel="preconnect" href="https://connect.facebook.net" />
+    <link rel="dns-prefetch" href="https://connect.facebook.net" />
+
+    <!-- Meta Pixel Code -->
+    <script>
+      !function(f,b,e,v,n,t,s)
+      {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+      n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+      if(!f._fbq)n=f.fbq;n.push=n;n.loaded=!0;n.version='2.0';
+      n.queue=[];t=b.createElement(e);t.async=!0;
+      t.src=v;s=b.getElementsByTagName(e)[0];
+      s.parentNode.insertBefore(t,s)}(window, document,'script',
+      'https://connect.facebook.net/en_US/fbevents.js');
+      fbq('init', '1231199638875272');
+      fbq('track', 'PageView');
+    </script>
+    <noscript>
+      <img height="1" width="1" style="display:none"
+        src="https://www.facebook.com/tr?id=1231199638875272&ev=PageView&noscript=1"
+      />
+    </noscript>
+    <!-- End Meta Pixel Code -->
+
+    <!-- Structured Data (Organization + Website) -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Organization",
+            "@id": "https://moostrade.com/#organization",
+            "name": "Moostrade",
+            "url": "https://moostrade.com/",
+            "logo": "https://moostrade.com/logo.png",
+            "sameAs": [
+              "https://x.com/moostrade",
+              "https://www.instagram.com/moostraders/",
+              "https://www.facebook.com/moostrade",
+              "https://tiktok.com/@moostrade"
+            ],
+            "contactPoint": [
+              {
+                "@type": "ContactPoint",
+                "contactType": "customer support",
+                "email": "support@moostrade.com",
+                "availableLanguage": ["en"]
+              }
+            ]
+          },
+          {
+            "@type": "WebSite",
+            "@id": "https://moostrade.com/#website",
+            "url": "https://moostrade.com/",
+            "name": "Moostrade",
+            "publisher": { "@id": "https://moostrade.com/#organization" },
+            "inLanguage": "en"
+          }
+        ]
+      }
+    </script>
   </head>
+
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>

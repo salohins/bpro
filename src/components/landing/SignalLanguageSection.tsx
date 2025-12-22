@@ -67,12 +67,12 @@ export default function SignalLanguageSection() {
 
                     <h2 className="text-4xl md:text-5xl xl:text-6xl font-extrabold tracking-tight leading-[1.05]">
                         <span className="bg-gradient-to-r from-white via-emerald-200 to-emerald-500 bg-clip-text text-transparent">
-                            Read signals like a system
+                            Read Signals with Context. <br/>Trade With Clarity.
                         </span>
                     </h2>
 
                     <p className="text-white/70 text-lg leading-relaxed max-w-2xl">
-                        Instead of “more arrows”, you get context cues — squeeze, invalidation, continuation — at reaction zones.
+                        Instead of more arrows, you get context. Squeeze, invalidation, and continuation signals appear only where price actually reacts.
                     </p>
                 </div>
 
@@ -92,24 +92,18 @@ export default function SignalLanguageSection() {
                                 reduceMotion={reduceMotion}
                             />
 
-                            <div className="mt-4 flex flex-wrap gap-2">
-                                <Pill icon={<Plus className="w-4 h-4 text-white/80" />}>Squeeze</Pill>
-                                <Pill icon={<Circle className="w-4 h-4 text-purple-200" />}>Invalidation</Pill>
-                                <Pill icon={<X className="w-4 h-4 text-emerald-200" />}>Continuation</Pill>
-                                <Pill icon={<Target className="w-4 h-4 text-emerald-200/90" />}>Pivot zone</Pill>
-                            </div>
+
                         </div>
 
                         {/* RIGHT */}
                         <div className="lg:col-span-5 w-full lg:pl-6 lg:border-l lg:border-white/10">
-                            <VerticalLegendSlider items={signalLegend} perPage={6} />
+                            <VerticalLegendSlider items={signalLegend} perPage={4} />
                         </div>
                     </div>
                 </motion.div>
 
                 <div className="mt-7 pt-4 border-t border-white/10 flex items-center justify-between text-xs text-white/45">
                     <span>Signal language • visual legend</span>
-                    <span className="text-emerald-300/70">swipe / arrows</span>
                 </div>
             </div>
         </section>
