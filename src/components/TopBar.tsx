@@ -24,6 +24,8 @@ export default function TopBar() {
       { label: "Future Targets", id: "future-targets" },
       { label: "Workflow", id: "workflow" },
       { label: "Profit Cases", id: "profit-cases" },
+      // ✅ NEW: FAQ as a route link (not a section id)
+      { label: "FAQ", id: "__faq_route__" },
     ],
     []
   );
@@ -31,6 +33,12 @@ export default function TopBar() {
   const goToSection = (id: string) => {
     setMenuOpen(false);
     setOpen(false);
+
+    // ✅ FAQ is a route, not a page section
+    if (id === "__faq_route__") {
+      navigate("/faq");
+      return;
+    }
 
     // If already on "/", smooth scroll. Otherwise go to "/#id".
     if (typeof window !== "undefined" && window.location.pathname === "/") {
@@ -61,14 +69,18 @@ export default function TopBar() {
         return;
       }
 
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/create-billing-portal`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: user.email }),
-      });
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/create-billing-portal`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: user.email }),
+        }
+      );
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Failed to create portal session.");
+      if (!res.ok)
+        throw new Error(data.error || "Failed to create portal session.");
       window.location.href = data.url;
     } catch (err: any) {
       console.error("Billing portal error:", err);
@@ -85,7 +97,10 @@ export default function TopBar() {
     window.location.href = "/";
   };
 
-  const initial = useMemo(() => (user?.email ? user.email[0].toUpperCase() : "M"), [user?.email]);
+  const initial = useMemo(
+    () => (user?.email ? user.email[0].toUpperCase() : "M"),
+    [user?.email]
+  );
 
   return (
     <motion.header
@@ -125,7 +140,9 @@ export default function TopBar() {
         >
           <motion.span
             className="text-[22px] sm:text-[24px] font-[var(--font-display)] font-semibold tracking-tight bg-gradient-to-r from-white via-emerald-100 to-emerald-400 bg-clip-text text-transparent"
-            animate={{ backgroundPosition: ["0% center", "100% center", "0% center"] }}
+            animate={{
+              backgroundPosition: ["0% center", "100% center", "0% center"],
+            }}
             transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
             style={{ backgroundSize: "200% 100%" }}
           >
@@ -134,19 +151,18 @@ export default function TopBar() {
         </motion.button>
 
         {/* CENTER MENU (desktop) — truly centered in viewport */}
-<nav className="hidden md:flex absolute left-1/2 -translate-x-1/2 items-center justify-center gap-2">
-  {sectionLinks.map((l) => (
-    <button
-      key={l.id}
-      type="button"
-      onClick={() => goToSection(l.id)}
-      className="px-3 py-2 rounded-xl text-[13px] font-medium text-white/70 hover:text-white transition hover:bg-white/[0.04] border border-transparent hover:border-white/10"
-    >
-      {l.label}
-    </button>
-  ))}
-</nav>
-
+        <nav className="hidden md:flex absolute left-1/2 -translate-x-1/2 items-center justify-center gap-2">
+          {sectionLinks.map((l) => (
+            <button
+              key={l.id}
+              type="button"
+              onClick={() => goToSection(l.id)}
+              className="px-3 py-2 rounded-xl text-[13px] font-medium text-white/70 hover:text-white transition hover:bg-white/[0.04] border border-transparent hover:border-white/10"
+            >
+              {l.label}
+            </button>
+          ))}
+        </nav>
 
         {/* RIGHT AREA */}
         <div className="ml-auto flex items-center gap-3">
@@ -163,12 +179,16 @@ export default function TopBar() {
               </motion.button>
 
               <motion.button
-                whileHover={{ scale: 1.04, boxShadow: "0 0 20px rgba(16,185,129,0.3)" }}
+                whileHover={{
+                  scale: 1.04,
+                  boxShadow: "0 0 20px rgba(16,185,129,0.3)",
+                }}
                 whileTap={{ scale: 0.96 }}
                 onClick={() => navigate("/subscribe")}
                 className="relative inline-flex items-center gap-3 px-5 py-2.5 rounded-2xl text-sm font-semibold text-black shadow-[0_0_20px_rgba(16,185,129,0.2)]"
                 style={{
-                  background: "linear-gradient(90deg, rgba(16,185,129,1) 0%, rgba(110,231,183,1) 100%)",
+                  background:
+                    "linear-gradient(90deg, rgba(16,185,129,1) 0%, rgba(110,231,183,1) 100%)",
                 }}
               >
                 Try Breakout PRO
@@ -195,7 +215,12 @@ export default function TopBar() {
                   </span>
                 </div>
 
-                <ChevronRight className={["w-4 h-4 transition-transform duration-200", open ? "rotate-90" : ""].join(" ")} />
+                <ChevronRight
+                  className={[
+                    "w-4 h-4 transition-transform duration-200",
+                    open ? "rotate-90" : "",
+                  ].join(" ")}
+                />
               </button>
 
               <AnimatePresence>
@@ -266,7 +291,11 @@ export default function TopBar() {
                 transition={{ duration: 0.3, ease: [0.45, 0, 0.2, 1] }}
                 className="relative z-10 text-white/90"
               >
-                {menuOpen ? <X className="w-5 h-5 text-emerald-300" /> : <Menu className="w-5 h-5 text-white/90" />}
+                {menuOpen ? (
+                  <X className="w-5 h-5 text-emerald-300" />
+                ) : (
+                  <Menu className="w-5 h-5 text-white/90" />
+                )}
               </motion.div>
             </AnimatePresence>
           </motion.button>
@@ -311,6 +340,18 @@ export default function TopBar() {
                   >
                     Sign In
                   </button>
+
+                  {/* ✅ NEW: FAQ quick link on mobile */}
+                  <button
+                    onClick={() => {
+                      navigate("/faq");
+                      setMenuOpen(false);
+                    }}
+                    className="w-full py-2.5 rounded-xl text-[15px] font-medium text-white/90 bg-white/[0.05] hover:bg-white/[0.08] border border-white/10"
+                  >
+                    FAQ
+                  </button>
+
                   <button
                     onClick={() => {
                       navigate("/subscribe");
@@ -318,7 +359,8 @@ export default function TopBar() {
                     }}
                     className="w-full py-2.5 rounded-xl text-[15px] font-semibold text-black"
                     style={{
-                      background: "linear-gradient(90deg, rgba(16,185,129,1) 0%, rgba(110,231,183,1) 100%)",
+                      background:
+                        "linear-gradient(90deg, rgba(16,185,129,1) 0%, rgba(110,231,183,1) 100%)",
                     }}
                   >
                     Try Moostrade PRO
@@ -326,6 +368,18 @@ export default function TopBar() {
                 </div>
               ) : (
                 <div className="space-y-2">
+                  {/* ✅ NEW: FAQ quick link when logged in too */}
+                  <button
+                    onClick={() => {
+                      navigate("/faq");
+                      setMenuOpen(false);
+                    }}
+                    className="w-full flex items-center justify-between gap-3 px-4 py-3 rounded-xl text-sm border border-white/10 bg-white/[0.04] text-white/85"
+                  >
+                    <span className="flex items-center gap-3">FAQ</span>
+                    <ChevronRight className="w-4 h-4 text-white/50" />
+                  </button>
+
                   <button
                     onClick={() => {
                       navigate("/profile");

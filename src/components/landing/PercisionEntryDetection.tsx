@@ -7,6 +7,7 @@ import {
     Target,
     Shield,
     Layers,
+    ChevronDown,
 } from "lucide-react";
 
 import breakoutLong from "../../assets/breakout-long.png";
@@ -16,34 +17,62 @@ const easePremium = [0.16, 1, 0.3, 1];
 
 export default function PrecisionEntryDetection() {
     const reduceMotion = useReducedMotion();
-    const [activeArchetype, setActiveArchetype] = useState("long");
+    const [activeArchetype, setActiveArchetype] = useState<"long" | "short">(
+        "long"
+    );
+
+    // ✅ dropdown open state (default open = active)
+    const [openArchetype, setOpenArchetype] = useState<"long" | "short" | null>(
+        "long"
+    );
 
     const enter = (dir = 1, d = 0) => ({
         initial: { opacity: 0, y: 16 * dir, filter: "blur(10px)" },
         whileInView: { opacity: 1, y: 0, filter: "blur(0px)" },
-        transition: reduceMotion ? { duration: 0.01 } : { duration: 0.85, delay: d, ease: easePremium },
+        transition: reduceMotion
+            ? { duration: 0.01 }
+            : { duration: 0.85, delay: d, ease: easePremium },
         viewport: { once: false, amount: 0.35 },
     });
 
-    const longItems = useMemo(() => ["Bull bias holds", "Reaction confirms", "Trigger prints"], []);
-    const shortItems = useMemo(() => ["Bear bias holds", "Support breaks", "Expansion follows"], []);
+    const longItems = useMemo(
+        () => ["Bull bias holds", "Reaction confirms", "Trigger prints"],
+        []
+    );
+    const shortItems = useMemo(
+        () => ["Bear bias holds", "Support breaks", "Expansion follows"],
+        []
+    );
 
     const activeImg = activeArchetype === "long" ? breakoutLong : breakoutShort;
 
     const infoText =
         activeArchetype === "long" ? (
             <>
-                Enter after <span className="font-semibold text-white/85">reaction at support</span>, aligned with{" "}
-                <span className="font-semibold text-white/85">bullish pressure</span>. Stop below{" "}
+                Enter after{" "}
+                <span className="font-semibold text-white/85">reaction at support</span>,
+                aligned with{" "}
+                <span className="font-semibold text-white/85">bullish pressure</span>.
+                Stop below{" "}
                 <span className="font-semibold text-white/85">last swing low</span>.
             </>
         ) : (
             <>
-                Enter after <span className="font-semibold text-white/85">breakdown at resistance</span>, aligned with{" "}
-                <span className="font-semibold text-white/85">bearish pressure</span>. Stop above{" "}
+                Enter after{" "}
+                <span className="font-semibold text-white/85">
+                    breakdown at resistance
+                </span>
+                , aligned with{" "}
+                <span className="font-semibold text-white/85">bearish pressure</span>.
+                Stop above{" "}
                 <span className="font-semibold text-white/85">last swing high</span>.
             </>
         );
+
+    const onPickArchetype = (next: "long" | "short") => {
+        setActiveArchetype(next);
+        setOpenArchetype((prev) => (prev === next ? null : next)); // toggle dropdown for same, open for other
+    };
 
     return (
         <section className="relative w-full py-20 md:py-24 bg-transparent text-white">
@@ -58,12 +87,16 @@ export default function PrecisionEntryDetection() {
             <div className="relative z-10 mx-auto max-w-[1760px] px-6 sm:px-10 lg:px-16 2xl:px-20">
                 {/* Header */}
                 <div className="space-y-3 mb-10">
-                    <div className="flex flex-wrap items-center gap-2">
-                        <Kicker>Engine 3 • Signal &amp; Execution</Kicker>
-                        <span className="px-3 py-1.5 rounded-full border border-white/10 bg-white/[0.03] text-[11px] tracking-[0.18em] uppercase text-white/55">
+                    <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:gap-2">
+                        <div className="w-full sm:w-auto">
+                            <Kicker className="w-full sm:w-fit">Engine 3 • Signal &amp; Execution</Kicker>
+                        </div>
+
+                        <span className="w-full sm:w-auto px-3 py-1.5 rounded-full border border-white/10 bg-white/[0.03] text-[11px] tracking-[0.18em] uppercase text-white/55 text-center sm:text-left">
                             Step 3 • Execution
                         </span>
                     </div>
+
 
                     <h2 className="text-4xl md:text-5xl xl:text-6xl font-extrabold tracking-tight leading-[1.05]">
                         <span className="bg-gradient-to-r from-white via-emerald-200 to-emerald-500 bg-clip-text text-transparent">
@@ -72,111 +105,147 @@ export default function PrecisionEntryDetection() {
                     </h2>
 
                     <p className="text-white/70 text-lg leading-relaxed max-w-2xl">
-                        Structure gives direction and filters create clarity. This is where you execute only on clean reactions.
+                        Structure gives direction and filters create clarity. This is where
+                        you execute only on clean reactions.
                     </p>
                 </div>
 
                 {/* Body */}
                 <motion.div {...enter(1, 0.05)}>
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-7 lg:gap-10 items-start">
-                        {/* LEFT — cards */}
+                        {/* LEFT — dropdown cards */}
                         <div className="lg:col-span-5 w-full space-y-4 order-2 lg:order-1">
                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-4">
-                                <FeatureCard
+                                <FeatureDropdownCard
+                                    archetype="long"
                                     active={activeArchetype === "long"}
-                                    onClick={() => setActiveArchetype("long")}
-                                    reduceMotion={reduceMotion}
-                                    delay={0.05}
+                                    open={openArchetype === "long"}
+                                    onPress={() => onPickArchetype("long")}
                                     tone="emerald"
                                     icon={<ArrowUpRight className="w-5 h-5 text-emerald-300" />}
                                     title="Long archetype"
+                                    subtitle="Reaction at support → pressure confirms → trigger prints."
                                     items={longItems}
                                 />
-                                <FeatureCard
+                                <FeatureDropdownCard
+                                    archetype="short"
                                     active={activeArchetype === "short"}
-                                    onClick={() => setActiveArchetype("short")}
-                                    reduceMotion={reduceMotion}
-                                    delay={0.1}
+                                    open={openArchetype === "short"}
+                                    onPress={() => onPickArchetype("short")}
                                     tone="red"
                                     icon={<ArrowDownRight className="w-5 h-5 text-red-300" />}
                                     title="Short archetype"
+                                    subtitle="Breakdown at resistance → expansion follows → execute clean."
                                     items={shortItems}
                                 />
                             </div>
 
-                            <Glass className="rounded-2xl p-5">
-                                <div className="flex items-start gap-3">
-                                    <IconBox tone="emerald">
-                                        <Layers className="w-4 h-4 text-emerald-300" />
-                                    </IconBox>
-                                    <div className="min-w-0">
-                                        <div className="text-sm font-semibold text-white/90">Correlation</div>
-                                        <div className="mt-1 text-sm text-white/65 leading-relaxed">
-                                            <span className="text-white/80 font-semibold">Structure</span> defines direction →{" "}
-                                            <span className="text-white/80 font-semibold">Filters</span> allow trading →{" "}
-                                            <span className="text-white/80 font-semibold">Execution</span> triggers on reaction.
-                                        </div>
-                                    </div>
-                                </div>
-                            </Glass>
-
                             <div className="text-xs text-white/45">
-                                Pro Tip: As soon as price touches the fast line, the trade is triggered. Risk is defined by the mid-trend line, with the stop placed slightly below it. The same logic applies in reverse for short setups, with entries, risk, and invalidation mirrored to the downside.
+                                Pro Tip: As soon as price touches the fast line, the trade is
+                                triggered. Risk is defined by the mid-trend line, with the stop
+                                placed slightly below it. The same logic applies in reverse for
+                                short setups, with entries, risk, and invalidation mirrored to
+                                the downside.
                             </div>
                         </div>
 
-                        {/* RIGHT — dynamic image */}
+                        {/* RIGHT — dynamic image (NO scaling on screenshot, only smooth resize below) */}
                         <div className="lg:col-span-7 w-full order-1 lg:order-2 relative">
-                            <AnimatePresence mode="wait">
-                                <motion.div
-                                    key={activeArchetype}
-                                    initial={{ opacity: 0, y: 10, filter: "blur(6px)" }}
-                                    animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                                    exit={{ opacity: 0, y: -10, filter: "blur(6px)" }}
-                                    transition={{ duration: 0.5, ease: easePremium }}
+                            {/* Screenshot NEVER inside a layout-animated parent */}
+                            <div>
+                                <MediaFrame
+                                    src={activeImg}
+                                    alt={`${activeArchetype} breakout example`}
+                                    heightClass="h-[300px] sm:h-[360px] lg:h-[460px]"
+                                    fit="cover"
+                                    reduceMotion={reduceMotion}
                                 >
-                                    <MediaFrame
-                                        src={activeImg}
-                                        alt={`${activeArchetype} breakout example`}
-                                        heightClass="h-[300px] sm:h-[360px] lg:h-[460px]"
-                                        fit="cover"
-                                        reduceMotion={reduceMotion}
-                                    >
-                                        <div className="absolute left-5 top-5 flex flex-wrap gap-2">
-                                            {activeArchetype === "long" ? (
-                                                <>
-                                                    <TagChip tone="emerald">Bull reaction</TagChip>
-                                                    <TagChip>FAST line</TagChip>
-                                                </>
-                                            ) : (
-                                                <>
-                                                    <TagChip tone="red">Bear reaction</TagChip>
-                                                    <TagChip>Resistance zone</TagChip>
-                                                </>
-                                            )}
-                                        </div>
+                                    <div className="absolute left-5 top-5 flex flex-wrap gap-2">
+                                        {activeArchetype === "long" ? (
+                                            <>
+                                                <TagChip tone="emerald">Bull reaction</TagChip>
+                                                <TagChip>FAST line</TagChip>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <TagChip tone="red">Bear reaction</TagChip>
+                                                <TagChip>Resistance zone</TagChip>
+                                            </>
+                                        )}
+                                    </div>
 
-                                        <div className="absolute left-5 right-5 bottom-5">
-                                            <Glass className="rounded-2xl bg-black/35 px-4 py-3">
-                                                <div className="text-sm text-white/70 leading-relaxed">{infoText}</div>
-                                            </Glass>
-                                        </div>
-                                    </MediaFrame>
-                                </motion.div>
-                            </AnimatePresence>
-
-                            <div className="mt-4 flex flex-wrap gap-2">
-                                <Pill icon={<Target className="w-4 h-4 text-emerald-200/90" />}>Bias aligned</Pill>
-                                <Pill icon={<Sparkles className="w-4 h-4 text-white/80" />}>Pressure context</Pill>
-                                <Pill icon={<Shield className="w-4 h-4 text-emerald-200/90" />}>Fast-line entry / mid-trend stop</Pill>
+                                    {/* Overlay info only on sm+ */}
+                                    <div className="hidden sm:block absolute left-5 right-5 bottom-5">
+                                        <Glass className="rounded-2xl bg-black/35 px-4 py-3">
+                                            <div className="text-sm text-white/70 leading-relaxed">{infoText}</div>
+                                        </Glass>
+                                    </div>
+                                </MediaFrame>
                             </div>
+
+                            {/* Mobile info OUTSIDE screenshot: smooth height only (no scaling of screenshot) */}
+                            <motion.div
+                                layout="size"
+                                initial={false}
+                                className="sm:hidden mt-3"
+                                transition={
+                                    reduceMotion
+                                        ? { duration: 0.01 }
+                                        : { layout: { duration: 0.35, ease: easePremium } }
+                                }
+                            >
+                                <Glass className="rounded-2xl px-4 py-3">
+                                    <div className="text-sm text-white/70 leading-relaxed">{infoText}</div>
+                                </Glass>
+                            </motion.div>
+
+                            {/* Pills: animate position only so it slides smoothly down/up with the info height */}
+                            <motion.div
+                                layout="position"
+                                initial={false}
+                                className="relative mt-4"
+                                transition={
+                                    reduceMotion
+                                        ? { duration: 0.01 }
+                                        : { layout: { duration: 0.35, ease: easePremium } }
+                                }
+                            >
+                                <div
+                                    aria-hidden
+                                    className="pointer-events-none absolute left-0 top-0 z-10 h-full w-8 bg-gradient-to-r from-[#0b0b0b] to-transparent md:hidden"
+                                />
+                                <div
+                                    aria-hidden
+                                    className="pointer-events-none absolute right-0 top-0 z-10 h-full w-10 bg-gradient-to-l from-[#0b0b0b] to-transparent md:hidden"
+                                />
+
+                                <div
+                                    className={[
+                                        "flex gap-2",
+                                        "md:flex-wrap",
+                                        "overflow-x-auto md:overflow-visible",
+                                        "whitespace-nowrap md:whitespace-normal",
+                                        "[-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
+                                        "pr-10 pl-2 md:pr-0 md:pl-0",
+                                        "py-1",
+                                    ].join(" ")}
+                                >
+                                    <Pill icon={<Target className="w-4 h-4 text-emerald-200/90" />}>Bias aligned</Pill>
+                                    <Pill icon={<Sparkles className="w-4 h-4 text-white/80" />}>Pressure context</Pill>
+                                    <Pill icon={<Shield className="w-4 h-4 text-emerald-200/90" />}>Fast-line entry / mid-trend stop</Pill>
+                                </div>
+                            </motion.div>
                         </div>
+
+
                     </div>
                 </motion.div>
 
                 <div className="mt-7 pt-4 border-t border-white/10 flex items-center justify-between text-xs text-white/45">
                     <span>Execution workflow • visual guide</span>
-                    <span className="text-emerald-300/70 capitalize">{activeArchetype} setup</span>
+                    <span className="text-emerald-300/70 capitalize">
+                        {activeArchetype} setup
+                    </span>
                 </div>
             </div>
         </section>
@@ -185,7 +254,13 @@ export default function PrecisionEntryDetection() {
 
 /* ===================== Atoms ===================== */
 
-function Glass({ className = "", children }) {
+function Glass({
+    className = "",
+    children,
+}: {
+    className?: string;
+    children: React.ReactNode;
+}) {
     return (
         <div
             className={[
@@ -199,13 +274,36 @@ function Glass({ className = "", children }) {
     );
 }
 
-function MediaFrame({ src, alt, heightClass = "h-[320px] sm:h-[380px] lg:h-[520px]", fit = "cover", loading = "lazy", reduceMotion = false, children }) {
-    const imgClass = fit === "contain" ? "object-contain p-3" : "object-cover object-center";
+function MediaFrame({
+    src,
+    alt,
+    heightClass = "h-[320px] sm:h-[380px] lg:h-[520px]",
+    fit = "cover",
+    loading = "lazy",
+    reduceMotion = false,
+    children,
+}: {
+    src: string;
+    alt: string;
+    heightClass?: string;
+    fit?: "cover" | "contain";
+    loading?: "lazy" | "eager";
+    reduceMotion?: boolean;
+    children?: React.ReactNode;
+}) {
+    const imgClass =
+        fit === "contain" ? "object-contain p-3" : "object-cover object-center";
 
     return (
         <Glass className="overflow-hidden">
             <div className={`relative ${heightClass} bg-black/20`}>
-                <img src={src} alt={alt} className={`absolute inset-0 w-full h-full ${imgClass}`} loading={loading} draggable={false} />
+                <img
+                    src={src}
+                    alt={alt}
+                    className={`absolute inset-0 w-full h-full ${imgClass}`}
+                    loading={loading}
+                    draggable={false}
+                />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/15 to-black/10" />
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_15%,rgba(16,185,129,0.18),transparent_55%)]" />
                 {children}
@@ -222,15 +320,35 @@ function MediaFrame({ src, alt, heightClass = "h-[320px] sm:h-[380px] lg:h-[520p
     );
 }
 
-function Kicker({ children }) {
+function Kicker({
+    children,
+    className = "",
+}: {
+    children: React.ReactNode;
+    className?: string;
+}) {
     return (
-        <div className="inline-flex items-center justify-center px-4 py-2 rounded-full border border-emerald-400/20 bg-white/[0.03] backdrop-blur-md w-fit">
-            <span className="text-emerald-300 text-xs tracking-[0.24em] font-semibold uppercase">{children}</span>
+        <div
+            className={[
+                "inline-flex items-center justify-center px-4 py-2 rounded-full border border-emerald-400/20 bg-white/[0.03] backdrop-blur-md w-fit",
+                className,
+            ].join(" ")}
+        >
+            <span className="text-emerald-300 text-xs tracking-[0.24em] font-semibold uppercase">
+                {children}
+            </span>
         </div>
     );
 }
 
-function TagChip({ children, tone = "neutral" }) {
+
+function TagChip({
+    children,
+    tone = "neutral",
+}: {
+    children: React.ReactNode;
+    tone?: "neutral" | "emerald" | "red";
+}) {
     const tones =
         tone === "emerald"
             ? "text-emerald-100 border-emerald-400/20 bg-emerald-400/10"
@@ -238,13 +356,21 @@ function TagChip({ children, tone = "neutral" }) {
                 ? "text-red-200 border-red-400/20 bg-red-400/10"
                 : "text-white/85 border-white/10 bg-black/30";
     return (
-        <span className={`text-[11px] tracking-[0.18em] uppercase px-3 py-1.5 rounded-full border backdrop-blur-md ${tones}`}>
+        <span
+            className={`text-[11px] tracking-[0.18em] uppercase px-3 py-1.5 rounded-full border backdrop-blur-md ${tones}`}
+        >
             {children}
         </span>
     );
 }
 
-function Pill({ icon, children }) {
+function Pill({
+    icon,
+    children,
+}: {
+    icon: React.ReactNode;
+    children: React.ReactNode;
+}) {
     return (
         <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5 text-xs text-white/70">
             {icon}
@@ -253,55 +379,148 @@ function Pill({ icon, children }) {
     );
 }
 
-function IconBox({ children, tone = "neutral" }) {
-    const toneMap = {
+function IconBox({
+    children,
+    tone = "neutral",
+}: {
+    children: React.ReactNode;
+    tone?: "neutral" | "emerald" | "red";
+}) {
+    const toneMap: Record<string, string> = {
         neutral: "bg-white/[0.03] border-white/10",
         emerald: "bg-emerald-400/10 border-emerald-400/20",
         red: "bg-red-500/10 border-red-400/20",
     };
     return (
-        <span className={`inline-flex h-9 w-9 items-center justify-center rounded-xl border ${toneMap[tone] || toneMap.neutral}`}>
+        <span
+            className={`inline-flex h-9 w-9 items-center justify-center rounded-xl border ${toneMap[tone] || toneMap.neutral
+                }`}
+        >
             {children}
         </span>
     );
 }
 
-function FeatureCard({ active, onClick, reduceMotion, delay = 0, tone = "emerald", icon, title, items }) {
+/* ===================== Dropdown Card ===================== */
+
+function FeatureDropdownCard({
+    archetype,
+    active,
+    open,
+    onPress,
+    tone = "emerald",
+    icon,
+    title,
+    subtitle,
+    items,
+}: {
+    archetype: "long" | "short";
+    active: boolean;
+    open: boolean;
+    onPress: () => void;
+    tone?: "emerald" | "red";
+    icon: React.ReactNode;
+    title: string;
+    subtitle: string;
+    items: string[];
+}) {
     const checkColor = tone === "red" ? "text-red-300/80" : "text-emerald-300/80";
     const iconTone = tone === "red" ? "red" : "emerald";
 
     const borderActive =
         tone === "red"
             ? active
-                ? "border-red-400/60 shadow-[0_0_15px_rgba(239,68,68,0.4)]"
+                ? "border-red-400/60 shadow-[0_0_15px_rgba(239,68,68,0.28)]"
                 : "border-white/10"
             : active
-                ? "border-emerald-400/60 shadow-[0_0_15px_rgba(16,185,129,0.4)]"
+                ? "border-emerald-400/60 shadow-[0_0_15px_rgba(16,185,129,0.28)]"
                 : "border-white/10";
 
     const bgActive = active ? "bg-white/[0.08]" : "bg-white/[0.03]";
 
-    return (
-        <motion.div
-            onClick={onClick}
-            initial={{ opacity: 0, y: 14, filter: "blur(10px)" }}
-            whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-            viewport={{ once: false, amount: 0.35 }}
-            transition={reduceMotion ? { duration: 0.01 } : { duration: 0.7, delay, ease: easePremium }}
-            className={`h-full rounded-2xl border ${borderActive} ${bgActive} backdrop-blur-md p-6 transition-all duration-300 cursor-pointer`}
-        >
-            <div className="flex items-center gap-3 mb-3">
-                <IconBox tone={iconTone}>{icon}</IconBox>
-                <h3 className="text-lg font-semibold text-white/90">{title}</h3>
-            </div>
+    const chevronTone =
+        tone === "red" ? "text-red-200/70" : "text-emerald-200/70";
 
-            <ul className="text-white/70 space-y-2 text-sm leading-relaxed">
-                {items.map((t) => (
-                    <li key={t} className="flex gap-2">
-                        <span className={checkColor}>✓</span> {t}
-                    </li>
-                ))}
-            </ul>
-        </motion.div>
+    return (
+        <div
+            className={[
+                "h-full w-full rounded-2xl border backdrop-blur-md overflow-hidden",
+                "transition-[transform,background-color,border-color,box-shadow] duration-200 ease-out",
+                "hover:-translate-y-[1px] active:translate-y-0",
+                borderActive,
+                bgActive,
+            ].join(" ")}
+        >
+            <button
+                type="button"
+                onClick={onPress}
+                aria-expanded={open}
+                aria-controls={`archetype-panel-${archetype}`}
+                className="w-full text-left px-6 pt-5 pb-4"
+            >
+                <div className="flex items-start justify-between gap-4">
+                    <div className="min-w-0">
+                        <div className="flex items-center gap-3">
+                            <IconBox tone={iconTone}>{icon}</IconBox>
+                            <h3 className="text-lg font-semibold text-white/90">{title}</h3>
+                        </div>
+                        <p className="mt-2 text-sm text-white/60 leading-relaxed">
+                            {subtitle}
+                        </p>
+                    </div>
+
+                    <span
+                        className={[
+                            "shrink-0 mt-1 inline-flex items-center justify-center rounded-xl border border-white/10 bg-white/[0.03] p-2",
+                            "transition-transform duration-200 ease-out",
+                            open ? "rotate-180" : "rotate-0",
+                        ].join(" ")}
+                    >
+                        <ChevronDown className={`w-4 h-4 ${chevronTone}`} />
+                    </span>
+                </div>
+            </button>
+
+            {/* Dropdown content (fast collapse without height:auto measurement) */}
+            <div
+                id={`archetype-panel-${archetype}`}
+                className={[
+                    "grid transition-[grid-template-rows,opacity] duration-200 ease-out",
+                    open ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0",
+                ].join(" ")}
+            >
+                <div className="overflow-hidden">
+                    <div className="px-6 pb-5">
+                        <div className="h-px w-full bg-white/10 mb-4" />
+
+                        <div className="text-xs tracking-[0.18em] uppercase text-white/45 mb-3">
+                            Details
+                        </div>
+
+                        <ul className="text-white/70 space-y-2 text-sm leading-relaxed">
+                            {items.map((t) => (
+                                <li key={t} className="flex gap-2">
+                                    <span className={checkColor}>✓</span> {t}
+                                </li>
+                            ))}
+                        </ul>
+
+                        <div className="mt-4 text-xs text-white/45">
+                            {tone === "red" ? (
+                                <>
+                                    Use when the structure loses support and momentum flips bearish.
+                                    Wait for clean breakdown + confirmation before execution.
+                                </>
+                            ) : (
+                                <>
+                                    Use when structure holds and pressure stays bullish. Let the reaction
+                                    confirm first — then execute only when the trigger prints.
+                                </>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     );
 }

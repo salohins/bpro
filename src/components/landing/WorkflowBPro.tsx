@@ -28,7 +28,7 @@ type Step = {
   title: string;
   desc: string;
   bullets: string[];
-  img: string; // ✅
+  img: string;
 };
 
 export default function WorkflowBPro() {
@@ -77,7 +77,11 @@ export default function WorkflowBPro() {
         icon: SlidersHorizontal,
         title: "4) Let filters grant permission",
         desc: "Signals only trigger when everything lines up. Volume + momentum + volatility agree.",
-        bullets: ["Volume + ADX strength", "MACD / RSI agreement", "Squeeze context (BB + KC)"],
+        bullets: [
+          "Volume + ADX strength",
+          "MACD / RSI agreement",
+          "Squeeze context (BB + KC)",
+        ],
         img: wf4,
       },
       {
@@ -95,7 +99,11 @@ export default function WorkflowBPro() {
         icon: ShieldCheck,
         title: "6) Manage and grade the trade",
         desc: "B:Pro tracks state and prints exit reasons. S/Q scoring helps you trade selectively.",
-        bullets: ["ATR stop + invalidation", "Exit reasons: flip / momentum / time", "Safety + Quality scoring"],
+        bullets: [
+          "ATR stop + invalidation",
+          "Exit reasons: flip / momentum / time",
+          "Safety + Quality scoring",
+        ],
         img: wf6,
       },
     ],
@@ -105,7 +113,9 @@ export default function WorkflowBPro() {
   const enter = (y = 14, d = 0) => ({
     initial: { opacity: 0, y: reduceMotion ? 0 : y },
     whileInView: { opacity: 1, y: 0 },
-    transition: reduceMotion ? { duration: 0.01 } : { duration: 0.75, delay: d, ease: easePremium },
+    transition: reduceMotion
+      ? { duration: 0.01 }
+      : { duration: 0.75, delay: d, ease: easePremium },
     viewport: { once: false, amount: 0.35 },
   });
 
@@ -124,10 +134,14 @@ export default function WorkflowBPro() {
   const stripStepPrefix = (t: string) => t.replace(/^\d+\)\s*/, "");
 
   // swipe helpers
-  const swipePower = (offset: number, velocity: number) => Math.abs(offset) * velocity;
+  const swipePower = (offset: number, velocity: number) =>
+    Math.abs(offset) * velocity;
   const swipeConfidenceThreshold = 8500;
 
-  const handleSwipeEnd = (_: any, info: { offset: { x: number }; velocity: { x: number } }) => {
+  const handleSwipeEnd = (
+    _: any,
+    info: { offset: { x: number }; velocity: { x: number } }
+  ) => {
     if (reduceMotion) return;
     const p = swipePower(info.offset.x, info.velocity.x);
     if (p > swipeConfidenceThreshold) prev();
@@ -137,21 +151,21 @@ export default function WorkflowBPro() {
   return (
     <section
       id="workflow"
-      className="relative w-full bg-black text-white overflow-hidden
-                 py-14 sm:py-16 md:py-20 lg:py-0 lg:h-[100svh] lg:min-h-[100svh]"
+      className="
+        relative w-full bg-black text-white overflow-hidden
+        py-14 sm:py-16 md:py-20 lg:py-24
+      "
     >
       {/* subtle background (doesn't hard-stop) */}
       <div aria-hidden className="pointer-events-none absolute inset-0">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_18%,rgba(16,185,129,0.14),transparent_60%)]" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_78%_55%,rgba(255,255,255,0.06),transparent_62%)]" />
-        <div className="absolute inset-0 opacity-[0.045] [mask-image:radial-gradient(ellipse_at_center,black,transparent_72%)]">
-          <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,.10)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,.10)_1px,transparent_1px)] bg-[size:96px_96px]" />
-        </div>
-        <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-b from-transparent to-black/55" />
+
+
       </div>
 
-      <div className="relative z-10 mx-auto max-w-[1760px] h-full px-4 sm:px-10 lg:px-16 2xl:px-20">
-        <div className="h-full flex flex-col lg:justify-center lg:py-14">
+      <div className="relative z-10 mx-auto max-w-[1760px] px-4 sm:px-10 lg:px-16 2xl:px-20">
+        <div className="flex flex-col">
           {/* header */}
           <motion.div {...enter(14, 0)} className="flex-none">
             <div className="inline-flex items-center gap-2 px-5 sm:px-6 py-2 rounded-full border border-emerald-400/20 bg-white/[0.03] w-fit">
@@ -169,10 +183,10 @@ export default function WorkflowBPro() {
           </motion.div>
 
           {/* body */}
-          <div className="mt-7 sm:mt-8 lg:mt-10 flex-1 min-h-0 grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 lg:gap-10 lg:items-stretch">
+          <div className="mt-7 sm:mt-8 lg:mt-10 grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 lg:gap-10 lg:items-stretch">
             {/* LEFT */}
-            <motion.div {...enter(12, 0.04)} className="lg:col-span-4 min-h-0 lg:h-full lg:min-h-0">
-              <div className="rounded-[26px] border border-white/10 bg-white/[0.02] p-3 sm:p-4 lg:h-full lg:min-h-0">
+            <motion.div {...enter(12, 0.04)} className="lg:col-span-4">
+              <div className="rounded-[26px] border border-white/10 bg-white/[0.02] p-3 sm:p-4 h-full">
                 {/* ✅ MOBILE: single-step “slide” */}
                 <div className="lg:hidden">
                   <motion.button
@@ -184,35 +198,30 @@ export default function WorkflowBPro() {
                     dragElastic={0.14}
                     dragDirectionLock
                     onDragEnd={handleSwipeEnd}
-                    initial={{ opacity: 0, y: reduceMotion ? 0 : 8, filter: "blur(6px)" }}
+                    initial={{
+                      opacity: 0,
+                      y: reduceMotion ? 0 : 8,
+                      filter: "blur(6px)",
+                    }}
                     animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                    transition={reduceMotion ? { duration: 0.01 } : { duration: 0.28, ease: easePremium }}
+                    transition={
+                      reduceMotion
+                        ? { duration: 0.01 }
+                        : { duration: 0.28, ease: easePremium }
+                    }
                     className="w-full text-left outline-none"
                     style={{ touchAction: "pan-y" }}
                   >
                     <div className="rounded-[22px] p-[1px] bg-gradient-to-b from-emerald-400/18 via-white/10 to-emerald-500/12">
                       <div className="rounded-[22px] border border-white/10 bg-white/[0.03] px-4 py-4">
-                        <div className="flex items-start gap-3">
+                        <div className="flex items-center gap-3">
                           <span className="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-emerald-300/50 bg-emerald-500/10 shrink-0">
                             <activeStep.icon className="h-5 w-5 text-emerald-200" />
                           </span>
 
                           <div className="min-w-0 flex-1">
-                            <div className="flex items-center justify-between gap-3">
-                              <div className="text-[11px] text-white/45 tracking-widest uppercase">
-                                Step {active + 1} / {steps.length}
-                              </div>
-                              <span className="inline-flex items-center px-2.5 py-1 rounded-full border border-white/10 bg-white/[0.03] text-[10px] tracking-widest uppercase text-white/60">
-                                Swipe
-                              </span>
-                            </div>
-
-                            <div className="mt-1 text-[14px] font-semibold text-white/92 truncate">
+                            <div className="text-[14px] font-semibold text-white/92">
                               {stripStepPrefix(activeStep.title)}
-                            </div>
-
-                            <div className="mt-1 text-[12.5px] text-white/65 line-clamp-2 leading-snug">
-                              {activeStep.desc}
                             </div>
                           </div>
                         </div>
@@ -272,9 +281,9 @@ export default function WorkflowBPro() {
                   </div>
                 </div>
 
-                {/* ✅ DESKTOP: original list (now explicitly stretches to match right) */}
-                <div className="hidden lg:flex flex-col h-full min-h-0">
-                  <div className="flex-1 min-h-0 flex flex-col gap-2">
+                {/* ✅ DESKTOP: original list */}
+                <div className="hidden lg:flex flex-col h-full">
+                  <div className="flex-1 flex flex-col gap-2">
                     {steps.map((s, i) => {
                       const isActive = i === active;
                       return (
@@ -290,7 +299,9 @@ export default function WorkflowBPro() {
                             className={[
                               "h-full rounded-[20px] px-5 py-4 border transition-all duration-200",
                               "bg-white/[0.02] hover:bg-white/[0.03]",
-                              isActive ? "border-emerald-400/30 bg-emerald-400/10" : "border-white/10",
+                              isActive
+                                ? "border-emerald-400/30 bg-emerald-400/10"
+                                : "border-white/10",
                             ].join(" ")}
                           >
                             <div className="h-full flex items-center gap-4">
@@ -302,7 +313,12 @@ export default function WorkflowBPro() {
                                     : "border-white/10 bg-white/[0.02]",
                                 ].join(" ")}
                               >
-                                <s.icon className={`h-6 w-6 ${isActive ? "text-emerald-200" : "text-white/65"}`} />
+                                <s.icon
+                                  className={`h-6 w-6 ${isActive
+                                    ? "text-emerald-200"
+                                    : "text-white/65"
+                                    }`}
+                                />
                               </span>
 
                               <div className="min-w-0 flex-1">
@@ -319,9 +335,8 @@ export default function WorkflowBPro() {
 
                               <span
                                 aria-hidden
-                                className={`h-2.5 w-2.5 rounded-full transition shrink-0 ${
-                                  isActive ? "bg-emerald-300" : "bg-white/18"
-                                }`}
+                                className={`h-2.5 w-2.5 rounded-full transition shrink-0 ${isActive ? "bg-emerald-300" : "bg-white/18"
+                                  }`}
                               />
                             </div>
                           </div>
@@ -339,31 +354,32 @@ export default function WorkflowBPro() {
             </motion.div>
 
             {/* RIGHT */}
-            <motion.div {...enter(12, 0.08)} className="lg:col-span-8 min-h-0 lg:h-full lg:min-h-0">
-              <div className="h-full min-h-0 rounded-[30px] p-[1px] bg-gradient-to-b from-emerald-400/22 via-white/10 to-emerald-500/14 shadow-[0_0_70px_rgba(16,185,129,0.08)]">
+            <motion.div {...enter(12, 0.08)} className="lg:col-span-8">
+              {/* ❌ removed the glow shadow here */}
+              <div className="w-full rounded-[30px] p-[1px] bg-gradient-to-b from-emerald-400/22 via-white/10 to-emerald-500/14">
                 <motion.div
                   className={[
-                    "relative rounded-[30px] overflow-hidden bg-[#070707]/70 border border-white/10",
-                    "h-[58svh] sm:h-[60svh] md:h-[62svh] lg:h-full",
+                    "relative rounded-[30px] overflow-hidden bg-black border border-white/10",
+                    "h-[350px] sm:h-[60svh] md:h-[62svh]",
+                    "lg:h-auto lg:aspect-[16/10]",
                   ].join(" ")}
                   drag={reduceMotion ? false : "x"}
                   dragConstraints={{ left: 0, right: 0 }}
                   dragElastic={0.12}
                   dragDirectionLock
                   onDragEnd={handleSwipeEnd}
-                  style={{ touchAction: "pan-y" }}
+                  style={{ touchAction: "pan-y", backgroundColor: "#003f29ff" }}
                 >
-                  {/* ✅ per-step screenshot */}
+                  {/* ✅ per-step screenshot (NO CROPPING) */}
                   <img
                     src={activeStep.img}
                     alt={`B:PRO workflow step ${active + 1}`}
-                    className="absolute inset-0 w-full h-full object-cover object-right"
+                    className="absolute inset-0 object-contain bg-black"
                     draggable={false}
                     loading="eager"
                     decoding="async"
                   />
 
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/24 to-black/12" />
                   <div className="absolute inset-0 ring-1 ring-white/10" />
 
                   {/* top badge */}
@@ -373,7 +389,7 @@ export default function WorkflowBPro() {
                     </div>
                   </div>
 
-                  {/* mobile quick arrows (stop drag when pressing) */}
+                  {/* mobile quick arrows */}
                   <div
                     className="lg:hidden absolute right-4 top-4 flex items-center gap-2"
                     onPointerDown={(e) => e.stopPropagation()}
@@ -396,19 +412,52 @@ export default function WorkflowBPro() {
                     </button>
                   </div>
 
-                  {/* bottom content */}
-                  <div className="absolute inset-x-0 bottom-0 p-3 sm:p-5 md:p-6">
+                  {/* ✅ DESKTOP: slimmer right sidebar (no shadow) */}
+                  <div className="hidden lg:block absolute inset-y-0 right-0 w-[280px] xl:w-[320px] p-4">
+
+                    <div className="relative h-full rounded-[22px] border border-white/10 bg-black/55 backdrop-blur-[2px] p-4 flex flex-col">
+                      <div className="text-[11px] text-white/55 tracking-[0.16em] uppercase">
+                        Step {active + 1} / {steps.length}
+                      </div>
+
+                      <div className="mt-2 text-[16px] xl:text-[18px] font-semibold tracking-tight text-white/92">
+                        {activeStep.title}
+                      </div>
+
+                      <div className="mt-2 text-white/70 text-[12.5px] xl:text-[13px] leading-relaxed">
+                        {activeStep.desc}
+                      </div>
+
+                      <div className="mt-4 space-y-2">
+                        {activeStep.bullets.slice(0, 5).map((b) => (
+                          <div
+                            key={b}
+                            className="flex items-start gap-2 text-[12.5px] text-white/78"
+                          >
+                            <span className="mt-[2px] text-emerald-300/85">✓</span>
+                            <span className="leading-snug">{b}</span>
+                          </div>
+                        ))}
+                      </div>
+
+                      <div className="mt-auto pt-4 text-[12px] text-white/45">
+                        Tip: keep it auditable — show the “why”, not promises.
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* MOBILE bottom overlay stays */}
+                  <div className="lg:hidden absolute inset-x-0 bottom-0 p-3 sm:p-5 md:p-6">
                     <div
                       aria-hidden
                       className="absolute inset-x-0 bottom-0 h-24 sm:h-40 bg-gradient-to-t from-black/92 via-black/45 to-transparent"
                     />
 
-                    {/* ✅ MOBILE overlay */}
                     <button
                       type="button"
                       onPointerDown={(e) => e.stopPropagation()}
                       onClick={() => setMobileExpanded((v) => !v)}
-                      className="lg:hidden relative w-full text-left rounded-[18px] border border-white/10 bg-black/40 backdrop-blur-[2px] p-3.5"
+                      className="relative w-full text-left rounded-[18px] border border-white/10 bg-black/40 backdrop-blur-[2px] p-3.5"
                     >
                       <div className="flex items-start justify-between gap-3">
                         <div className="min-w-0">
@@ -435,43 +484,20 @@ export default function WorkflowBPro() {
                         <div className="mt-3">
                           <ul className="space-y-1.5">
                             {activeStep.bullets.slice(0, 3).map((b) => (
-                              <li key={b} className="flex items-start gap-2 text-[12.5px] text-white/75">
-                                <span className="mt-[2px] text-emerald-300/85">✓</span>
+                              <li
+                                key={b}
+                                className="flex items-start gap-2 text-[12.5px] text-white/75"
+                              >
+                                <span className="mt-[2px] text-emerald-300/85">
+                                  ✓
+                                </span>
                                 <span className="leading-snug">{b}</span>
                               </li>
                             ))}
                           </ul>
-
-                          <div className="mt-3 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-                          <div className="mt-3 text-[12px] text-white/45">
-                            Tip: keep it auditable — show the “why”, not promises.
-                          </div>
                         </div>
                       )}
                     </button>
-
-                    {/* Desktop overlay (unchanged) */}
-                    <div className="hidden lg:block relative rounded-[22px] border border-white/10 bg-black/50 backdrop-blur-[2px] p-4 sm:p-5 md:p-6">
-                      <div className="mt-2 text-[18px] sm:text-xl md:text-2xl font-semibold tracking-tight text-white/92">
-                        {activeStep.title}
-                      </div>
-
-                      <div className="mt-2 text-white/68 text-[13px] sm:text-sm md:text-[15px] leading-relaxed max-w-[920px]">
-                        {activeStep.desc}
-                      </div>
-
-                      <div className="mt-4 flex flex-wrap gap-2">
-                        {activeStep.bullets.slice(0, 3).map((b) => (
-                          <span
-                            key={b}
-                            className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5 text-[12px] text-white/72"
-                          >
-                            <span className="text-emerald-300/85">✓</span>
-                            {b}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
                   </div>
 
                   <div className="absolute inset-x-0 bottom-0 h-[1px]" />

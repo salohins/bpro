@@ -32,15 +32,6 @@ export default function HeroSection() {
   const isMdUp = useMediaQuery("(min-width: 768px)");
   const allowMotion = !reduceMotion && isMdUp; // ✅ key optimization: disable heavy motion on mobile
 
-  const engines = useMemo(
-    () => [
-      { icon: Map, label: "Market Structure Engine", sub: "3-EMA cloud, regime + HTF alignment." },
-      { icon: Filter, label: "Confluence & Filters Engine", sub: "Adaptive permission gates for higher-quality entries." },
-      { icon: Target, label: "Signals & Execution Engine", sub: "Breakouts + confirmations with clear entry context." },
-      { icon: ShieldCheck, label: "Risk & Trade Management", sub: "Stops, invalidations, exits — rules end-to-end." },
-    ],
-    []
-  );
 
   const wrap = { hidden: {}, show: {} };
 

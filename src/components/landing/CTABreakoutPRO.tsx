@@ -21,7 +21,7 @@ export default function CTABreakoutPro() {
       { icon: <Layers className="w-4 h-4 text-emerald-300" />, text: "Trend Cloud + HTF structure" },
       { icon: <SlidersHorizontal className="w-4 h-4 text-emerald-300" />, text: "Confluence filters + sentiment" },
       { icon: <ShieldCheck className="w-4 h-4 text-emerald-300" />, text: "Trade management + S/Q scoring" },
-      { icon: <ShieldCheck className="w-4 h-4 text-emerald-300" />, text: "Trade management + S/Q scoring" },
+      { icon: <ShieldCheck className="w-4 h-4 text-emerald-300" />, text: "Decision intellegence" },
     ],
     []
   );
@@ -50,7 +50,7 @@ export default function CTABreakoutPro() {
 
           <h2 className="mt-5 font-semibold tracking-[-0.045em] leading-[1.02] text-[clamp(34px,3.1vw,56px)]">
             <span className="bg-gradient-to-r from-white via-emerald-200 to-emerald-500 bg-clip-text text-transparent">
-              Stop Guessing. <br/>Trade with Structure.
+              Stop Guessing. <br />Trade with Structure.
             </span>
           </h2>
 

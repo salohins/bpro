@@ -1,7 +1,12 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import {
+  AnimatePresence,
+  motion,
+  useReducedMotion,
+  LayoutGroup,
+} from "framer-motion";
 import {
   Sparkles,
   TrendingUp,
@@ -59,7 +64,6 @@ export default function ProfitCases() {
           "4H mid standard mode: long entry at fast line, stop at midtrend, take profit into close-long or fastline / midtrend.",
         img: fourH19,
       },
-
       {
         pct: "8.1%",
         tag: "Open Long",
@@ -77,7 +81,6 @@ export default function ProfitCases() {
           "4H mid standard mode: long entry at fast line; SL can be close-long, fastline, or midtrend (per your plan).",
         img: fourH8,
       },
-
       {
         pct: "5.62%",
         tag: "Open Long",
@@ -95,7 +98,6 @@ export default function ProfitCases() {
           "2H breakout case: continuation can happen without a fastline retest; risk at midtrend, targets into fastline/midtrend zones.",
         img: twoH5,
       },
-
       {
         pct: "3.1%",
         tag: "Open Short",
@@ -113,7 +115,6 @@ export default function ProfitCases() {
           "1H breakdown case: continuation can happen without a fastline retest; stop at midtrend, take profit into close-short or fastline/midtrend.",
         img: oneH3,
       },
-
       {
         pct: "29.8%",
         tag: "Open Long",
@@ -131,7 +132,6 @@ export default function ProfitCases() {
           "2D trend case: white label suggests continuation without fastline retest; risk at midtrend, targets into fastline/midtrend or close-short signal.",
         img: twoD29,
       },
-
       {
         pct: "27.5%",
         tag: "Divergence",
@@ -149,7 +149,6 @@ export default function ProfitCases() {
           "Weekly context: bearish divergence can be used to plan a separate setup; define risk at prior B:PRO resistance and target the fast line.",
         img: week27,
       },
-
       {
         pct: "31.5%",
         tag: "Bear Continuation",
@@ -167,7 +166,6 @@ export default function ProfitCases() {
           "Daily trend case: breakdown + bear continuation suggests continuation without a fastline retest; stop at fastline, targets into fastline/midtrend.",
         img: day31,
       },
-
       {
         pct: "10.3%",
         tag: "Open Long",
@@ -185,7 +183,6 @@ export default function ProfitCases() {
           "Daily continuation case: breakout + bull continuation suggests continuation without a fastline retest; risk at midtrend, take profit into close-long or fastline/midtrend.",
         img: day10,
       },
-
       {
         pct: "1.2%",
         tag: "Open Long",
@@ -203,7 +200,6 @@ export default function ProfitCases() {
           "1m fast mode scalp: long trigger at fast line, stop tucked under midtrend, take profit into close-short / fastline / midtrend.",
         img: oneMinLong,
       },
-
       {
         pct: "1.92%",
         tag: "Open Short",
@@ -221,7 +217,6 @@ export default function ProfitCases() {
           "5m fast mode (bear): short trigger at fast line, stop at midtrend, take profit into fastline or close-short / midtrend.",
         img: fiveMin,
       },
-
       {
         pct: "1.2%",
         tag: "Open Long",
@@ -239,7 +234,6 @@ export default function ProfitCases() {
           "15m standard mode: long entry at fast line, stop at midtrend, take profit into fastline or close-short / midtrend.",
         img: fifteenMin,
       },
-
       {
         pct: "5.8%",
         tag: "Open Long",
@@ -290,29 +284,56 @@ export default function ProfitCases() {
             </p>
           </div>
 
-          <div className="lg:col-span-5 grid grid-cols-2 gap-3">
-            <MiniMetric
-              icon={<Layers className="h-4 w-4 text-emerald-300" />}
-              label="On-chart proof"
+          {/* Mini metrics — one line scroll on mobile + edge fade, grid on lg+ */}
+          <div className="relative lg:col-span-5">
+            {/* left fade (mobile only) */}
+            <div
+              aria-hidden
+              className="pointer-events-none absolute left-0 top-0 z-10 h-full w-8
+               bg-gradient-to-r from-[#0b0b0b] to-transparent lg:hidden"
             />
-            <MiniMetric
-              icon={<ShieldCheck className="h-4 w-4 text-emerald-300" />}
-              label="Defined risk"
+            {/* right fade (mobile only) */}
+            <div
+              aria-hidden
+              className="pointer-events-none absolute right-0 top-0 z-10 h-full w-10
+               bg-gradient-to-l from-[#0b0b0b] to-transparent lg:hidden"
             />
-            <MiniMetric
-              icon={<Target className="h-4 w-4 text-emerald-300" />}
-              label="Clear targets"
-            />
-            <MiniMetric
-              icon={<TrendingUp className="h-4 w-4 text-emerald-300" />}
-              label="Selective triggers"
-            />
+
+            <div
+              className={[
+                "flex gap-3 overflow-x-auto whitespace-nowrap",
+                "[-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
+                "pl-2 pr-10 py-1",
+                "lg:grid lg:grid-cols-2 lg:gap-3 lg:overflow-visible lg:whitespace-normal lg:p-0",
+              ].join(" ")}
+            >
+              <MiniMetric
+                icon={<Layers className="h-4 w-4 text-emerald-300" />}
+                label="On-chart proof"
+                className="shrink-0 lg:shrink"
+              />
+              <MiniMetric
+                icon={<ShieldCheck className="h-4 w-4 text-emerald-300" />}
+                label="Defined risk"
+                className="shrink-0 lg:shrink"
+              />
+              <MiniMetric
+                icon={<Target className="h-4 w-4 text-emerald-300" />}
+                label="Clear targets"
+                className="shrink-0 lg:shrink"
+              />
+              <MiniMetric
+                icon={<TrendingUp className="h-4 w-4 text-emerald-300" />}
+                label="Selective triggers"
+                className="shrink-0 lg:shrink"
+              />
+            </div>
           </div>
         </motion.div>
 
         {/* Slider */}
         <motion.div {...enter(1, 0.05)} className="mt-10">
-          <CasesSlider cases={cases} reduceMotion={reduceMotion} />
+          <CasesSlider cases={cases} reduceMotion={!!reduceMotion} />
         </motion.div>
       </div>
     </section>
@@ -358,14 +379,12 @@ function CasesSlider({
   const slides = useMemo(() => chunk(cases, perSlide), [cases, perSlide]);
 
   const slideTitles = useMemo(() => {
-    // one title per slide (in order)
     return ["Swing trading", "Position trading", "Scalping/Day trading"];
   }, []);
 
   const [idx, setIdx] = useState(0);
   const [dir, setDir] = useState(1);
 
-  // ✅ selected (expanded) card state
   const [selected, setSelected] = useState<any | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
@@ -381,7 +400,11 @@ function CasesSlider({
     setSelectedId(id);
   };
 
+  const [closingId, setClosingId] = useState<string | null>(null);
   const closeCase = () => {
+    // ✅ mark which tile is "returning" so it can be z-elevated in the grid
+    setClosingId(selectedId);
+
     setSelected(null);
     setSelectedId(null);
   };
@@ -445,139 +468,144 @@ function CasesSlider({
   };
 
   return (
-    <div className="relative">
-      {/* Top bar */}
-      <div className="flex items-center justify-between mb-4">
-        <div className="text-xs text-white/45 tracking-widest uppercase flex items-center gap-2">
-          <span>
-            Slide {idx + 1} / {slides.length}
-          </span>
-          <span className="text-white/25">·</span>
-          <span className="text-white/70">{slideTitles[idx] ?? "Cases"}</span>
-        </div>
+    <LayoutGroup id="cases">
+      <div className="relative">
+        {/* Top bar */}
+        <div className="flex items-center justify-between mb-4">
+          <div className="text-xs text-white/45 tracking-widest uppercase flex items-center gap-2">
+            <span>
+              Slide {idx + 1} / {slides.length}
+            </span>
+            <span className="text-white/25">·</span>
+            <span className="text-white/70">{slideTitles[idx] ?? "Cases"}</span>
+          </div>
 
-        <div className="flex items-center gap-2">
-          <button
-            onClick={prev}
-            aria-label="Previous cases"
-            className="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.03] hover:bg-white/[0.05] transition"
-          >
-            <ChevronLeft className="h-5 w-5 text-white/70" />
-          </button>
-          <button
-            onClick={next}
-            aria-label="Next cases"
-            className="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.03] hover:bg-white/[0.05] transition"
-          >
-            <ChevronRight className="h-5 w-5 text-white/70" />
-          </button>
-        </div>
-      </div>
-
-      {/* Slide viewport */}
-      <div className="relative overflow-hidden rounded-[28px] border border-white/10 bg-white/[0.02] backdrop-blur-xl">
-        <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_20%_10%,rgba(16,185,129,0.10),transparent_55%)]" />
-
-        {/* ✅ lock viewport height so ALL slides have identical height */}
-        <div className="relative h-[980px] sm:h-[740px] lg:h-[520px] xl:h-[450px]">
-          <AnimatePresence initial={false} custom={dir} mode="popLayout">
-            <motion.div
-              key={`${idx}-${perSlide}`}
-              custom={dir}
-              variants={variants}
-              initial="enter"
-              animate="center"
-              exit="exit"
-              drag={reduceMotion ? false : "x"}
-              dragConstraints={{ left: 0, right: 0 }}
-              dragElastic={0.08}
-              onDragEnd={(_, info) => {
-                if (reduceMotion) return;
-                if (info.offset.x < -70) next();
-                if (info.offset.x > 70) prev();
-              }}
-              className="relative p-4 sm:p-5 lg:p-6 h-full"
+          <div className="flex items-center gap-2">
+            <button
+              onClick={prev}
+              aria-label="Previous cases"
+              className="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.03] hover:bg-white/[0.05] transition"
             >
-              {/* ✅ make grid + tiles stretch; equal card heights */}
-              <div className="grid h-full grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 lg:gap-5 auto-rows-fr items-stretch">
-                {slides[idx]?.map((c) => {
-                  const id = makeId(c);
-                  return (
-                    <CaseTile
-                      key={id}
-                      id={id}
-                      item={c}
-                      onSelect={() => openCase(c)}
-                    />
-                  );
-                })}
-              </div>
-            </motion.div>
-          </AnimatePresence>
+              <ChevronLeft className="h-5 w-5 text-white/70" />
+            </button>
+            <button
+              onClick={next}
+              aria-label="Next cases"
+              className="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.03] hover:bg-white/[0.05] transition"
+            >
+              <ChevronRight className="h-5 w-5 text-white/70" />
+            </button>
+          </div>
         </div>
-      </div>
 
-      {/* Dots */}
-      <div className="mt-5 flex items-center justify-center gap-2">
-        {slides.map((_, i) => (
-          <button
-            key={i}
-            aria-label={`Go to slide ${i + 1}`}
-            onClick={() => {
-              setDir(i > idx ? 1 : -1);
-              setIdx(i);
-            }}
-            className={`h-2.5 rounded-full transition-all ${
-              i === idx
+        {/* Slide viewport */}
+        <div className="relative overflow-hidden rounded-[28px] border border-white/10 bg-white/[0.02] backdrop-blur-xl">
+          <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_20%_10%,rgba(16,185,129,0.10),transparent_55%)]" />
+
+          {/* lock viewport height so ALL slides have identical height */}
+          <div className="relative h-[400px] sm:h-[740px] lg:h-[520px] xl:h-[450px]">
+            <AnimatePresence initial={false} custom={dir} mode="popLayout">
+              <motion.div
+                key={`${idx}-${perSlide}`}
+                custom={dir}
+                variants={variants}
+                initial="enter"
+                animate="center"
+                exit="exit"
+                drag={reduceMotion ? false : "x"}
+                dragConstraints={{ left: 0, right: 0 }}
+                dragElastic={0.08}
+                onDragEnd={(_, info) => {
+                  if (reduceMotion) return;
+                  if (info.offset.x < -70) next();
+                  if (info.offset.x > 70) prev();
+                }}
+                className="relative p-4 sm:p-5 lg:p-6 h-full"
+              >
+                <div className="grid h-full grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 lg:gap-5 auto-rows-fr items-stretch">
+                  {slides[idx]?.map((c) => {
+                    const id = makeId(c);
+
+                    return (
+                      <CaseTile
+                        key={id}
+                        id={id}
+                        item={c}
+                        onSelect={() => openCase(c)}
+                        isSelected={selectedId === id}          // already have this
+                        elevate={closingId === id}             // ✅ new
+                        onReturnComplete={() => setClosingId(null)} // ✅ new
+                      />
+                    );
+                  })}
+
+                </div>
+              </motion.div>
+            </AnimatePresence>
+          </div>
+        </div>
+
+        {/* Dots */}
+        <div className="mt-5 flex items-center justify-center gap-2">
+          {slides.map((_, i) => (
+            <button
+              key={i}
+              aria-label={`Go to slide ${i + 1}`}
+              onClick={() => {
+                setDir(i > idx ? 1 : -1);
+                setIdx(i);
+              }}
+              className={`h-2.5 rounded-full transition-all ${i === idx
                 ? "w-8 bg-emerald-300/70"
                 : "w-2.5 bg-white/15 hover:bg-white/25"
-            }`}
-          />
-        ))}
-      </div>
+                }`}
+            />
+          ))}
+        </div>
 
-      {/* ✅ Expanded overlay */}
-      {mounted &&
-        createPortal(
-          <AnimatePresence>
-            {selected && selectedId ? (
-              <motion.div
-                className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-8"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-              >
-                {/* backdrop */}
-                <button
-                  aria-label="Close expanded case"
-                  onClick={closeCase}
-                  className="absolute inset-0 bg-black/70 backdrop-blur-sm"
-                />
-
-                {/* centered content (viewport) */}
-                <motion.div
-                  className="relative w-full max-w-[980px]"
-                  initial={reduceMotion ? { scale: 1 } : { scale: 0.98 }}
-                  animate={{ scale: 1 }}
-                  exit={reduceMotion ? { scale: 1 } : { scale: 0.98 }}
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <button
-                    onClick={closeCase}
-                    aria-label="Close"
-                    className="absolute -top-3 -right-3 z-10 inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.06] hover:bg-white/[0.10] transition"
+        {/* Expanded overlay (shared LayoutGroup across portal) */}
+        {mounted &&
+          createPortal(
+            <LayoutGroup id="cases" inherit={false}>
+              <AnimatePresence>
+                {selected && selectedId ? (
+                  <motion.div
+                    className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-8"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
                   >
-                    <X className="h-5 w-5 text-white/80" />
-                  </button>
+                    {/* backdrop */}
+                    <button
+                      aria-label="Close expanded case"
+                      onClick={closeCase}
+                      className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+                    />
 
-                  <CaseTile item={selected} id={selectedId} expanded />
-                </motion.div>
-              </motion.div>
-            ) : null}
-          </AnimatePresence>,
-          document.body
-        )}
-    </div>
+                    {/* centered content */}
+                    <motion.div
+                      className="relative w-full max-w-[980px]"
+                      initial={reduceMotion ? { scale: 1 } : { scale: 0.98 }}
+                      animate={{ scale: 1 }}
+                      exit={reduceMotion ? { scale: 1 } : { scale: 0.98 }}
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <CaseTile
+                        item={selected}
+                        id={selectedId}
+                        expanded
+                        isSelected
+                        onClose={closeCase}
+                      />
+                    </motion.div>
+                  </motion.div>
+                ) : null}
+              </AnimatePresence>
+            </LayoutGroup>,
+            document.body
+          )}
+      </div>
+    </LayoutGroup>
   );
 }
 
@@ -594,18 +622,27 @@ function Kicker({ children }: { children: React.ReactNode }) {
   );
 }
 
-function MiniMetric({ icon, label }: { icon: React.ReactNode; label: string }) {
+function MiniMetric({
+  icon,
+  label,
+  className = "",
+}: {
+  icon: React.ReactNode;
+  label: string;
+  className?: string;
+}) {
   return (
     <div
-      className="flex items-center gap-3 px-4 py-3 rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-md"
-      style={{ boxShadow: "0 0 0 1px rgba(255,255,255,0.02)" }}
+      className={[
+        "flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.02] px-4 py-3",
+        className,
+      ].join(" ")}
     >
-      <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/[0.03]">
+      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/[0.03]">
         {icon}
       </span>
-      <div className="text-sm text-white/75 leading-tight font-semibold tracking-tight">
-        {label}
-      </div>
+
+      <span className="min-w-0 text-sm text-white/80 leading-tight">{label}</span>
     </div>
   );
 }
@@ -614,14 +651,30 @@ function CaseTile({
   item,
   id,
   onSelect,
+  onClose,
   expanded = false,
+  isSelected = false, // ✅ true for the grid tile that matches the currently opened id
+  elevate = false,    // ✅ true for the grid tile while it's returning (after close)
+  onReturnComplete,
 }: {
   item: any;
   id: string;
   onSelect?: () => void;
+  onClose?: () => void;
   expanded?: boolean;
+  isSelected?: boolean;
+  elevate?: boolean;
+  onReturnComplete?: () => void;
 }) {
   const clickable = !!onSelect && !expanded;
+
+  /**
+   * ✅ Z-index rules
+   * - expanded (portal) always on top
+   * - isSelected (grid lead during OPEN travel) stays above siblings
+   * - elevate (grid destination during CLOSE travel) stays above siblings until return completes
+   */
+  const zIndex = expanded ? 9999 : elevate || isSelected ? 80 : 0;
 
   return (
     <motion.div
@@ -632,23 +685,33 @@ function CaseTile({
       onKeyDown={
         clickable
           ? (e) => {
-              if (e.key === "Enter" || e.key === " ") onSelect?.();
-            }
+            if (e.key === "Enter" || e.key === " ") onSelect?.();
+          }
           : undefined
       }
-      className={`group h-full rounded-[26px] p-[1px] bg-gradient-to-b from-emerald-400/22 via-white/10 to-emerald-500/14 ${
-        clickable ? "cursor-pointer" : "cursor-default"
-      }`}
+      style={{ zIndex }}
+      className={[
+        "relative", // ✅ required for z-index to apply
+        "isolate",  // ✅ contain stacking
+        "will-change-transform",
+        clickable ? "cursor-pointer" : "cursor-default",
+        "group h-full rounded-[26px] p-[1px] bg-gradient-to-b from-emerald-400/22 via-white/10 to-emerald-500/14",
+      ].join(" ")}
+      onLayoutAnimationComplete={() => {
+        // ✅ only used for the CLOSE "return to grid" completion
+        if (!expanded && elevate) onReturnComplete?.();
+      }}
     >
       <div className="relative h-full flex flex-col rounded-[26px] overflow-hidden bg-[#070707]/75 border border-white/10 backdrop-blur-2xl">
         {/* Screenshot */}
         <div
-          className={["relative bg-white/[0.02]", expanded ? "w-full" : "h-[200px]"].join(
-            " "
-          )}
+          className={[
+            "relative bg-white/[0.02]",
+            expanded ? "w-full" : "h-[200px]",
+          ].join(" ")}
         >
           {expanded ? (
-            // ✅ Hard 16:10 box (modal)
+            // ✅ Modal view (16:10)
             <div
               className="relative w-full overflow-hidden"
               style={{ paddingTop: "62.5%" }}
@@ -657,10 +720,8 @@ function CaseTile({
                 <img
                   src={item.img}
                   alt={`${item.symbol} profit case`}
-                  className={[
-                    "absolute inset-0 w-full h-full",
-                    expanded ? "object-contain bg-black" : "object-cover",
-                  ].join(" ")}
+                  className="absolute inset-0 w-full h-full object-contain bg-black"
+                  draggable={false}
                 />
               ) : null}
 
@@ -686,7 +747,26 @@ function CaseTile({
                 <Pill>{item.tf}</Pill>
               </div>
 
-              <div className="absolute right-3 top-3 text-right">
+              {/* ✅ Close button INSIDE the frame */}
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onClose?.();
+                }}
+                aria-label="Close"
+                className={[
+                  "absolute right-3 top-3 z-20 inline-flex h-10 w-10 items-center justify-center",
+                  "rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-md",
+                  "hover:bg-white/[0.06] hover:-translate-y-[1px] active:translate-y-0",
+                  "transition-[transform,background-color] duration-150 ease-out",
+                  "shadow-[0_0_0_1px_rgba(255,255,255,0.03)]",
+                ].join(" ")}
+              >
+                <X className="h-4 w-4 text-white/75" />
+              </button>
+
+              <div className="absolute right-3 top-3 pr-12 text-right">
                 <div className="text-[10px] text-white/45 tracking-widest uppercase">
                   Result
                 </div>
@@ -698,13 +778,14 @@ function CaseTile({
               </div>
             </div>
           ) : (
-            // ✅ Original tile view (200px fixed height)
+            // ✅ Tile view (200px)
             <div className="absolute inset-0">
               {item.img ? (
                 <img
                   src={item.img}
                   alt={`${item.symbol} profit case`}
                   className="absolute inset-0 w-full h-full object-cover"
+                  draggable={false}
                 />
               ) : null}
 
@@ -752,11 +833,9 @@ function CaseTile({
                 {item.symbol}
               </div>
 
-              {/* ✅ clamp headline in tile mode so cards don't grow */}
               <div
-                className={`text-xs text-white/50 mt-1 ${
-                  expanded ? "" : "line-clamp-1"
-                }`}
+                className={`text-xs text-white/50 mt-1 ${expanded ? "" : "line-clamp-1"
+                  }`}
               >
                 {item.headline}
               </div>
@@ -771,13 +850,7 @@ function CaseTile({
                   className="flex items-start gap-2 text-xs text-white/65"
                 >
                   <span className="text-emerald-300/80">✓</span>
-
-                  {/* ✅ clamp bullet lines in tile mode */}
-                  <span
-                    className={`leading-tight ${expanded ? "" : ""}`}
-                  >
-                    {b}
-                  </span>
+                  <span className="leading-tight">{b}</span>
                 </div>
               )
             )}
@@ -809,6 +882,7 @@ function CaseTile({
     </motion.div>
   );
 }
+
 
 function Pill({
   children,

@@ -58,16 +58,20 @@ export default function SignalLanguageSection() {
             <div className="relative z-10 mx-auto max-w-[1760px] px-6 sm:px-10 lg:px-16 2xl:px-20">
                 {/* Header */}
                 <div className="space-y-3">
-                    <div className="flex flex-wrap items-center gap-2">
-                        <Kicker>Signal &amp; Execution ENGINE</Kicker>
-                        <span className="px-3 py-1.5 rounded-full border border-white/10 bg-white/[0.03] text-[11px] tracking-[0.18em] uppercase text-white/55">
+                    <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:gap-2">
+                        <Kicker className="w-full sm:w-auto">Signal &amp; Execution ENGINE</Kicker>
+
+                        <span className="w-full sm:w-auto inline-flex items-center justify-center text-center px-3 py-1.5 rounded-full border border-white/10 bg-white/[0.03] text-[11px] tracking-[0.18em] uppercase text-white/55">
                             Icon Language
                         </span>
                     </div>
 
+
+
+
                     <h2 className="text-4xl md:text-5xl xl:text-6xl font-extrabold tracking-tight leading-[1.05]">
                         <span className="bg-gradient-to-r from-white via-emerald-200 to-emerald-500 bg-clip-text text-transparent">
-                            Read Signals with Context. <br/>Trade With Clarity.
+                            Read Signals with Context. <br />Trade With Clarity.
                         </span>
                     </h2>
 
@@ -188,7 +192,7 @@ function VerticalLegendSlider({ items, perPage = 6 }) {
                                 if (info.offset.y < -t) next();
                                 if (info.offset.y > t) prev();
                             }}
-                            className="absolute inset-0 p-6 space-y-3"
+                            className="absolute inset-0 p-6 space-y-1.5 md:space-y-2"
                         >
                             {(pages[page] || []).map((s) => (
                                 <LegendRow
@@ -228,13 +232,16 @@ function VerticalLegendSlider({ items, perPage = 6 }) {
 
 /* ===================== Atoms ===================== */
 
-function Kicker({ children }) {
+function Kicker({ children }: { children: React.ReactNode }) {
     return (
-        <div className="inline-flex items-center justify-center px-4 py-2 rounded-full border border-emerald-400/20 bg-white/[0.03] backdrop-blur-md w-fit">
-            <span className="text-emerald-300 text-xs tracking-[0.24em] font-semibold uppercase">{children}</span>
+        <div className="w-full sm:w-auto inline-flex items-center justify-center px-4 py-2 rounded-full border border-emerald-400/20 bg-white/[0.03] backdrop-blur-md">
+            <span className="text-emerald-300 text-xs tracking-[0.24em] font-semibold uppercase">
+                {children}
+            </span>
         </div>
     );
 }
+
 
 function CinematicImage({ src, alt, tags = [], caption, reduceMotion }) {
     return (

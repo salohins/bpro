@@ -1,11 +1,5 @@
-import React, { useMemo, useRef } from "react";
-import {
-  motion,
-  useReducedMotion,
-  useMotionValue,
-  useSpring,
-  useTransform,
-} from "framer-motion";
+import React, { useMemo } from "react";
+import { motion, useReducedMotion } from "framer-motion";
 import {
   Star,
   ShieldCheck,
@@ -54,17 +48,22 @@ export default function ScoringSystem() {
             initial={{ opacity: 0, x: -18, y: 6, filter: "blur(10px)" }}
             whileInView={{ opacity: 1, x: 0, y: 0, filter: "blur(0px)" }}
             transition={
-              reduceMotion ? { duration: 0.01 } : { duration: 0.85, ease: easePremium }
+              reduceMotion
+                ? { duration: 0.01 }
+                : { duration: 0.85, ease: easePremium }
             }
             viewport={{ once: false, amount: 0.35 }}
             className="lg:col-span-5 space-y-6"
           >
-            <div className="flex flex-wrap items-center gap-2">
-              <Badge icon={<Sparkles className="w-4 h-4 text-emerald-300" />}>
+            <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:gap-2">
+              <Badge
+                icon={<Sparkles className="w-4 h-4 text-emerald-300" />}
+                className="w-full sm:w-auto justify-center"
+              >
                 Decision Intelligence layer
               </Badge>
 
-              <span className="inline-flex items-center gap-2 px-3.5 py-2 sm:px-4 rounded-full border border-white/10 bg-white/[0.02] backdrop-blur-md text-[11px] tracking-[0.18em] uppercase text-white/55">
+              <span className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-3.5 py-2 sm:px-4 rounded-full border border-white/10 bg-white/[0.02] backdrop-blur-md text-[11px] tracking-[0.18em] uppercase text-white/55 text-center">
                 <Layers className="w-3.5 h-3.5 text-emerald-300/80" />
                 Rank setups
               </span>
@@ -78,10 +77,13 @@ export default function ScoringSystem() {
             </h2>
 
             <p className="text-white/70 text-base sm:text-lg leading-relaxed max-w-xl">
-              After structure + filters give permission, B:PRO grades the setup with two
-              quick scores:<br />
-              <span className="text-white/90 font-medium">Safety</span> (risk gates) and{" "}
-              <span className="text-white/90 font-medium">Quality</span> (confluence clarity).
+              After structure + filters give permission, B:PRO grades the setup
+              with two quick scores:
+              <br />
+              <span className="text-white/90 font-medium">Safety</span> (risk
+              gates) and{" "}
+              <span className="text-white/90 font-medium">Quality</span>{" "}
+              (confluence clarity).
             </p>
 
             {/* compact score cards */}
@@ -119,12 +121,20 @@ export default function ScoringSystem() {
             </div>
           </motion.div>
 
-          {/* RIGHT — premium HUD (replaces scoreboard) */}
-          <motion.div className="lg:col-span-7 space-y-5">
+          {/* RIGHT — premium HUD (no hover / no sheen / no group hover) */}
+          <motion.div
+            initial={{ opacity: 0, x: 18, y: 6, filter: "blur(10px)" }}
+            whileInView={{ opacity: 1, x: 0, y: 0, filter: "blur(0px)" }}
+            transition={
+              reduceMotion
+                ? { duration: 0.01 }
+                : { duration: 0.85, ease: easePremium }
+            }
+            viewport={{ once: false, amount: 0.35 }}
+            className="lg:col-span-7 space-y-5"
+          >
             {showHudPanel && (
-              <PanelTilt reduceMotion={reduceMotion}>
-                <SignalsHudCard items={lastSignals} reduceMotion={reduceMotion} />
-              </PanelTilt>
+              <SignalsHudCard items={lastSignals} reduceMotion={reduceMotion} />
             )}
           </motion.div>
         </div>
@@ -138,17 +148,24 @@ export default function ScoringSystem() {
 function Badge({
   icon,
   children,
+  className = "",
 }: {
   icon: React.ReactNode;
   children: React.ReactNode;
+  className?: string;
 }) {
   return (
-    <div className="inline-flex items-center gap-2 px-4 py-2 sm:px-5 rounded-full border border-emerald-400/20 bg-white/[0.03] backdrop-blur-md w-fit">
+    <span
+      className={[
+        "inline-flex items-center gap-2 px-5 py-2 rounded-full border border-emerald-400/20 bg-white/[0.03] backdrop-blur-md",
+        className,
+      ].join(" ")}
+    >
       {icon}
-      <span className="text-emerald-300 text-[10px] sm:text-xs tracking-[0.24em] font-semibold uppercase">
+      <span className="text-emerald-300 text-xs tracking-[0.24em] font-semibold uppercase">
         {children}
       </span>
-    </div>
+    </span>
   );
 }
 
@@ -199,7 +216,9 @@ function MiniScoreCard({
             <div className="text-xs text-white/45">{hint}</div>
           </div>
         </div>
-        <div className="text-sm font-semibold text-white/85 tabular-nums">{value}</div>
+        <div className="text-sm font-semibold text-white/85 tabular-nums">
+          {value}
+        </div>
       </div>
 
       <div className="mt-3 h-2.5 rounded-full bg-white/5 overflow-hidden">
@@ -207,59 +226,13 @@ function MiniScoreCard({
           initial={{ width: 0 }}
           whileInView={{ width: scheme === "emerald" ? "100%" : "72%" }}
           viewport={{ once: false, amount: 0.35 }}
-          transition={reduceMotion ? { duration: 0.01 } : { duration: 0.9, ease: "easeOut" }}
+          transition={
+            reduceMotion ? { duration: 0.01 } : { duration: 0.9, ease: "easeOut" }
+          }
           className={`h-full rounded-full ${bar}`}
         />
       </div>
     </div>
-  );
-}
-
-/* ---------------- tilt wrapper ---------------- */
-
-function PanelTilt({
-  children,
-  reduceMotion,
-}: {
-  children: React.ReactNode;
-  reduceMotion: boolean;
-}) {
-  const ref = useRef<HTMLDivElement | null>(null);
-  const mx = useMotionValue(0);
-  const my = useMotionValue(0);
-
-  const sx = useSpring(mx, { stiffness: 230, damping: 24, mass: 0.7 });
-  const sy = useSpring(my, { stiffness: 230, damping: 24, mass: 0.7 });
-
-  const rotateY = useTransform(sx, [-0.5, 0.5], reduceMotion ? [0, 0] : [-7, 7]);
-  const rotateX = useTransform(sy, [-0.5, 0.5], reduceMotion ? [0, 0] : [7, -7]);
-
-  const onMove = (e: React.MouseEvent) => {
-    if (reduceMotion || !ref.current) return;
-    const r = ref.current.getBoundingClientRect();
-    mx.set((e.clientX - r.left) / r.width - 0.5);
-    my.set((e.clientY - r.top) / r.height - 0.5);
-  };
-
-  const onLeave = () => {
-    mx.set(0);
-    my.set(0);
-  };
-
-  return (
-    <motion.div
-      ref={ref}
-      initial={{ opacity: 0, x: 18, y: 6, filter: "blur(10px)" }}
-      whileInView={{ opacity: 1, x: 0, y: 0, filter: "blur(0px)" }}
-      transition={reduceMotion ? { duration: 0.01 } : { duration: 0.85, ease: easePremium }}
-      viewport={{ once: false, amount: 0.35 }}
-      style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
-      onMouseMove={onMove}
-      onMouseLeave={onLeave}
-      className="relative"
-    >
-      {children}
-    </motion.div>
   );
 }
 
@@ -279,7 +252,7 @@ function SignalsHudCard({
   };
 
   return (
-    <div className="group relative rounded-[26px] sm:rounded-[30px] p-[1px] bg-gradient-to-b from-emerald-400/25 via-white/10 to-emerald-500/15 shadow-[0_0_60px_rgba(16,185,129,0.10)]">
+    <div className="relative rounded-[26px] sm:rounded-[30px] p-[1px] bg-gradient-to-b from-emerald-400/25 via-white/10 to-emerald-500/15 shadow-[0_0_60px_rgba(16,185,129,0.10)]">
       <div className="relative rounded-[26px] sm:rounded-[30px] overflow-hidden bg-[#070707]/75 border border-white/10 backdrop-blur-xl">
         {/* blooms */}
         <div
@@ -299,16 +272,6 @@ function SignalsHudCard({
           <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,.12)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,.12)_1px,transparent_1px)] bg-[size:56px_56px]" />
         </div>
 
-        {/* sheen */}
-        <motion.div
-          aria-hidden="true"
-          className="absolute top-0 left-[-120%] w-[240%] h-full bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100"
-          animate={reduceMotion ? {} : { x: ["-120%", "120%"] }}
-          transition={
-            reduceMotion ? { duration: 0.01 } : { duration: 7.5, repeat: Infinity, ease: "linear" }
-          }
-        />
-
         {/* header */}
         <div className="relative px-4 sm:px-6 py-4 sm:py-5 border-b border-white/10 flex items-start justify-between gap-4">
           <div className="leading-tight">
@@ -317,7 +280,6 @@ function SignalsHudCard({
             </div>
             <div className="text-[11px] text-white/50">S (Safety) + Q (Quality)</div>
           </div>
-
         </div>
 
         {/* body */}
@@ -351,14 +313,18 @@ function SignalsHudCard({
                     show: { opacity: 1, y: 0, filter: "blur(0px)" },
                   }}
                   transition={
-                    reduceMotion ? { duration: 0.01 } : { duration: 0.55, ease: [0.16, 1, 0.3, 1] }
+                    reduceMotion
+                      ? { duration: 0.01 }
+                      : { duration: 0.55, ease: [0.16, 1, 0.3, 1] }
                   }
                   className="relative rounded-2xl border border-white/10 bg-white/[0.02] backdrop-blur-md px-4 py-3"
                 >
                   {/* ✅ Mobile layout */}
                   <div className="sm:hidden">
                     <div className="flex items-center justify-between gap-3">
-                      <span className="text-white/88 text-[13px] font-medium">{row.type}</span>
+                      <span className="text-white/88 text-[13px] font-medium">
+                        {row.type}
+                      </span>
                       <span className="text-[11px] text-white/45 tracking-widest uppercase">
                         S + Q
                       </span>
@@ -381,7 +347,11 @@ function SignalsHudCard({
                             initial={{ width: 0 }}
                             whileInView={{ width: `${sp}%` }}
                             viewport={{ once: false, amount: 0.35 }}
-                            transition={reduceMotion ? { duration: 0.01 } : { duration: 0.9, ease: "easeOut" }}
+                            transition={
+                              reduceMotion
+                                ? { duration: 0.01 }
+                                : { duration: 0.9, ease: "easeOut" }
+                            }
                           />
                         </div>
                       </div>
@@ -402,7 +372,11 @@ function SignalsHudCard({
                             initial={{ width: 0 }}
                             whileInView={{ width: `${qp}%` }}
                             viewport={{ once: false, amount: 0.35 }}
-                            transition={reduceMotion ? { duration: 0.01 } : { duration: 0.9, ease: "easeOut" }}
+                            transition={
+                              reduceMotion
+                                ? { duration: 0.01 }
+                                : { duration: 0.9, ease: "easeOut" }
+                            }
                           />
                         </div>
                       </div>
@@ -424,7 +398,11 @@ function SignalsHudCard({
                           initial={{ width: 0 }}
                           whileInView={{ width: `${sp}%` }}
                           viewport={{ once: false, amount: 0.35 }}
-                          transition={reduceMotion ? { duration: 0.01 } : { duration: 0.9, ease: "easeOut" }}
+                          transition={
+                            reduceMotion
+                              ? { duration: 0.01 }
+                              : { duration: 0.9, ease: "easeOut" }
+                          }
                         />
                       </div>
                     </div>
@@ -440,7 +418,11 @@ function SignalsHudCard({
                           initial={{ width: 0 }}
                           whileInView={{ width: `${qp}%` }}
                           viewport={{ once: false, amount: 0.35 }}
-                          transition={reduceMotion ? { duration: 0.01 } : { duration: 0.9, ease: "easeOut" }}
+                          transition={
+                            reduceMotion
+                              ? { duration: 0.01 }
+                              : { duration: 0.9, ease: "easeOut" }
+                          }
                         />
                       </div>
                     </div>

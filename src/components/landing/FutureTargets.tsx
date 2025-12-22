@@ -57,7 +57,7 @@ export default function FutureTargets() {
   const [autoplay, setAutoplay] = useState(true);
   const [paused, setPaused] = useState(false);
 
-  const wrap = (n) => (n + shots.length) % shots.length;
+  const wrap = (n: number) => (n + shots.length) % shots.length;
 
   const next = () => {
     setDir(1);
@@ -82,7 +82,7 @@ export default function FutureTargets() {
   }, [autoplay, paused, reduceMotion, shots.length, shotIdx]);
 
   const variants = {
-    enter: (d) => ({
+    enter: (d: number) => ({
       opacity: 0,
       x: reduceMotion ? 0 : d * 16,
       filter: "blur(10px)",
@@ -95,7 +95,7 @@ export default function FutureTargets() {
         ? { duration: 0.01 }
         : { duration: 0.55, ease: easePremium },
     },
-    exit: (d) => ({
+    exit: (d: number) => ({
       opacity: 0,
       x: reduceMotion ? 0 : d * -16,
       filter: "blur(10px)",
@@ -127,19 +127,20 @@ export default function FutureTargets() {
             {...enter(1)}
             className="lg:col-span-5 space-y-5 sm:space-y-6 order-1 lg:order-2"
           >
-            <div className="flex flex-wrap items-center gap-2">
-              <div className="inline-flex items-center gap-2 px-4 sm:px-5 py-2 rounded-full border border-emerald-400/20 bg-white/[0.03] backdrop-blur-md w-fit">
+            <div className="flex flex-wrap items-center justify-center gap-2 w-full">
+              <div className="inline-flex items-center gap-2 px-4 sm:px-5 py-2 rounded-full border border-emerald-400/20 bg-white/[0.03] backdrop-blur-md w-full sm:w-fit justify-center">
                 <Sparkles className="w-4 h-4 text-emerald-300" />
                 <span className="text-emerald-300 text-[11px] sm:text-xs tracking-[0.24em] font-semibold uppercase">
                   Market Structure Engine
                 </span>
               </div>
 
-              <span className="inline-flex items-center gap-2 px-3.5 sm:px-4 py-2 rounded-full border border-white/10 bg-white/[0.02] backdrop-blur-md text-[10px] sm:text-[11px] tracking-[0.18em] uppercase text-white/55">
+              <span className="inline-flex items-center gap-2 px-3.5 sm:px-4 py-2 rounded-full border border-white/10 bg-white/[0.02] backdrop-blur-md text-[10px] sm:text-[11px] tracking-[0.18em] uppercase text-white/55 w-full sm:w-fit justify-center">
                 <Layers className="w-3.5 h-3.5 text-emerald-300/80" />
                 T1 / T2 Lines
               </span>
             </div>
+
 
             <h2 className="font-extrabold tracking-tight leading-[1.05] text-[clamp(28px,7.6vw,52px)]">
               <span className="bg-gradient-to-r from-white via-emerald-200 to-emerald-500 bg-clip-text text-transparent">
@@ -150,8 +151,9 @@ export default function FutureTargets() {
             <p className="text-white/70 leading-relaxed max-w-xl text-[14.5px] sm:text-lg">
               After a breakout, price often interacts with{" "}
               <span className="text-white/85 font-semibold">T1</span> first, then{" "}
-              <span className="text-white/85 font-semibold">T2</span>. These adaptive EMA lines act as forward
-              structure, giving you clean reaction zones for continuation, failure or partials.
+              <span className="text-white/85 font-semibold">T2</span>. These
+              adaptive EMA lines act as forward structure, giving you clean
+              reaction zones for continuation, failure or partials.
             </p>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -272,12 +274,13 @@ export default function FutureTargets() {
                     <TagChip tone="emerald">{current.tags[1]}</TagChip>
                   </div>
 
-                  <div className="absolute left-3 right-3 sm:left-5 sm:right-5 bottom-3 sm:bottom-5">
+                  {/* DESKTOP/TABLET: overlay caption (sm+) */}
+                  <div className="hidden sm:block absolute left-3 right-3 sm:left-5 sm:right-5 bottom-3 sm:bottom-5">
                     <Glass className="rounded-2xl bg-black/35 px-3 py-2 sm:px-4 sm:py-3">
                       <div className="text-[13px] sm:text-sm font-semibold text-white/90 leading-tight line-clamp-1">
                         {current.captionTitle}
                       </div>
-                      <div className="mt-1 text-[12.5px] sm:text-sm text-white/65 leading-relaxed line-clamp-3 sm:line-clamp-none">
+                      <div className="mt-1 text-[12.5px] sm:text-sm text-white/65 leading-relaxed sm:line-clamp-none">
                         {current.caption}
                       </div>
                     </Glass>
@@ -294,6 +297,20 @@ export default function FutureTargets() {
                   <div className="absolute inset-0 ring-1 ring-white/10" />
                 </motion.div>
 
+                {/* ✅ MOBILE: caption OUTSIDE the image */}
+                <div className="sm:hidden px-4 pt-4 pb-4">
+                  <Glass className="rounded-2xl bg-white/[0.03] px-4 py-3">
+                    <div className="text-sm font-semibold text-white/90 leading-tight">
+                      {current.captionTitle}
+                    </div>
+                    <div className="mt-1 text-[13px] text-white/65 leading-relaxed">
+                      {current.caption}
+                    </div>
+                  </Glass>
+                </div>
+
+
+
                 <div className="px-4 sm:px-6 py-3 sm:py-4 border-t border-white/10">
                   <div className="flex items-center justify-between gap-3">
                     <div className="text-[11px] sm:text-xs text-white/45">
@@ -309,11 +326,10 @@ export default function FutureTargets() {
                             setShotIdx(i);
                           }}
                           aria-label={`Go to screenshot ${i + 1}`}
-                          className={`h-2.5 rounded-full transition-all ${
-                            i === shotIdx
-                              ? "w-7 sm:w-8 bg-emerald-300/70"
-                              : "w-2.5 bg-white/15 hover:bg-white/25"
-                          }`}
+                          className={`h-2.5 rounded-full transition-all ${i === shotIdx
+                            ? "w-7 sm:w-8 bg-emerald-300/70"
+                            : "w-2.5 bg-white/15 hover:bg-white/25"
+                            }`}
                         />
                       ))}
                     </div>
@@ -330,7 +346,7 @@ export default function FutureTargets() {
 
 /* ---------- tiny atoms ---------- */
 
-function Glass({ className = "", children }) {
+function Glass({ className = "", children }: { className?: string; children: React.ReactNode }) {
   return (
     <div
       className={[
@@ -344,7 +360,13 @@ function Glass({ className = "", children }) {
   );
 }
 
-function TagChip({ children, tone = "neutral" }) {
+function TagChip({
+  children,
+  tone = "neutral",
+}: {
+  children: React.ReactNode;
+  tone?: "neutral" | "emerald";
+}) {
   const tones =
     tone === "emerald"
       ? "text-emerald-100 border-emerald-400/20 bg-emerald-400/10"
@@ -362,7 +384,17 @@ function TagChip({ children, tone = "neutral" }) {
   );
 }
 
-function Chip({ icon, title, desc, tone = "neutral" }) {
+function Chip({
+  icon,
+  title,
+  desc,
+  tone = "neutral",
+}: {
+  icon?: React.ReactNode;
+  title: string;
+  desc: string;
+  tone?: "neutral" | "emerald";
+}) {
   const base = "flex items-center gap-3 px-4 py-3 rounded-2xl border backdrop-blur-md";
   const toneCls =
     tone === "emerald"

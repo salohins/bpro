@@ -59,20 +59,20 @@ export default function AdaptiveTrendCloud() {
       className="relative w-full overflow-hidden bg-transparent text-white
                  py-14 sm:py-16 lg:py-0 lg:h-[100svh] lg:min-h-[100svh]"
     >
-{/* FULL-WIDTH CLOUD BACKGROUND IMAGE */}
-{/* FULL-WIDTH CLOUD BACKGROUND IMAGE */}
-<div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
-  <div
-    className="
+      {/* FULL-WIDTH CLOUD BACKGROUND IMAGE */}
+      {/* FULL-WIDTH CLOUD BACKGROUND IMAGE */}
+      <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div
+          className="
       absolute inset-0 bg-no-repeat
       [background-size:300%_300%] [background-position:55%_58%]
       sm:[background-size:200%_200%] sm:[background-position:55%_20%]
       md:[background-size:160%_160%] md:[background-position:52%_18%]
       lg:[background-size:cover] lg:[background-position:center]
     "
-    style={{ backgroundImage: `url(${cloudBg})` }}
-  />
-</div>
+          style={{ backgroundImage: `url(${cloudBg})`, opacity: 0.8 }}
+        />
+      </div>
       <div className="relative z-10 mx-auto max-w-[1760px] h-full px-4 sm:px-10 lg:px-16 2xl:px-20">
         <motion.div
           variants={container}
@@ -86,8 +86,8 @@ export default function AdaptiveTrendCloud() {
           <motion.div variants={fadeLeft} className="lg:col-span-5 space-y-5 sm:space-y-6">
             <div className="flex flex-wrap items-center gap-2">
               <div className="flex flex-wrap items-center justify-center gap-2 w-full">
-  <div
-    className="
+                <div
+                  className="
       inline-flex items-center gap-2
       w-full sm:w-fit
       justify-center
@@ -96,15 +96,15 @@ export default function AdaptiveTrendCloud() {
       border border-emerald-400/20
       bg-white/[0.03] backdrop-blur-md
     "
-  >
-    <Sparkles className="w-4 h-4 text-emerald-300" />
-    <span className="text-emerald-300 text-[11px] sm:text-xs tracking-[0.24em] font-semibold uppercase">
-      Market Structure Engine
-    </span>
-  </div>
+                >
+                  <Sparkles className="w-4 h-4 text-emerald-300" />
+                  <span className="text-emerald-300 text-[11px] sm:text-xs tracking-[0.24em] font-semibold uppercase">
+                    Market Structure Engine
+                  </span>
+                </div>
 
-  <span
-    className="
+                <span
+                  className="
       inline-flex items-center gap-2
       w-full sm:w-fit
       justify-center
@@ -115,11 +115,11 @@ export default function AdaptiveTrendCloud() {
       text-[10px] sm:text-[11px]
       tracking-[0.18em] uppercase text-white/55
     "
-  >
-    <Layers className="w-3.5 h-3.5 text-emerald-300/80" />
-    Adaptive Cloud Layer
-  </span>
-        </div>
+                >
+                  <Layers className="w-3.5 h-3.5 text-emerald-300/80" />
+                  Adaptive Cloud Layer
+                </span>
+              </div>
 
             </div>
 
@@ -158,7 +158,7 @@ export default function AdaptiveTrendCloud() {
               </motion.li>
             </motion.ul>
 
-           
+
           </motion.div>
 
           {/* RIGHT */}
