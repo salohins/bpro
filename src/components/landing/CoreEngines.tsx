@@ -62,7 +62,7 @@ export default function CoreEngines() {
         title: "Confluence & Sentiment Engine",
         tagline: "Is the environment favorable?",
         points: ["9-layer permission gates", "Volume · momentum · volatility", "Bull/Bear/Range strictness"],
-        footer: "Filters adapt to regime so you trade what fits, not what you want",
+        footer: "Filters adapt to regime so you trade what fits.",
         tone: "sky",
         badge: "Permission",
       },
@@ -71,7 +71,7 @@ export default function CoreEngines() {
         title: "Decision Intelligence",
         tagline: "How good is this setup?",
         points: ["Safety score (risk)", "Quality score (edge)", "Last signals panel (selectivity)"],
-        footer: "Grades setups so you trade selectively, not emotionally.",
+        footer: "Grades setups so you trade selectively.",
         tone: "lime",
         badge: "Grading",
       },
@@ -80,7 +80,7 @@ export default function CoreEngines() {
         title: "Trade Lifecycle & Risk Engine",
         tagline: "Trade management from open to close.",
         points: ["ATR stops + invalidation", "Structural + momentum exits", "State machine: Active → Closed"],
-        footer: "More than signals. Full trade management.",
+        footer: "Trading signals + scores.",
         tone: "amber",
         badge: "Risk",
       },
@@ -89,11 +89,11 @@ export default function CoreEngines() {
         title: "Signal & Execution Engine",
         tagline: "Turns context into a clear entry decision.",
         points: [
-          "Breakout entries as the primary trigger",
+          "Open/Long/Short signals as the primary trigger",
           "Divergences used as confirmation or warning",
           "Continuations used to stay aligned with trend",
         ],
-        footer: "Gives you one clean trigger, with supporting context. No random signals.",
+        footer: "Gives you one clean trigger, with supporting context.",
         tone: "fuchsia",
         badge: "Execution",
       },
@@ -133,93 +133,62 @@ export default function CoreEngines() {
       id="core-engines"
       className="
         relative w-full bg-black text-white
-        h-[100svh] overflow-hidden
+        min-h-[100svh] h-[100svh] overflow-hidden
       "
     >
-{/* Background (static) */}
-<div className="absolute inset-0">
-  <motion.div
-    className="absolute inset-0 will-change-transform"
-    // ✅ MOBILE: keep it oversized so panning never reveals edges
-    style={!isLgUp ? { scale: 1.28 } : undefined}
-    animate={
-      !isLgUp && !reduceMotion
-        ? { x: [-55, 55, -55] } // px = predictable, hits edges properly
-        : undefined
-    }
-    transition={
-      !isLgUp && !reduceMotion
-        ? { duration: 14, repeat: Infinity, ease: "easeInOut" }
-        : undefined
-    }
-  >
-    <img
-      src={bproScreenshot}
-      alt=""
-      className="
-        absolute inset-0 w-full h-full object-cover
-        object-[90%_0%]
-        md:object-[-20%_50%]
-      "
-      loading="lazy"
-      decoding="async"
-    />
-  </motion.div>
+      {/* Background (static) */}
+      <div className="absolute inset-0">
+        <motion.div
+          className="absolute inset-0 will-change-transform"
+          // ✅ MOBILE: keep it oversized so panning never reveals edges
+          style={!isLgUp ? { scale: 1.28 } : undefined}
+          animate={!isLgUp && !reduceMotion ? { x: [-55, 55, -55] } : undefined}
+          transition={!isLgUp && !reduceMotion ? { duration: 14, repeat: Infinity, ease: "easeInOut" } : undefined}
+        >
+          <img
+            src={bproScreenshot}
+            alt=""
+            className="absolute inset-0 w-full h-full object-cover object-[90%_0%] md:object-[-20%_50%]"
+            loading="lazy"
+            decoding="async"
+          />
+        </motion.div>
 
-  {/* ✅ Base dark overlay: mobile bottom→top, desktop left→right */}
-  <div
-    className="
-      absolute inset-0
-      bg-gradient-to-t from-black/95 via-black/55 to-transparent
-      md:bg-gradient-to-r md:from-black/95 md:via-black/70 md:to-transparent
-    "
-  />
+        {/* ✅ Base dark overlay: mobile bottom→top, desktop left→right */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/55 to-transparent md:bg-gradient-to-r md:from-black/95 md:via-black/70 md:to-transparent" />
 
-  <AnimatePresence initial={false} mode="wait">
-    <motion.div
-      key={active.tone}
-      className={`absolute inset-0 ${tone.bgWash}`}
-      initial={{ opacity: 0 }}
-      animate={{ opacity: isLgUp ? 0.55 : 0.28 }}
-      exit={{ opacity: 0 }}
-      transition={reduceMotion ? { duration: 0.01 } : { duration: 0.32, ease: easePremium }}
-    />
-  </AnimatePresence>
-</div>
-
-
-      <div className="relative z-10 mx-auto max-w-[1760px] fkex items-center h-full px-6 sm:px-10 lg:px-16 2xl:px-20">
-{/* MOBILE — SLIDER (headline + slider as ONE bottom-aligned block) */}
-<div className="lg:hidden h-full flex flex-col pt-10 pb-14">
-  {/* ✅ Push content to bottom */}
-  <div className="flex-1 min-h-0 flex items-end">
-    <div className="w-full max-w-[560px] mx-auto">
-      {/* headline (part of the same block) */}
-      <motion.div {...enter(0)} className="mb-5">
-        <h2 className="font-semibold tracking-[-0.05em] leading-[1.02] text-[clamp(36px,8.2vw,42px)]">
-          <span className="text-white/95">Five engines.</span>
-          <br />
-          <span className={`bg-gradient-to-r ${tone.textGrad} bg-clip-text text-transparent`}>
-            One Decision Framework.
-          </span>
-        </h2>
-      </motion.div>
-
-      {/* ✅ stable slider height so slides stay equal height */}
-      <div className="h-[52svh] min-h-[340px] max-h-[520px]">
-        <MobileEnginesSlider
-          engines={engines}
-          idx={idx}
-          setIdx={setIdx}
-          reduceMotion={reduceMotion}
-        />
+        <AnimatePresence initial={false} mode="wait">
+          <motion.div
+            key={active.tone}
+            className={`absolute inset-0 ${tone.bgWash}`}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: isLgUp ? 0.55 : 0.28 }}
+            exit={{ opacity: 0 }}
+            transition={reduceMotion ? { duration: 0.01 } : { duration: 0.32, ease: easePremium }}
+          />
+        </AnimatePresence>
       </div>
-    </div>
-  </div>
-</div>
 
+      <div className="relative z-10 mx-auto max-w-[1760px] h-full px-6 sm:px-10 lg:px-16 2xl:px-20">
+        {/* ✅ MOBILE — headline + slider (no svh caps, slider uses remaining height) */}
+        <div className="lg:hidden h-full flex flex-col pt-10 pb-10">
+          <div className="w-full max-w-[560px] mx-auto flex flex-col h-full min-h-0">
+            <motion.div {...enter(0)} className="shrink-0 mb-4">
+              <h2 className="font-semibold tracking-[-0.05em] leading-[1.02] text-[clamp(34px,8.2vw,42px)]">
+                <span className="text-white/95">Five engines.</span>
+                <br />
+                <span className={`bg-gradient-to-r ${tone.textGrad} bg-clip-text text-transparent`}>
+                  One Decision Framework.
+                </span>
+              </h2>
+            </motion.div>
 
-
+            {/* ✅ slider fills remaining height */}
+            <div className="flex-1 min-h-0">
+              <MobileEnginesSlider engines={engines} idx={idx} setIdx={setIdx} reduceMotion={reduceMotion} />
+            </div>
+          </div>
+        </div>
 
         {/* DESKTOP */}
         <div className="hidden lg:grid h-full grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
@@ -280,9 +249,7 @@ export default function CoreEngines() {
 
                           <div className="min-w-0 flex-1">
                             <div className="flex items-center justify-between gap-3">
-                              <div className="text-sm font-semibold text-white/90 leading-tight truncate">
-                                {e.title}
-                              </div>
+                              <div className="text-sm font-semibold text-white/90 leading-tight truncate">{e.title}</div>
                               <span
                                 className={[
                                   "shrink-0 inline-flex items-center px-3 py-1.5 rounded-full border text-[10px] tracking-widest uppercase",
@@ -292,9 +259,7 @@ export default function CoreEngines() {
                                 {e.badge}
                               </span>
                             </div>
-                            <div className="mt-1 text-sm text-white/65 leading-tight line-clamp-2">
-                              {e.tagline}
-                            </div>
+                            <div className="mt-1 text-sm text-white/65 leading-tight line-clamp-2">{e.tagline}</div>
                           </div>
                         </div>
                       </div>
@@ -475,7 +440,6 @@ function MobileEnginesSlider({
 }
 
 /* ---------------- MOBILE CARD ---------------- */
-
 function MobileEngineCard({
   engine,
   isActive,
@@ -492,67 +456,64 @@ function MobileEngineCard({
     <div
       className={[
         "h-full rounded-[30px] p-[1px] transition-all duration-300",
-        isActive
-          ? `bg-gradient-to-b ${t.cardGrad} shadow-[0_0_45px_rgba(255,255,255,0.07)]`
-          : "bg-gradient-to-b from-white/10 via-white/7 to-white/10",
+        isActive ? `bg-gradient-to-b ${t.cardGrad} shadow-[0_0_45px_rgba(255,255,255,0.07)]` : "bg-gradient-to-b from-white/10 via-white/7 to-white/10",
       ].join(" ")}
     >
       <div
         className={[
-          "relative h-full overflow-hidden rounded-[30px] border border-white/10 bg-[#070707]/70 backdrop-blur-2xl p-5 flex flex-col",
+          "relative h-full overflow-hidden rounded-[30px] border border-white/10 bg-[#070707]/70 backdrop-blur-2xl p-4 sm:p-5 flex flex-col",
           isActive ? `ring-1 ${t.ring}` : "",
         ].join(" ")}
       >
         <div className={`pointer-events-none absolute inset-0 ${t.bgWash} opacity-[0.28]`} />
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/55 via-black/20 to-transparent" />
 
-        <div className="relative flex flex-col h-full min-h-0">
-          <div className="flex items-start justify-between gap-4">
-            <div className="min-w-0">
-  
+        {/* Badge */}
+        <span
+          className={[
+            "absolute left-5 top-5 inline-flex items-center px-3 py-1.5 rounded-full border text-[10px] tracking-widest uppercase",
+            t.pillActive,
+          ].join(" ")}
+        >
+          {engine.badge}
+        </span>
 
-              <div className="mt-12 flex items-center gap-3">
-                <span
-                  className={[
-                    "inline-flex h-12 w-12 items-center justify-center rounded-2xl border border-white/10",
-                    isActive ? t.iconBox : "bg-white/[0.03]",
-                  ].join(" ")}
-                >
-                  <Icon className={`h-5 w-5 ${isActive ? t.icon : "text-white/70"}`} />
-                </span>
-
-                <div className="min-w-0">
-                  <div className="text-[18px] font-semibold tracking-tight text-white/92 leading-tight">
-                    {engine.title}
-                  </div>
-                  <div className="mt-1 text-white/65 text-sm leading-snug">{engine.tagline}</div>
-                </div>
-              </div>
-            </div>
-
+        {/* Header block (fixed + clamped) */}
+        <div className="relative mt-12">
+          <div className="flex items-start gap-3">
             <span
               className={[
-                "absolute left-0 shrink-0 inline-flex items-center px-3 py-1.5 rounded-full border text-[10px] tracking-widest uppercase",
-                t.pillActive,
+                "inline-flex h-12 w-12 items-center justify-center rounded-2xl border border-white/10 shrink-0",
+                isActive ? t.iconBox : "bg-white/[0.03]",
               ].join(" ")}
             >
-              {engine.badge}
+              <Icon className={`h-5 w-5 ${isActive ? t.icon : "text-white/70"}`} />
             </span>
-          </div>
 
-          {/* fills space so footer sits consistently near bottom */}
-          <div className="mt-5 space-y-2.5 flex-1 min-h-0">
+            <div className="min-w-0">
+              <div className="text-[18px] font-semibold tracking-tight text-white/92 leading-tight line-clamp-2">
+                {engine.title}
+              </div>
+              <div className="mt-1 text-white/65 text-sm leading-snug line-clamp-2">{engine.tagline}</div>
+            </div>
+          </div>
+        </div>
+
+        {/* ✅ FIXED-HEIGHT bullets (NO SCROLL) */}
+        <div className="relative mt-4 overflow-hidden" style={{ height: 132 }}>
+          <div className="space-y-2.5">
             {engine.points.slice(0, 3).map((p) => (
               <div key={p} className="flex items-start gap-3">
                 <span className={`mt-[6px] h-2 w-2 rounded-full ${t.dot}`} />
-                <div className="text-sm text-white/80 leading-snug">{p}</div>
+                <div className="text-[13.5px] text-white/80 leading-snug line-clamp-2">{p}</div>
               </div>
             ))}
           </div>
+        </div>
 
-          <div className="mt-4 pt-4 border-t border-white/10 text-xs text-white/45 leading-relaxed">
-            {engine.footer}
-          </div>
+        {/* Footer pinned to bottom, also clamped */}
+        <div className="relative mt-auto pt-4 border-t border-white/10 text-xs text-white/45 leading-relaxed line-clamp-2">
+          {engine.footer}
         </div>
       </div>
     </div>
@@ -564,13 +525,9 @@ function MobileEngineCard({
 function Kicker({ children, tone }: { children: React.ReactNode; tone: Engine["tone"] }) {
   const t = getTone(tone);
   return (
-    <div
-      className={`inline-flex items-center gap-2 px-5 py-2 rounded-full border bg-white/[0.03] backdrop-blur-md w-fit ${t.kickerBorder}`}
-    >
+    <div className={`inline-flex items-center gap-2 px-5 py-2 rounded-full border bg-white/[0.03] backdrop-blur-md w-fit ${t.kickerBorder}`}>
       <Sparkles className={`w-4 h-4 ${t.icon}`} />
-      <span className={`text-xs tracking-[0.24em] font-semibold uppercase ${t.kickerText}`}>
-        {children}
-      </span>
+      <span className={`text-xs tracking-[0.24em] font-semibold uppercase ${t.kickerText}`}>{children}</span>
     </div>
   );
 }
@@ -578,9 +535,7 @@ function Kicker({ children, tone }: { children: React.ReactNode; tone: Engine["t
 function Pill({ children, tone }: { children: React.ReactNode; tone: Engine["tone"] }) {
   const t = getTone(tone);
   return (
-    <span
-      className={`inline-flex items-center px-3 py-1.5 rounded-full border text-[10px] tracking-widest uppercase ${t.pillActive}`}
-    >
+    <span className={`inline-flex items-center px-3 py-1.5 rounded-full border text-[10px] tracking-widest uppercase ${t.pillActive}`}>
       {children}
     </span>
   );

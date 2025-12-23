@@ -441,13 +441,6 @@ export default function TradeModes() {
 
   return (
     <section className="relative w-full py-24 md:py-28 bg-transparent text-white" id="trade-modes">
-      {/* background can bleed into adjacent sections */}
-      <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
-        <div className="absolute -top-28 -bottom-28 left-0 right-0 bg-[radial-gradient(circle_at_50%_18%,rgba(16,185,129,0.10),transparent_62%)]" />
-        <div className="absolute inset-0 opacity-[0.04] [mask-image:radial-gradient(ellipse_at_center,black,transparent_72%)]">
-          <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,.10)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,.10)_1px,transparent_1px)] bg-[size:96px_96px]" />
-        </div>
-      </div>
 
       <div className="relative z-10 mx-auto max-w-[1760px] px-6 sm:px-10 lg:px-16 2xl:px-20">
         <motion.div

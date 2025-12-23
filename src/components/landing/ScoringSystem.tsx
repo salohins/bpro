@@ -16,11 +16,11 @@ export default function ScoringSystem() {
 
   const lastSignals = useMemo(
     () => [
-      { type: "Breakout", safety: "1/3", quality: "2/3" },
+      { type: "Open Short", safety: "1/3", quality: "2/3" },
       { type: "Bull Continuation", safety: "3/3", quality: "2/3" },
       { type: "Cross Up", safety: "3/3", quality: "2/3" },
       { type: "Cross Down", safety: "2/3", quality: "1/3" },
-      { type: "Breakout", safety: "3/3", quality: "2/3" },
+      { type: "Open Long", safety: "3/3", quality: "2/3" },
     ],
     []
   );
@@ -32,13 +32,6 @@ export default function ScoringSystem() {
       className="relative w-full py-16 sm:py-20 lg:py-24 bg-transparent text-white"
       id="scoring-system"
     >
-      {/* ✅ background that can bleed into neighbor sections (no abrupt cut) */}
-      <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
-        <div className="absolute -top-28 -bottom-28 left-0 right-0 bg-[radial-gradient(circle_at_55%_14%,rgba(16,185,129,0.12),transparent_62%)]" />
-        <div className="absolute inset-0 opacity-[0.04] [mask-image:radial-gradient(ellipse_at_center,black,transparent_72%)]">
-          <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,.10)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,.10)_1px,transparent_1px)] bg-[size:96px_96px]" />
-        </div>
-      </div>
 
       {/* ✅ match the same width as other premium sections */}
       <div className="relative z-10 mx-auto max-w-[1760px] px-4 sm:px-10 lg:px-16 2xl:px-20">

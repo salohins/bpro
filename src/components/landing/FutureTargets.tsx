@@ -112,13 +112,6 @@ export default function FutureTargets() {
       id="future-targets"
       className="relative w-full bg-transparent text-white py-14 sm:py-16 md:py-24"
     >
-      {/* background stays as you had it */}
-      <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
-        <div className="absolute left-0 right-0 -top-28 -bottom-28 bg-[radial-gradient(circle_at_60%_15%,rgba(16,185,129,0.10),transparent_60%)]" />
-        <div className="absolute inset-0 opacity-[0.05] [mask-image:radial-gradient(ellipse_at_center,black,transparent_72%)]">
-          <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,.10)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,.10)_1px,transparent_1px)] bg-[size:96px_96px]" />
-        </div>
-      </div>
 
       <div className="relative z-10 mx-auto max-w-[1760px] px-4 sm:px-10 lg:px-16 2xl:px-20">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-10 lg:gap-14 items-start lg:items-center">
@@ -151,25 +144,11 @@ export default function FutureTargets() {
             <p className="text-white/70 leading-relaxed max-w-xl text-[14.5px] sm:text-lg">
               After a breakout, price often interacts with{" "}
               <span className="text-white/85 font-semibold">T1</span> first, then{" "}
-              <span className="text-white/85 font-semibold">T2</span>. These
+              <span className="text-white/85 font-semibold">T2</span> continue or fail. These
               adaptive EMA lines act as forward structure, giving you clean
               reaction zones for continuation, failure or partials.
             </p>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <Chip
-                icon={<Target className="w-4 h-4 text-emerald-200/90" />}
-                title="T1 reaction"
-                desc="first touch zone"
-              />
-              <Chip
-                icon={<Shield className="w-4 h-4 text-emerald-200/90" />}
-                title="T2 decision"
-                desc="continue or fail"
-              />
-              <Chip tone="emerald" title="EMA-based lines" desc="dynamic, not static" />
-              <Chip title="Cleaner exits" desc="less guessing" />
-            </div>
 
             <div className="pt-1 text-xs text-white/45 max-w-xl flex items-center gap-2">
               <ArrowRight className="w-3.5 h-3.5 text-emerald-300/70" />

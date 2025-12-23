@@ -47,212 +47,213 @@ export default function ProfitCases() {
 
   const cases = useMemo(
     () => [
-      {
-        pct: "19.9%",
-        tag: "Open Long",
-        symbol: "BTC / USDT",
-        tf: "4H",
-        dates: "Example (swing)",
-        headline: "Mid — Standard mode long",
-        bullets: [
-          "Mode 4H (mid Tmeframe) — Standard mode",
-          "Entry: Open Long at Fast Line",
-          "SL: at Midtrend Line",
-          "TP: Close Long / Fast Line / Midtrend Line",
-        ],
-        note:
-          "4H mid standard mode: long entry at fast line, stop at midtrend, take profit into close-long or fastline / midtrend.",
-        img: fourH19,
-      },
-      {
-        pct: "8.1%",
-        tag: "Open Long",
-        symbol: "BTC / USDT",
-        tf: "4H",
-        dates: "Example (swing)",
-        headline: "Mid — Standard mode long",
-        bullets: [
-          "Mode 4H (mid Timeframe) — Standard mode",
-          "Entry: Open Long at Fast Line",
-          "SL: Close Long / Fast Line / Midtrend Line",
-          "TP: (not specified)",
-        ],
-        note:
-          "4H mid standard mode: long entry at fast line; SL can be close-long, fastline, or midtrend (per your plan).",
-        img: fourH8,
-      },
-      {
-        pct: "5.62%",
-        tag: "Open Long",
-        symbol: "BTC / USDT",
-        tf: "2H",
-        dates: "Example",
-        headline: "Mid — Standard mode breakout long",
-        bullets: [
-          "Mode 2H (mid Timeframe) — Standard mode",
-          "Breakout symbol: price may not touch Fast Line before continuing uptrend",
-          "SL: at Midtrend Line",
-          "TP: Fast Line / Midtrend Line",
-        ],
-        note:
-          "2H breakout case: continuation can happen without a fastline retest; risk at midtrend, targets into fastline/midtrend zones.",
-        img: twoH5,
-      },
-      {
-        pct: "3.1%",
-        tag: "Open Short",
-        symbol: "BTC / USDT",
-        tf: "1H",
-        dates: "Example",
-        headline: "Mid — Standard mode breakdown short",
-        bullets: [
-          "Mode 1H (mid Timeframe) — Standard mode",
-          "Yellow breakdown symbol: price may not touch Fast Line before trend continues",
-          "SL: at Midtrend Line",
-          "TP: Close Short / Fast Line / Midtrend Line",
-        ],
-        note:
-          "1H breakdown case: continuation can happen without a fastline retest; stop at midtrend, take profit into close-short or fastline/midtrend.",
-        img: oneH3,
-      },
-      {
-        pct: "29.8%",
-        tag: "Open Long",
-        symbol: "BTC / USDT",
-        tf: "2D",
-        dates: "Example (trend)",
-        headline: "Standard mode long (no-fastline retest)",
-        bullets: [
-          "Mode 2D — Standard mode (long)",
-          "White label: trend may not touch Fast Line before continuing",
-          "SL: at Midtrend Line",
-          "TP: Fast Line / Midtrend Line / Close Short symbol",
-        ],
-        note:
-          "2D trend case: white label suggests continuation without fastline retest; risk at midtrend, targets into fastline/midtrend or close-short signal.",
-        img: twoD29,
-      },
-      {
-        pct: "27.5%",
-        tag: "Divergence",
-        symbol: "BTC / USDT",
-        tf: "1W",
-        dates: "Example (context)",
-        headline: "Standard mode — bearish divergence context",
-        bullets: [
-          "Weekly (long Timeframe) — Standard mode",
-          "Not a direct setup: highlights bearish divergence you can build a trade on",
-          "SL: at previous B:PRO resistance",
-          "TP: at Fast Line",
-        ],
-        note:
-          "Weekly context: bearish divergence can be used to plan a separate setup; define risk at prior B:PRO resistance and target the fast line.",
-        img: week27,
-      },
-      {
-        pct: "31.5%",
-        tag: "Bear Continuation",
-        symbol: "BTC / USDT",
-        tf: "1D",
-        dates: "Example (trend)",
-        headline: "Standard mode — breakdown + bear continuation",
-        bullets: [
-          "Daily (long Timeframe) — Standard mode",
-          "Breakdown + bear continuation print: price likely won’t touch Fast Line before continuing down",
-          "SL: at Fast Line",
-          "TP: Fast Line / Midtrend Line",
-        ],
-        note:
-          "Daily trend case: breakdown + bear continuation suggests continuation without a fastline retest; stop at fastline, targets into fastline/midtrend.",
-        img: day31,
-      },
-      {
-        pct: "10.3%",
-        tag: "Open Long",
-        symbol: "BTC / USDT",
-        tf: "1D",
-        dates: "Example (trend)",
-        headline: "Standard mode — bull continuation + breakout",
-        bullets: [
-          "Daily (long Timeframe) — Standard mode",
-          "Bull continuation + breakout symbol: price may not touch B:PRO Fast Line before continuing up",
-          "SL: at Midtrend Line",
-          "TP: Close Long / Fast Line / Midtrend Line",
-        ],
-        note:
-          "Daily continuation case: breakout + bull continuation suggests continuation without a fastline retest; risk at midtrend, take profit into close-long or fastline/midtrend.",
-        img: day10,
-      },
-      {
-        pct: "1.2%",
-        tag: "Open Long",
-        symbol: "BTC / USDT",
-        tf: "1m",
-        dates: "Example (scalp)",
-        headline: "Fast Timeframe Mode Bull",
-        bullets: [
-          "Mode 1m (fast Timeframe)",
-          "Entry: Open Long at Fast Line",
-          "SL: slightly below Midtrend Line",
-          "TP: Close Short / Fast Line / Midtrend Line",
-        ],
-        note:
-          "1m fast mode scalp: long trigger at fast line, stop tucked under midtrend, take profit into close-short / fastline / midtrend.",
-        img: oneMinLong,
-      },
-      {
-        pct: "1.92%",
-        tag: "Open Short",
-        symbol: "BTC / USDT",
-        tf: "5m",
-        dates: "Example (scalp)",
-        headline: "Fast Timeframe Mode bear",
-        bullets: [
-          "Mode 5m (fast Timeframe) — Bear mode",
-          "Entry: Open Short at Fast Line",
-          "SL: at Midtrend Line",
-          "TP: Fast Line / Close Short / Midtrend Line",
-        ],
-        note:
-          "5m fast mode (bear): short trigger at fast line, stop at midtrend, take profit into fastline or close-short / midtrend.",
-        img: fiveMin,
-      },
-      {
-        pct: "1.2%",
-        tag: "Open Long",
-        symbol: "BTC / USDT",
-        tf: "15m",
-        dates: "Example (scalp)",
-        headline: "Standard mode long",
-        bullets: [
-          "Mode 15m (short Timeframe) — Standard mode",
-          "Entry: Open Long at Fast Line",
-          "SL: at Midtrend Line",
-          "TP: Fast Line / Close Short / Midtrend Line",
-        ],
-        note:
-          "15m standard mode: long entry at fast line, stop at midtrend, take profit into fastline or close-short / midtrend.",
-        img: fifteenMin,
-      },
-      {
-        pct: "5.8%",
-        tag: "Open Long",
-        symbol: "BTC / USDT",
-        tf: "30m",
-        dates: "Example (scalp)",
-        headline: "Fast Timeframe Mode — Standard long",
-        bullets: [
-          "Mode 30m (fast Timeframe) — Standard mode",
-          "Entry: Open Long at Fast Line",
-          "SL: at Midtrend Line",
-          "TP: Fast Line / Close Short / Midtrend Line",
-        ],
-        note:
-          "30m fast Tiemframe standard mode: long entry at fast line, stop at midtrend, take profit into fastline or close-short / midtrend.",
-        img: thirtyMin,
-      },
+  {
+    pct: "19.9%",
+    tag: "Open Long",
+    symbol: "BTC / USDT",
+    tf: "4H",
+    dates: "Example (swing)",
+    headline: "Mid — Standard mode long",
+    bullets: [
+      "Mode 4H (mid Tmeframe) — Standard mode",
+      "Entry: After Open Long, Signal at the Fast Line",
+      "SL: at Midtrend Line",
+      "TP: Close Long / Fast Line / Midtrend Line",
     ],
-    []
+    note:
+      "4H mid standard mode: long entry at fast line, stop at midtrend, take profit into close-long or fastline / midtrend.",
+    img: fourH19,
+  },
+  {
+    pct: "8.1%",
+    tag: "Open Long",
+    symbol: "BTC / USDT",
+    tf: "4H",
+    dates: "Example (swing)",
+    headline: "Mid — Standard mode long",
+    bullets: [
+      "Mode 4H (mid Timeframe) — Standard mode",
+      "Entry: After Open Long, Signal at the Fast Line",
+      "SL: Close Long / Fast Line / Midtrend Line",
+      "TP: (not specified)",
+    ],
+    note:
+      "4H mid standard mode: long entry at fast line; SL can be close-long, fastline, or midtrend (per your plan).",
+    img: fourH8,
+  },
+  {
+    pct: "5.62%",
+    tag: "Open Long",
+    symbol: "BTC / USDT",
+    tf: "2H",
+    dates: "Example",
+    headline: "Mid — Standard mode breakout long",
+    bullets: [
+      "Mode 2H (mid Timeframe) — Standard mode",
+      "Breakout symbol: price may not touch Fast Line before continuing uptrend",
+      "SL: at Midtrend Line",
+      "TP: Fast Line / Midtrend Line",
+    ],
+    note:
+      "2H breakout case: continuation can happen without a fastline retest; risk at midtrend, targets into fastline/midtrend zones.",
+    img: twoH5,
+  },
+  {
+    pct: "3.1%",
+    tag: "Open Short",
+    symbol: "BTC / USDT",
+    tf: "1H",
+    dates: "Example",
+    headline: "Mid — Standard mode breakdown short",
+    bullets: [
+      "Mode 1H (mid Timeframe) — Standard mode",
+      "Yellow breakdown symbol: price may not touch Fast Line before trend continues",
+      "SL: at Midtrend Line",
+      "TP: Close Short / Fast Line / Midtrend Line",
+    ],
+    note:
+      "1H breakdown case: continuation can happen without a fastline retest; stop at midtrend, take profit into close-short or fastline/midtrend.",
+    img: oneH3,
+  },
+  {
+    pct: "29.8%",
+    tag: "Open Long",
+    symbol: "BTC / USDT",
+    tf: "2D",
+    dates: "Example (trend)",
+    headline: "Standard mode long (no-fastline retest)",
+    bullets: [
+      "Mode 2D — Standard mode (long)",
+      "White label: trend may not touch Fast Line before continuing",
+      "SL: at Midtrend Line",
+      "TP: Fast Line / Midtrend Line / Close Short symbol",
+    ],
+    note:
+      "2D trend case: white label suggests continuation without fastline retest; risk at midtrend, targets into fastline/midtrend or close-short signal.",
+    img: twoD29,
+  },
+  {
+    pct: "27.5%",
+    tag: "Divergence",
+    symbol: "BTC / USDT",
+    tf: "1W",
+    dates: "Example (context)",
+    headline: "Standard mode — bearish divergence context",
+    bullets: [
+      "Weekly (long Timeframe) — Standard mode",
+      "Not a direct setup: highlights bearish divergence you can build a trade on",
+      "SL: at previous B:PRO resistance",
+      "TP: at Fast Line",
+    ],
+    note:
+      "Weekly context: bearish divergence can be used to plan a separate setup; define risk at prior B:PRO resistance and target the fast line.",
+    img: week27,
+  },
+  {
+    pct: "31.5%",
+    tag: "Bear Continuation",
+    symbol: "BTC / USDT",
+    tf: "1D",
+    dates: "Example (trend)",
+    headline: "Standard mode — breakdown + bear continuation",
+    bullets: [
+      "Daily (long Timeframe) — Standard mode",
+      "Breakdown + bear continuation print: price likely won’t touch Fast Line before continuing down",
+      "SL: at Fast Line",
+      "TP: Fast Line / Midtrend Line",
+    ],
+    note:
+      "Daily trend case: breakdown + bear continuation suggests continuation without a fastline retest; stop at fastline, targets into fastline/midtrend.",
+    img: day31,
+  },
+  {
+    pct: "10.3%",
+    tag: "Open Long",
+    symbol: "BTC / USDT",
+    tf: "1D",
+    dates: "Example (trend)",
+    headline: "Standard mode — bull continuation + breakout",
+    bullets: [
+      "Daily (long Timeframe) — Standard mode",
+      "Bull continuation + breakout symbol: price may not touch B:PRO Fast Line before continuing up",
+      "SL: at Midtrend Line",
+      "TP: Close Long / Fast Line / Midtrend Line",
+    ],
+    note:
+      "Daily continuation case: breakout + bull continuation suggests continuation without a fastline retest; risk at midtrend, take profit into close-long or fastline/midtrend.",
+    img: day10,
+  },
+  {
+    pct: "1.2%",
+    tag: "Open Long",
+    symbol: "BTC / USDT",
+    tf: "1m",
+    dates: "Example (scalp)",
+    headline: "Fast Timeframe Mode Bull",
+    bullets: [
+      "Mode 1m (fast Timeframe)",
+      "Entry: After Open Long, Signal at the Fast Line",
+      "SL: slightly below Midtrend Line",
+      "TP: Close Short / Fast Line / Midtrend Line",
+    ],
+    note:
+      "1m fast mode scalp: long trigger at fast line, stop tucked under midtrend, take profit into close-short / fastline / midtrend.",
+    img: oneMinLong,
+  },
+  {
+    pct: "1.92%",
+    tag: "Open Short",
+    symbol: "BTC / USDT",
+    tf: "5m",
+    dates: "Example (scalp)",
+    headline: "Fast Timeframe Mode bear",
+    bullets: [
+      "Mode 5m (fast Timeframe) — Bear mode",
+      "Entry: After Open Short, Signal at the Fast Line",
+      "SL: at Midtrend Line",
+      "TP: Fast Line / Close Short / Midtrend Line",
+    ],
+    note:
+      "5m fast mode (bear): short trigger at fast line, stop at midtrend, take profit into fastline or close-short / midtrend.",
+    img: fiveMin,
+  },
+  {
+    pct: "1.2%",
+    tag: "Open Long",
+    symbol: "BTC / USDT",
+    tf: "15m",
+    dates: "Example (scalp)",
+    headline: "Standard mode long",
+    bullets: [
+      "Mode 15m (short Timeframe) — Standard mode",
+      "Entry: After Open Long, Signal at the Fast Line",
+      "SL: at Midtrend Line",
+      "TP: Fast Line / Close Short / Midtrend Line",
+    ],
+    note:
+      "15m standard mode: long entry at fast line, stop at midtrend, take profit into fastline or close-short / midtrend.",
+    img: fifteenMin,
+  },
+  {
+    pct: "5.8%",
+    tag: "Open Long",
+    symbol: "BTC / USDT",
+    tf: "30m",
+    dates: "Example (scalp)",
+    headline: "Fast Timeframe Mode — Standard long",
+    bullets: [
+      "Mode 30m (fast Timeframe) — Standard mode",
+      "Entry: After Open Long, Signal at the Fast Line",
+      "SL: at Midtrend Line",
+      "TP: Fast Line / Close Short / Midtrend Line",
+    ],
+    note:
+      "30m fast Tiemframe standard mode: long entry at fast line, stop at midtrend, take profit into fastline or close-short / midtrend.",
+    img: thirtyMin,
+  },
+]
+
+    
   );
 
   return (
@@ -477,7 +478,6 @@ function CasesSlider({
               Slide {idx + 1} / {slides.length}
             </span>
             <span className="text-white/25">·</span>
-            <span className="text-white/70">{slideTitles[idx] ?? "Cases"}</span>
           </div>
 
           <div className="flex items-center gap-2">

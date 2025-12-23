@@ -10,15 +10,7 @@ body,
   margin: 0;
   padding: 0;
   overflow-x: hidden !important;
-  background: radial-gradient(circle at top left,
-      rgba(16, 185, 129, 0.04) 0%,
-      transparent 30%),
-    radial-gradient(circle at bottom right,
-      rgba(16, 185, 129, 0.06) 0%,
-      transparent 25%),
-    linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 50%, #0a0a0a 100%);
-  background-repeat: no-repeat;
-  background-attachment: fixed;
+
   color-scheme: dark;
   color: #e5e5e5;
 }

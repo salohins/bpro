@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useEffect } from "react";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import Landing from "./pages/Landing";
 import Success from "./pages/Success";
@@ -16,51 +16,43 @@ import PrivacyPolicy from "./pages/PrivacyPolicy";
 import ImprintPage from "./pages/ImprintPage";
 import TermsPage from "./pages/TermsPage";
 import FaqPage from "./pages/FAQPage";
+import PricingPage from "./pages/PricingPage";
+import SupportPage from "./pages/SupportPage";
+
+function ScrollToTop() {
+  const { pathname, search, hash } = useLocation();
+
+  useEffect(() => {
+    // If you use hash links for landing sections (/#core-engines), let the hash handle scrolling
+    if (hash) return;
+
+    window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+  }, [pathname, search, hash]);
+
+  return null;
+}
 
 function GlobalBackground() {
-  // ✅ fewer particles + more subtle
-  const particles = useMemo(
-    () =>
-      Array.from({ length: 22 }).map((_, i) => {
-        const r1 = ((i * 73) % 101) / 100;
-        const r2 = ((i * 41 + 17) % 97) / 96;
-        const r3 = ((i * 29 + 7) % 89) / 88;
-
-        const size = 10 + Math.round(r1 * 22); // 10..32
-        const dur = 10 + r2 * 12; // 10..22s
-        const delay = -r3 * 16;
-        const blur = 3 + r2 * 7; // a bit less glow
-        const opacity = 0.06 + r1 * 0.10; // ✅ (0.06..0.16) cap opacity
-
-        return {
-          id: i,
-          left: `${Math.round(r2 * 100)}%`,
-          top: `${Math.round(r1 * 100)}%`,
-          size,
-          dur,
-          delay,
-          blur,
-          opacity,
-          drift: 10 + Math.round(r2 * 20), // 10..30px
-          rise: 130 + Math.round(r1 * 210), // 130..340px
-        };
-      }),
-    []
-  );
-
   return (
-    <div aria-hidden className="pointer-events-none fixed inset-0 overflow-hidden">
+    <div
+      aria-hidden
+      className="pointer-events-none fixed inset-0 z-0 overflow-hidden transform-gpu will-change-transform"
+    >
       {/* base + blooms */}
       <div className="absolute inset-0 bg-black" />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_22%_18%,rgba(16,185,129,0.18),transparent_55%)]" />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_76%_58%,rgba(255,255,255,0.08),transparent_62%)]" />
       <div className="absolute inset-x-0 bottom-0 h-56 bg-gradient-to-t from-black/55 via-black/20 to-transparent" />
 
-      {/* Swiss grid */}
+      {/* Swiss grid (lighter on mobile to avoid scroll jank / flashing) */}
       <div className="absolute inset-0 opacity-[0.14]">
         <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,.18)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,.18)_1px,transparent_1px)] bg-[size:80px_80px]" />
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,.10)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,.10)_1px,transparent_1px)] bg-[size:20px_20px]" />
-        <div className="absolute inset-0 [mask-image:radial-gradient(ellipse_at_center,black,transparent_70%)] bg-black" />
+
+        {/* hide the dense 20px grid on mobile */}
+        <div className="absolute inset-0 hidden md:block bg-[linear-gradient(to_right,rgba(255,255,255,.10)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,.10)_1px,transparent_1px)] bg-[size:20px_20px]" />
+
+        {/* mask only on md+ (mask-image can cause mobile compositing glitches) */}
+        <div className="absolute inset-0 bg-black md:[mask-image:radial-gradient(ellipse_at_center,black,transparent_70%)]" />
       </div>
 
       {/* particles (flying dollars) */}
@@ -74,36 +66,14 @@ function GlobalBackground() {
         }
       `}</style>
 
-      <div className="absolute inset-0">
-        {particles.map((p) => (
-          <span
-            key={p.id}
-            className="absolute select-none"
-            style={{
-              left: p.left,
-              top: p.top,
-              fontSize: p.size,
-              lineHeight: 1,
-              fontWeight: 800,
-              letterSpacing: "-0.02em",
-              // ✅ keyframes control fade; --op caps max opacity
-              ["--drift" as any]: `${p.drift}px`,
-              ["--rise" as any]: `${p.rise}px`,
-              ["--op" as any]: p.opacity,
-              // ✅ more subtle color + much softer glow
-              color: "rgba(110,231,183,0.55)",
-              textShadow: `0 0 ${Math.max(4, p.blur)}px rgba(16,185,129,0.12)`,
-              willChange: "transform, opacity",
-              animation: `floatParticle ${p.dur}s linear ${p.delay}s infinite`,
-            }}
-          >
-            $
-          </span>
-        ))}
-      </div>
-
-      {/* film grain */}
-      <div className="absolute inset-0 opacity-[0.05] mix-blend-overlay [background-image:url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22120%22 height=%22120%22%3E%3Cfilter id=%22n%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.9%22 numOctaves=%222%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22120%22 height=%22120%22 filter=%22url(%23n)%22 opacity=%220.35%22/%3E%3C/svg%3E')]" />
+      {/* film grain (disable blend mode on mobile; blend modes often flash during scroll) */}
+      <div
+        className="
+          absolute inset-0 opacity-[0.05]
+          mix-blend-normal md:mix-blend-overlay
+          [background-image:url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22120%22 height=%22120%22%3E%3Cfilter id=%22n%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.9%22 numOctaves=%222%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22120%22 height=%22120%22 filter=%22url(%23n)%22 opacity=%220.35%22/%3E%3C/svg%3E')]
+        "
+      />
     </div>
   );
 }
@@ -113,8 +83,11 @@ function Layout() {
   const hideTopBar = ["/success", "/auth/callback"].includes(location.pathname);
 
   return (
-    <div className="relative flex min-h-screen flex-col text-gray-100">
+    <div className="relative flex min-h-[100dvh] flex-col bg-black text-gray-100">
       <GlobalBackground />
+
+      {/* ✅ scroll to top on route changes */}
+      <ScrollToTop />
 
       {!hideTopBar && (
         <div className="flex-shrink-0">
@@ -137,6 +110,8 @@ function Layout() {
           <Route path="/terms" element={<TermsPage />} />
           <Route path="/faq" element={<FaqPage />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/pricing" element={<PricingPage />} />
+          <Route path="/support" element={<SupportPage />} />
         </Routes>
       </main>
 

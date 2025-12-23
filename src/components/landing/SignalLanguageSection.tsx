@@ -33,27 +33,20 @@ export default function SignalLanguageSection() {
             { key: "open-short", title: "Open Short", desc: "Short entry trigger", tone: "red", icon: <ArrowDownRight className="h-4 w-4 text-red-300" /> },
             { key: "breakout", title: "Breakout", desc: "Breaks out of range", tone: "neutral", icon: <ArrowUp className="h-4 w-4 text-white/80" /> },
             { key: "breakdown", title: "Breakdown", desc: "Breaks down from range", tone: "yellow", icon: <ArrowDown className="h-4 w-4 text-yellow-300" /> },
-            { key: "close-long", title: "Close Long", desc: "Long exit / take profit", tone: "blue", icon: <Diamond className="h-4 w-4 text-blue-300" /> },
-            { key: "close-short", title: "Close Short", desc: "Short exit / take profit", tone: "orange", icon: <Diamond className="h-4 w-4 text-orange-300" /> },
+            { key: "close-long", title: "Close Long", desc: "Long exit", tone: "blue", icon: <Diamond className="h-4 w-4 text-blue-300" /> },
+            { key: "close-short", title: "Close Short", desc: "Short exit", tone: "orange", icon: <Diamond className="h-4 w-4 text-orange-300" /> },
             { key: "cross-up", title: "Cross Up", desc: "Bullish cross marker", tone: "emerald", icon: <X className="h-4 w-4 text-emerald-300" /> },
             { key: "cross-down", title: "Cross Down", desc: "Bearish cross marker", tone: "red", icon: <X className="h-4 w-4 text-red-300" /> },
-            { key: "squeeze-down", title: "Squeeze Down", desc: "Compression / move loading", tone: "neutral", icon: <Plus className="h-4 w-4 text-white/80" /> },
-            { key: "bull-cont", title: "Bull Continuation", desc: "Trend continuation (bull)", tone: "emerald", icon: <Circle className="h-4 w-4 text-emerald-300" /> },
-            { key: "bear-cont", title: "Bear Continuation", desc: "Trend continuation (bear)", tone: "red", icon: <Circle className="h-4 w-4 text-red-300" /> },
-            { key: "long-invalid", title: "Long Invalidated", desc: "Long setup invalidation", tone: "purple", icon: <Circle className="h-4 w-4 text-purple-200" /> },
-            { key: "short-invalid", title: "Short Invalidated", desc: "Short setup invalidation", tone: "purple", icon: <Circle className="h-4 w-4 text-purple-200" /> },
+            { key: "squeeze-down", title: "Squeeze", desc: "Compression", tone: "neutral", icon: <Plus className="h-4 w-4 text-white/80" /> },
+            { key: "bull-cont", title: "Bull Continuation", desc: "Trend continuation", tone: "emerald", icon: <Circle className="h-4 w-4 text-emerald-300" /> },
+            { key: "bear-cont", title: "Bear Continuation", desc: "Trend continuation", tone: "red", icon: <Circle className="h-4 w-4 text-red-300" /> },
+            { key: "long-invalid", title: "Long/Short Invalidated", desc: "Long setup invalidation", tone: "purple", icon: <Circle className="h-4 w-4 text-purple-200" /> },
         ],
         []
     );
 
     return (
         <section className="relative w-full py-20 md:py-24 bg-transparent text-white">
-            <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
-                <div className="absolute left-0 right-0 -top-32 -bottom-32 bg-[radial-gradient(circle_at_55%_12%,rgba(16,185,129,0.10),transparent_60%)]" />
-                <div className="absolute inset-0 opacity-[0.05] [mask-image:radial-gradient(ellipse_at_center,black,transparent_72%)]">
-                    <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,.10)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,.10)_1px,transparent_1px)] bg-[size:96px_96px]" />
-                </div>
-            </div>
 
             <div className="relative z-10 mx-auto max-w-[1760px] px-6 sm:px-10 lg:px-16 2xl:px-20">
                 {/* Header */}
@@ -208,7 +201,6 @@ function VerticalLegendSlider({ items, perPage = 6 }) {
 
                 {/* Footer */}
                 <div className="px-6 py-4 border-t border-white/10 flex items-center justify-between">
-                    <div className="text-xs text-white/40">Tip: ignore icons away from reaction zones.</div>
                     <div className="flex items-center gap-2">
                         {pages.map((_, i) => (
                             <button

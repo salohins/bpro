@@ -36,11 +36,11 @@ export default function PrecisionEntryDetection() {
     });
 
     const longItems = useMemo(
-        () => ["Bull bias holds", "Reaction confirms", "Trigger prints"],
+        () => ["Bullish Continuation prints (trend building)", "Bull Reaction confirms (FAST line holds)", "Breakout / Trigger (white label) prints"],
         []
     );
     const shortItems = useMemo(
-        () => ["Bear bias holds", "Support breaks", "Expansion follows"],
+        () => ["Bear bias holds", "Bear reaction confirms (resistance zone holds)",  "Open Short: sell on FAST-line touch, SL at mid-trend"],
         []
     );
 
@@ -49,23 +49,11 @@ export default function PrecisionEntryDetection() {
     const infoText =
         activeArchetype === "long" ? (
             <>
-                Enter after{" "}
-                <span className="font-semibold text-white/85">reaction at support</span>,
-                aligned with{" "}
-                <span className="font-semibold text-white/85">bullish pressure</span>.
-                Stop below{" "}
-                <span className="font-semibold text-white/85">last swing low</span>.
+                Bullish Continuation = trend building. Breakout (white label) = likely no fast-line retest. Open Long = buy on fast-line touch, SL at mid-trend. Hold while trend holds. Blue diamond = take profits / close long.
             </>
         ) : (
             <>
-                Enter after{" "}
-                <span className="font-semibold text-white/85">
-                    breakdown at resistance
-                </span>
-                , aligned with{" "}
-                <span className="font-semibold text-white/85">bearish pressure</span>.
-                Stop above{" "}
-                <span className="font-semibold text-white/85">last swing high</span>.
+                Open Short = sell on the FAST-line touch, SL at mid-trend. Orange diamond = optional take-profit zone. Hold while trend holds for potential further downside.
             </>
         );
 
@@ -76,13 +64,6 @@ export default function PrecisionEntryDetection() {
 
     return (
         <section className="relative w-full py-20 md:py-24 bg-transparent text-white">
-            {/* Background / grid */}
-            <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
-                <div className="absolute left-0 right-0 -top-32 -bottom-32 bg-[radial-gradient(circle_at_55%_12%,rgba(16,185,129,0.10),transparent_60%)]" />
-                <div className="absolute inset-0 opacity-[0.05] [mask-image:radial-gradient(ellipse_at_center,black,transparent_72%)]">
-                    <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,.10)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,.10)_1px,transparent_1px)] bg-[size:96px_96px]" />
-                </div>
-            </div>
 
             <div className="relative z-10 mx-auto max-w-[1760px] px-6 sm:px-10 lg:px-16 2xl:px-20">
                 {/* Header */}
@@ -240,13 +221,6 @@ export default function PrecisionEntryDetection() {
 
                     </div>
                 </motion.div>
-
-                <div className="mt-7 pt-4 border-t border-white/10 flex items-center justify-between text-xs text-white/45">
-                    <span>Execution workflow • visual guide</span>
-                    <span className="text-emerald-300/70 capitalize">
-                        {activeArchetype} setup
-                    </span>
-                </div>
             </div>
         </section>
     );
@@ -504,20 +478,6 @@ function FeatureDropdownCard({
                                 </li>
                             ))}
                         </ul>
-
-                        <div className="mt-4 text-xs text-white/45">
-                            {tone === "red" ? (
-                                <>
-                                    Use when the structure loses support and momentum flips bearish.
-                                    Wait for clean breakdown + confirmation before execution.
-                                </>
-                            ) : (
-                                <>
-                                    Use when structure holds and pressure stays bullish. Let the reaction
-                                    confirm first — then execute only when the trigger prints.
-                                </>
-                            )}
-                        </div>
                     </div>
                 </div>
             </div>

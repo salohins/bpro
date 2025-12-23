@@ -8,6 +8,7 @@ import {
   Zap,
   SlidersHorizontal,
   Star,
+  Brain,
 } from "lucide-react";
 
 export default function FAQSection() {
@@ -44,6 +45,26 @@ export default function FAQSection() {
         q: "Is this beginner-friendly?",
         a: "Yes — the system is complex under the hood, but the UX is built to be simple: follow structure first, confirm filters, then check the score before executing.",
         tag: "Learning",
+      },
+
+      // ✅ NEW
+      {
+        icon: <Brain className="w-4 h-4 text-emerald-300" />,
+        q: "Can I trade B:PRO signals mechanically, or is it meant for discretion?",
+        a: "B:PRO is built as a decision framework, not a fully mechanical system. It highlights structured long/short opportunities, but position size, exact entries/exits, and risk management should always be defined by your own trading plan. Treat the signals, cloud, and scoring as a guided checklist rather than automatic “buy/sell” commands.",
+        tag: "Approach",
+      },
+      {
+        icon: <SlidersHorizontal className="w-4 h-4 text-emerald-300" />,
+        q: "Do I need other indicators on my chart when using B:PRO?",
+        a: "No additional tools are required — B:PRO already combines trend, volatility, momentum, volume, and higher-timeframe context into a single view. Many traders run it on a clean chart and only add simple extras like key horizontal levels or sessions if they want. The idea is to reduce indicator clutter and keep decisions focused on one consistent framework.",
+        tag: "Setup",
+      },
+      {
+        icon: <ShieldCheck className="w-4 h-4 text-emerald-300" />,
+        q: "How should I test and adapt B:PRO before trading live capital?",
+        a: "Start by observing how signals behave on your preferred markets and timeframes, then forward-test on demo or very small size. Once you understand typical win/loss patterns, you can fine-tune Trade Mode, Market Sentiment, and filter toggles to match your personal style (more conservative or more aggressive). Always verify that the behavior fits your own rules and risk tolerance before scaling up.",
+        tag: "Testing",
       },
     ],
     []
@@ -89,8 +110,6 @@ export default function FAQSection() {
 
         {/* Layout */}
         <div className="lg:col-span-7 mx-auto w-full max-w-[900px]">
-
-
           {/* Right: Accordion */}
           <motion.div
             initial={{ opacity: 0, x: 24, filter: "blur(8px)" }}
@@ -128,9 +147,6 @@ export default function FAQSection() {
                     );
                   })}
                 </div>
-
-                {/* footer */}
-                
               </div>
             </div>
           </motion.div>

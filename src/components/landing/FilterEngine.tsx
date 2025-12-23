@@ -107,8 +107,6 @@ export default function FilterEngine() {
       className="relative w-full py-24 md:py-28 bg-transparent text-white"
       id="filter-engine"
     >
-      {/* ✅ Background isolated so accordion toggles don't re-render it */}
-      <MemoBackgroundChart shouldReduceMotion={!!shouldReduceMotion} />
 
       {/* ✅ same width as your other premium sections */}
       <div className="relative z-10 mx-auto max-w-[1760px] px-6 sm:px-10 lg:px-16 2xl:px-20">
@@ -371,10 +369,6 @@ export default function FilterEngine() {
                     </button>
                   ))}
                 </div>
-
-                <div className="mt-3 text-xs text-white/45">
-                  Tip: Clean screenshots = better trust. Keep it minimal so overlays read instantly.
-                </div>
               </div>
             </motion.div>
           </motion.div>
@@ -488,164 +482,6 @@ const AccordionGroup = React.memo(function AccordionGroup({
   );
 });
 
-/* ---------------- heavy bg isolated ---------------- */
-
-const MemoBackgroundChart = React.memo(function BackgroundChart({
-  shouldReduceMotion,
-}: {
-  shouldReduceMotion: boolean;
-}) {
-  const bgChart = useMemo(() => {
-    const W = 1200;
-    const H = 600;
-    const N = 160;
-
-    const pts = Array.from({ length: N }).map((_, i) => {
-      const t = i / (N - 1);
-      const x = t * W;
-
-      const base = 320;
-      const wave1 = Math.sin(t * Math.PI * 2.2) * 70;
-      const wave2 = Math.sin(t * Math.PI * 9.5 + 0.7) * 18;
-      const trend = (t - 0.5) * 120;
-      const spike = i > 118 ? (i - 118) * 2.2 : 0;
-
-      const y = base + wave1 + wave2 - trend - spike;
-      return { x, y: Math.max(70, Math.min(H - 70, y)) };
-    });
-
-    const lineD = pts
-      .map((p, i) => `${i === 0 ? "M" : "L"} ${p.x.toFixed(1)} ${p.y.toFixed(1)}`)
-      .join(" ");
-    const areaD = `${lineD} L ${W} ${H} L 0 ${H} Z`;
-
-    const C = 64;
-    const step = W / (C + 2);
-    const candles = Array.from({ length: C }).map((_, i) => {
-      const x = (i + 1.5) * step;
-
-      const t = i / (C - 1);
-      const center = 340 - (t - 0.5) * 110 + Math.sin(t * 8.2) * 28;
-      const body = 10 + ((i * 13) % 18);
-      const dir = i % 3 === 0 ? -1 : 1;
-
-      const open = center + dir * (body * 0.35);
-      const close = center - dir * (body * 0.35);
-
-      const wick = 18 + ((i * 9) % 22);
-      const high = Math.min(open, close) - wick;
-      const low = Math.max(open, close) + wick;
-
-      return {
-        x,
-        open,
-        close,
-        high,
-        low,
-        up: close < open,
-        w: Math.max(6, step * 0.38),
-      };
-    });
-
-    return { W, H, lineD, areaD, candles };
-  }, []);
-
-  return (
-    <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
-      <div className="absolute left-0 right-0 -top-28 -bottom-28 bg-[radial-gradient(circle_at_55%_12%,rgba(16,185,129,0.10),transparent_60%)]" />
-      <div className="absolute inset-0 opacity-[0.04] [mask-image:radial-gradient(ellipse_at_center,black,transparent_72%)]">
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,.10)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,.10)_1px,transparent_1px)] bg-[size:96px_96px]" />
-      </div>
-
-      {/* chart layer */}
-      <div className="absolute inset-0 overflow-hidden">
-        <motion.svg
-          viewBox={`0 0 ${bgChart.W} ${bgChart.H}`}
-          className="absolute inset-0 w-full h-full"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-          style={{ opacity: 0.55 }}
-        >
-          <defs>
-            <linearGradient id="bgLine" x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0%" stopColor="#00ffcc" stopOpacity="0.0" />
-              <stop offset="35%" stopColor="#00ffcc" stopOpacity="0.55" />
-              <stop offset="65%" stopColor="#00ffaa" stopOpacity="0.65" />
-              <stop offset="100%" stopColor="#00ffcc" stopOpacity="0.0" />
-            </linearGradient>
-
-            <linearGradient id="bgArea" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#00ffaa" stopOpacity="0.18" />
-              <stop offset="55%" stopColor="#00ffaa" stopOpacity="0.04" />
-              <stop offset="100%" stopColor="#000000" stopOpacity="0.0" />
-            </linearGradient>
-
-            <filter id="bgGlow">
-              <feGaussianBlur stdDeviation="2.4" result="b" />
-              <feMerge>
-                <feMergeNode in="b" />
-                <feMergeNode in="SourceGraphic" />
-              </feMerge>
-            </filter>
-          </defs>
-
-          <g style={{ filter: "url(#bgGlow)" }} opacity="0.45">
-            <path d={bgChart.areaD} fill="url(#bgArea)" opacity="0.30" />
-            <motion.path
-              d={bgChart.lineD}
-              fill="none"
-              stroke="url(#bgLine)"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeDasharray="10 10"
-              animate={shouldReduceMotion ? {} : { strokeDashoffset: [0, -200] }}
-              transition={
-                shouldReduceMotion
-                  ? {}
-                  : { duration: 8, repeat: Infinity, ease: "linear" }
-              }
-              opacity="0.85"
-            />
-            <g opacity="0.40">
-              {bgChart.candles.map((c, i) => {
-                const yTop = Math.min(c.open, c.close);
-                const yBot = Math.max(c.open, c.close);
-                const col = c.up ? "#00ffaa" : "#ff4d6d";
-                return (
-                  <g key={i} opacity={0.9}>
-                    <line
-                      x1={c.x}
-                      x2={c.x}
-                      y1={c.high}
-                      y2={c.low}
-                      stroke={col}
-                      strokeOpacity="0.30"
-                      strokeWidth="1.2"
-                    />
-                    <rect
-                      x={c.x - c.w / 2}
-                      y={yTop}
-                      width={c.w}
-                      height={Math.max(6, yBot - yTop)}
-                      rx="2"
-                      fill={col}
-                      fillOpacity="0.12"
-                      stroke={col}
-                      strokeOpacity="0.22"
-                      strokeWidth="1"
-                    />
-                  </g>
-                );
-              })}
-            </g>
-          </g>
-        </motion.svg>
-      </div>
-    </div>
-  );
-});
 
 /* ---------------- tiny atoms ---------------- */
 

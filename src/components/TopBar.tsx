@@ -3,56 +3,74 @@ import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "../lib/supabase";
 import { useSession } from "../hooks/useSession";
-import { User, CreditCard, LogOut, ChevronRight, Menu, X } from "lucide-react";
+import {
+  User,
+  CreditCard,
+  LogOut,
+  ChevronRight,
+  Menu,
+  X,
+  ChevronDown,
+  Sparkles,
+  // ✅ section icons
+  Layers,
+  SlidersHorizontal,
+  Cloud,
+  Target,
+  Workflow,
+  TrendingUp,
+  // ✅ NEW: support icon
+  LifeBuoy,
+  // ✅ NEW: icons for pricing + faq
+  Tag,
+  HelpCircle,
+} from "lucide-react";
+
+import Logo from "../assets/Logo.svg";
 
 export default function TopBar() {
   const { user } = useSession();
 
-  const [open, setOpen] = useState(false); // desktop logged-in dropdown
-  const [menuOpen, setMenuOpen] = useState(false); // mobile menu (always available)
+  const [open, setOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [bproOpen, setBproOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const navigate = useNavigate();
   const menuRef = useRef<HTMLDivElement | null>(null);
+  const bproRef = useRef<HTMLDivElement | null>(null);
 
-  const sectionLinks = useMemo(
+  // ✅ B:PRO sections with icons + micro copy
+  const bproSections = useMemo(
     () => [
-      { label: "Core Engines", id: "core-engines" },
-      { label: "Trade Modes", id: "trade-modes" },
-      { label: "Adaptive Cloud", id: "adaptive-cloud" },
-      { label: "Future Targets", id: "future-targets" },
-      { label: "Workflow", id: "workflow" },
-      { label: "Profit Cases", id: "profit-cases" },
-      // ✅ NEW: FAQ as a route link (not a section id)
-      { label: "FAQ", id: "__faq_route__" },
+      { label: "Core Engines", id: "core-engines", icon: Layers, sub: "Structure + system map" },
+      { label: "Trade Modes", id: "trade-modes", icon: SlidersHorizontal, sub: "Short / Mid / Long" },
+      { label: "Adaptive Cloud", id: "adaptive-cloud", icon: Cloud, sub: "Trend context + regimes" },
+      { label: "Future Targets", id: "future-targets", icon: Target, sub: "T1/T2 rails + bias" },
+      { label: "Workflow", id: "workflow", icon: Workflow, sub: "Step-by-step execution" },
+      { label: "Profit Cases", id: "profit-cases", icon: TrendingUp, sub: "Examples + outcomes" },
     ],
     []
   );
 
-  const goToSection = (id: string) => {
+  const closeAllMenus = () => {
     setMenuOpen(false);
     setOpen(false);
+    setBproOpen(false);
+  };
 
-    // ✅ FAQ is a route, not a page section
-    if (id === "__faq_route__") {
-      navigate("/faq");
-      return;
-    }
+  const goToSection = (id: string) => {
+    closeAllMenus();
 
-    // If already on "/", smooth scroll. Otherwise go to "/#id".
     if (typeof window !== "undefined" && window.location.pathname === "/") {
       const el = document.getElementById(id);
-      if (el) {
-        el.scrollIntoView({ behavior: "smooth", block: "start" });
-      } else {
-        window.location.hash = id;
-      }
+      if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+      else window.location.hash = id;
       return;
     }
 
     navigate(`/#${id}`);
-    // best-effort smooth scroll after route changes
     setTimeout(() => {
       const el = document.getElementById(id);
       if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -69,26 +87,21 @@ export default function TopBar() {
         return;
       }
 
-      const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/create-billing-portal`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email: user.email }),
-        }
-      );
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/create-billing-portal`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: user.email }),
+      });
 
       const data = await res.json();
-      if (!res.ok)
-        throw new Error(data.error || "Failed to create portal session.");
+      if (!res.ok) throw new Error(data.error || "Failed to create portal session.");
       window.location.href = data.url;
     } catch (err: any) {
       console.error("Billing portal error:", err);
       setError(err.message);
     } finally {
       setLoading(false);
-      setOpen(false);
-      setMenuOpen(false);
+      closeAllMenus();
     }
   };
 
@@ -97,10 +110,7 @@ export default function TopBar() {
     window.location.href = "/";
   };
 
-  const initial = useMemo(
-    () => (user?.email ? user.email[0].toUpperCase() : "M"),
-    [user?.email]
-  );
+  const initial = useMemo(() => (user?.email ? user.email[0].toUpperCase() : "M"), [user?.email]);
 
   return (
     <motion.header
@@ -130,38 +140,205 @@ export default function TopBar() {
         {/* Brand */}
         <motion.button
           onClick={() => {
-            setMenuOpen(false);
-            setOpen(false);
+            closeAllMenus();
+
+            // ✅ If already on "/", just scroll to top instead of navigating
+            if (typeof window !== "undefined" && window.location.pathname === "/") {
+              window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+              // optional: also clear hash so you don't jump back to a section
+              if (window.location.hash) window.history.replaceState(null, "", "/");
+              return;
+            }
+
             navigate("/");
           }}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.97 }}
-          className="flex items-center gap-2 cursor-pointer select-none"
+          className="flex items-center gap-3 cursor-pointer select-none"
+          aria-label="Go to home"
         >
-          <motion.span
-            className="text-[22px] sm:text-[24px] font-[var(--font-display)] font-semibold tracking-tight bg-gradient-to-r from-white via-emerald-100 to-emerald-400 bg-clip-text text-transparent"
-            animate={{
-              backgroundPosition: ["0% center", "100% center", "0% center"],
-            }}
-            transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
-            style={{ backgroundSize: "200% 100%" }}
-          >
-            moostrade
-          </motion.span>
+          <img
+            src={Logo}
+            alt="moostrade"
+            className="h-5 w-auto sm:h-5"
+            draggable={false}
+          />
         </motion.button>
 
-        {/* CENTER MENU (desktop) — truly centered in viewport */}
+        {/* CENTER MENU (desktop) */}
         <nav className="hidden md:flex absolute left-1/2 -translate-x-1/2 items-center justify-center gap-2">
-          {sectionLinks.map((l) => (
+          {/* ✅ B:PRO Mega Menu */}
+          <div className="relative" ref={bproRef}>
             <button
-              key={l.id}
               type="button"
-              onClick={() => goToSection(l.id)}
-              className="px-3 py-2 rounded-xl text-[13px] font-medium text-white/70 hover:text-white transition hover:bg-white/[0.04] border border-transparent hover:border-white/10"
+              onClick={() => setBproOpen((v) => !v)}
+              className="px-3 py-2 rounded-xl text-[13px] font-medium text-white/75 hover:text-white transition hover:bg-white/[0.04] border border-transparent hover:border-white/10 inline-flex items-center gap-2"
             >
-              {l.label}
+              <span className="inline-flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-emerald-300" />
+                B:PRO
+              </span>
+              <ChevronDown
+                className={[
+                  "w-4 h-4 text-white/60 transition-transform duration-200",
+                  bproOpen ? "rotate-180" : "",
+                ].join(" ")}
+              />
             </button>
-          ))}
+
+            <AnimatePresence>
+              {bproOpen && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10, filter: "blur(8px)" }}
+                  animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                  exit={{ opacity: 0, y: -10, filter: "blur(8px)" }}
+                  transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+                  className="absolute left-0 mt-3 w-[680px] rounded-[28px] overflow-hidden"
+                >
+                  {/* Premium frame */}
+                  <div className="p-[1px] rounded-[28px] bg-gradient-to-b from-emerald-400/25 via-white/10 to-emerald-500/15 shadow-[0_18px_70px_rgba(0,0,0,0.55)]">
+                    <div className="relative rounded-[28px] border border-white/10 bg-[#0b0b0b]/82 backdrop-blur-2xl overflow-hidden">
+                      {/* ambient */}
+                      <div aria-hidden className="absolute inset-0 pointer-events-none">
+                        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_15%,rgba(16,185,129,0.14),transparent_55%)]" />
+                        <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_70%,rgba(255,255,255,0.07),transparent_60%)]" />
+                        <div className="absolute -top-20 left-0 right-0 h-24 bg-gradient-to-b from-black/40 to-transparent" />
+                      </div>
+
+                      <div className="relative z-10 p-5">
+                        {/* top row */}
+                        <div className="flex items-center justify-between gap-4">
+                          <div>
+                            <div className="text-xs text-white/45 tracking-widest uppercase">B:PRO navigation</div>
+                            <div className="mt-1 text-[15px] text-white/80">Jump directly to the part you need.</div>
+                          </div>
+
+                          <button
+                            onClick={() => {
+                              closeAllMenus();
+                              navigate("/pricing");
+                            }}
+                            className="inline-flex items-center gap-2 px-4 py-2 rounded-2xl text-[13px] font-semibold text-black border border-emerald-300/30 shadow-[0_0_26px_rgba(16,185,129,0.20)]"
+                            style={{
+                              background:
+                                "linear-gradient(90deg, rgba(16,185,129,1) 0%, rgba(110,231,183,1) 100%)",
+                            }}
+                          >
+                            <Tag className="w-4 h-4" />
+                            View Pricing <ChevronRight className="w-4 h-4" />
+                          </button>
+                        </div>
+
+                        {/* grid of section tiles */}
+                        <div className="mt-5 grid grid-cols-2 gap-3">
+                          {bproSections.map((l) => {
+                            const Icon = l.icon;
+                            return (
+                              <button
+                                key={l.id}
+                                type="button"
+                                onClick={() => goToSection(l.id)}
+                                className="group w-full text-left rounded-2xl border border-white/10 bg-white/[0.03] hover:bg-white/[0.06] transition px-4 py-3.5"
+                              >
+                                <div className="flex items-start gap-3">
+                                  <span className="mt-0.5 inline-flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/[0.03] group-hover:border-emerald-300/25 transition">
+                                    <Icon className="w-5 h-5 text-emerald-300" />
+                                  </span>
+
+                                  <div className="min-w-0">
+                                    <div className="flex items-center justify-between gap-2">
+                                      <div className="text-[13.5px] font-semibold text-white/85 group-hover:text-white transition">
+                                        {l.label}
+                                      </div>
+                                      <ChevronRight className="w-4 h-4 text-white/35 group-hover:text-white/70 transition" />
+                                    </div>
+                                    <div className="mt-1 text-[12px] text-white/55 leading-snug">{l.sub}</div>
+                                  </div>
+                                </div>
+                              </button>
+                            );
+                          })}
+                        </div>
+
+                        {/* bottom trust strip + support link */}
+                        <div className="mt-4 rounded-2xl border border-white/10 bg-white/[0.02] px-4 py-3 flex items-center justify-between gap-3">
+                          <div className="text-[12px] text-white/60">
+                            Trial on subscriptions • One-time lifetime available • Secure Stripe checkout
+                          </div>
+
+                          <div className="flex items-center gap-4">
+                            <button
+                              onClick={() => {
+                                closeAllMenus();
+                                navigate("/support");
+                              }}
+                              className="inline-flex items-center gap-2 text-[12px] font-semibold text-white/65 hover:text-white transition"
+                            >
+                              <LifeBuoy className="w-4 h-4 text-emerald-300" />
+                              Support
+                            </button>
+
+                            <button
+                              onClick={() => {
+                                closeAllMenus();
+                                navigate("/pricing");
+                              }}
+                              className="text-[12px] font-semibold text-emerald-300 hover:text-emerald-200 transition inline-flex items-center gap-2"
+                            >
+                              <Tag className="w-4 h-4" />
+                              Compare plans →
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* glow footer */}
+                      <div className="absolute -bottom-16 left-0 w-full h-40 bg-gradient-to-t from-emerald-500/10 to-transparent blur-3xl" />
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+
+          {/* Pricing (top-level) */}
+          <button
+            type="button"
+            onClick={() => {
+              closeAllMenus();
+              navigate("/pricing");
+            }}
+            className="px-3 py-2 rounded-xl text-[13px] font-medium text-white/70 hover:text-white transition hover:bg-white/[0.04] border border-transparent hover:border-white/10 inline-flex items-center gap-2"
+          >
+            <Tag className="w-4 h-4 text-emerald-300" />
+            Pricing
+          </button>
+
+          {/* FAQ (top-level) */}
+          <button
+            type="button"
+            onClick={() => {
+              closeAllMenus();
+              navigate("/faq");
+            }}
+            className="px-3 py-2 rounded-xl text-[13px] font-medium text-white/70 hover:text-white transition hover:bg-white/[0.04] border border-transparent hover:border-white/10 inline-flex items-center gap-2"
+          >
+            <HelpCircle className="w-4 h-4 text-emerald-300" />
+            FAQ
+          </button>
+
+          {/* Support (top-level) */}
+          <button
+            type="button"
+            onClick={() => {
+              closeAllMenus();
+              navigate("/support");
+            }}
+            className="px-3 py-2 rounded-xl text-[13px] font-medium text-white/70 hover:text-white transition hover:bg-white/[0.04] border border-transparent hover:border-white/10 inline-flex items-center gap-2"
+          >
+            <LifeBuoy className="w-4 h-4 text-emerald-300" />
+            Support
+          </button>
         </nav>
 
         {/* RIGHT AREA */}
@@ -179,19 +356,17 @@ export default function TopBar() {
               </motion.button>
 
               <motion.button
-                whileHover={{
-                  scale: 1.04,
-                  boxShadow: "0 0 20px rgba(16,185,129,0.3)",
-                }}
+                whileHover={{ scale: 1.04, boxShadow: "0 0 20px rgba(16,185,129,0.3)" }}
                 whileTap={{ scale: 0.96 }}
-                onClick={() => navigate("/subscribe")}
+                onClick={() => navigate("/pricing")}
                 className="relative inline-flex items-center gap-3 px-5 py-2.5 rounded-2xl text-sm font-semibold text-black shadow-[0_0_20px_rgba(16,185,129,0.2)]"
                 style={{
                   background:
                     "linear-gradient(90deg, rgba(16,185,129,1) 0%, rgba(110,231,183,1) 100%)",
                 }}
               >
-                Try Breakout PRO
+                <Tag className="w-4 h-4" />
+                View Pricing
                 <ChevronRight className="w-4 h-4" />
               </motion.button>
             </div>
@@ -210,9 +385,7 @@ export default function TopBar() {
 
                 <div className="hidden lg:flex flex-col items-start leading-tight">
                   <span className="text-[13px] text-white/65">Signed in</span>
-                  <span className="text-[14px] text-white/90 font-medium max-w-[520px] truncate">
-                    {user.email}
-                  </span>
+                  <span className="text-[14px] text-white/90 font-medium max-w-[520px] truncate">{user.email}</span>
                 </div>
 
                 <ChevronRight
@@ -247,6 +420,14 @@ export default function TopBar() {
                         label={loading ? "Opening Portal..." : "Manage Subscription"}
                         disabled={loading}
                       />
+                      <MenuItem
+                        onClick={() => {
+                          setOpen(false);
+                          navigate("/support");
+                        }}
+                        icon={<LifeBuoy className="w-4 h-4 text-emerald-300" />}
+                        label="Support"
+                      />
                       <div className="my-2 h-px bg-white/10" />
                       <MenuItem
                         onClick={handleLogout}
@@ -261,7 +442,7 @@ export default function TopBar() {
             </div>
           )}
 
-          {/* Mobile menu toggle — ALWAYS available (logged in or not) */}
+          {/* Mobile menu toggle — ALWAYS available */}
           <motion.button
             onClick={() => setMenuOpen((v) => !v)}
             whileHover={{ scale: 1.1 }}
@@ -291,18 +472,14 @@ export default function TopBar() {
                 transition={{ duration: 0.3, ease: [0.45, 0, 0.2, 1] }}
                 className="relative z-10 text-white/90"
               >
-                {menuOpen ? (
-                  <X className="w-5 h-5 text-emerald-300" />
-                ) : (
-                  <Menu className="w-5 h-5 text-white/90" />
-                )}
+                {menuOpen ? <X className="w-5 h-5 text-emerald-300" /> : <Menu className="w-5 h-5 text-white/90" />}
               </motion.div>
             </AnimatePresence>
           </motion.button>
         </div>
       </div>
 
-      {/* === MOBILE MENU (section links + auth/account actions) === */}
+      {/* === MOBILE MENU (unchanged except it still works) === */}
       <AnimatePresence>
         {menuOpen && (
           <motion.div
@@ -313,77 +490,135 @@ export default function TopBar() {
             className="md:hidden border-t border-white/10 bg-[#0b0b0b]/80 backdrop-blur-2xl shadow-[0_22px_70px_rgba(0,0,0,0.55)]"
           >
             <div className="p-4 space-y-4">
-              {/* section links */}
               <div className="grid grid-cols-2 gap-2">
-                {sectionLinks.map((l) => (
-                  <button
-                    key={l.id}
-                    onClick={() => goToSection(l.id)}
-                    className="w-full py-2.5 rounded-xl text-[13px] font-medium text-white/85 bg-white/[0.05] hover:bg-white/[0.08] border border-white/10 text-left px-3"
-                  >
-                    {l.label}
+                <button
+                  onClick={() => {
+                    navigate("/pricing");
+                    closeAllMenus();
+                  }}
+                  className="w-full py-2.5 rounded-xl text-[13px] font-medium text-white/85 bg-white/[0.05] hover:bg-white/[0.08] border border-white/10 text-left px-3 inline-flex items-center gap-2"
+                >
+                  <Tag className="w-4 h-4 text-emerald-300" />
+                  Pricing
+                </button>
+
+                <button
+                  onClick={() => {
+                    navigate("/faq");
+                    closeAllMenus();
+                  }}
+                  className="w-full py-2.5 rounded-xl text-[13px] font-medium text-white/85 bg-white/[0.05] hover:bg-white/[0.08] border border-white/10 text-left px-3 inline-flex items-center gap-2"
+                >
+                  <HelpCircle className="w-4 h-4 text-emerald-300" />
+                  FAQ
+                </button>
+
+                {/* Support on mobile grid */}
+                <button
+                  onClick={() => {
+                    navigate("/support");
+                    closeAllMenus();
+                  }}
+                  className="col-span-2 w-full py-2.5 rounded-xl text-[13px] font-medium text-white/85 bg-white/[0.05] hover:bg-white/[0.08] border border-white/10 text-left px-3 inline-flex items-center gap-2"
+                >
+                  <LifeBuoy className="w-4 h-4 text-emerald-300" />
+                  Support
+                </button>
+              </div>
+
+              <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-3">
+                <div className="flex items-center justify-between">
+                  <div className="text-xs text-white/45 tracking-widest uppercase">B:PRO</div>
+                  <button onClick={() => setBproOpen((v) => !v)} className="text-xs text-emerald-300 font-semibold">
+                    {bproOpen ? "Hide" : "Show"}
                   </button>
-                ))}
+                </div>
+
+                <AnimatePresence initial={false}>
+                  {bproOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      exit={{ opacity: 0, height: 0 }}
+                      transition={{ duration: 0.25 }}
+                      className="mt-3 grid grid-cols-2 gap-2 overflow-hidden"
+                    >
+                      {bproSections.map((l) => (
+                        <button
+                          key={l.id}
+                          onClick={() => goToSection(l.id)}
+                          className="w-full py-2.5 rounded-xl text-[13px] font-medium text-white/85 bg-white/[0.05] hover:bg-white/[0.08] border border-white/10 text-left px-3"
+                        >
+                          {l.label}
+                        </button>
+                      ))}
+
+                      <button
+                        onClick={() => {
+                          navigate("/pricing");
+                          closeAllMenus();
+                        }}
+                        className="col-span-2 w-full py-2.5 rounded-xl text-[13px] font-semibold text-black inline-flex items-center justify-center gap-2"
+                        style={{
+                          background:
+                            "linear-gradient(90deg, rgba(16,185,129,1) 0%, rgba(110,231,183,1) 100%)",
+                        }}
+                      >
+                        <Tag className="w-4 h-4" />
+                        View Pricing →
+                      </button>
+
+                      {/* Support button inside B:PRO block */}
+                      <button
+                        onClick={() => {
+                          navigate("/support");
+                          closeAllMenus();
+                        }}
+                        className="col-span-2 w-full py-2.5 rounded-xl text-[13px] font-medium text-white/90 bg-white/[0.05] hover:bg-white/[0.08] border border-white/10 inline-flex items-center justify-center gap-2"
+                      >
+                        <LifeBuoy className="w-4 h-4 text-emerald-300" />
+                        Support
+                      </button>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
 
               <div className="h-px bg-white/10" />
 
-              {/* auth/account actions */}
               {!user ? (
                 <div className="flex flex-col gap-3">
                   <button
                     onClick={() => {
                       navigate("/login");
-                      setMenuOpen(false);
+                      closeAllMenus();
                     }}
                     className="w-full py-2.5 rounded-xl text-[15px] font-medium text-white/90 bg-white/[0.05] hover:bg-white/[0.08] border border-white/10"
                   >
                     Sign In
                   </button>
 
-                  {/* ✅ NEW: FAQ quick link on mobile */}
                   <button
                     onClick={() => {
-                      navigate("/faq");
-                      setMenuOpen(false);
+                      navigate("/pricing");
+                      closeAllMenus();
                     }}
-                    className="w-full py-2.5 rounded-xl text-[15px] font-medium text-white/90 bg-white/[0.05] hover:bg-white/[0.08] border border-white/10"
-                  >
-                    FAQ
-                  </button>
-
-                  <button
-                    onClick={() => {
-                      navigate("/subscribe");
-                      setMenuOpen(false);
-                    }}
-                    className="w-full py-2.5 rounded-xl text-[15px] font-semibold text-black"
+                    className="w-full py-2.5 rounded-xl text-[15px] font-semibold text-black inline-flex items-center justify-center gap-2"
                     style={{
                       background:
                         "linear-gradient(90deg, rgba(16,185,129,1) 0%, rgba(110,231,183,1) 100%)",
                     }}
                   >
-                    Try Moostrade PRO
+                    <Tag className="w-4 h-4" />
+                    View Pricing
                   </button>
                 </div>
               ) : (
                 <div className="space-y-2">
-                  {/* ✅ NEW: FAQ quick link when logged in too */}
-                  <button
-                    onClick={() => {
-                      navigate("/faq");
-                      setMenuOpen(false);
-                    }}
-                    className="w-full flex items-center justify-between gap-3 px-4 py-3 rounded-xl text-sm border border-white/10 bg-white/[0.04] text-white/85"
-                  >
-                    <span className="flex items-center gap-3">FAQ</span>
-                    <ChevronRight className="w-4 h-4 text-white/50" />
-                  </button>
-
                   <button
                     onClick={() => {
                       navigate("/profile");
-                      setMenuOpen(false);
+                      closeAllMenus();
                     }}
                     className="w-full flex items-center justify-between gap-3 px-4 py-3 rounded-xl text-sm border border-white/10 bg-white/[0.04] text-white/85"
                   >
@@ -409,6 +644,22 @@ export default function TopBar() {
                         <CreditCard className="w-4 h-4 text-emerald-300" />
                       </span>
                       {loading ? "Opening Portal..." : "Manage Subscription"}
+                    </span>
+                    <ChevronRight className="w-4 h-4 text-white/50" />
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      navigate("/support");
+                      closeAllMenus();
+                    }}
+                    className="w-full flex items-center justify-between gap-3 px-4 py-3 rounded-xl text-sm border border-white/10 bg-white/[0.04] text-white/85"
+                  >
+                    <span className="flex items-center gap-3">
+                      <span className="w-9 h-9 rounded-xl border border-white/10 bg-white/[0.03] flex items-center justify-center">
+                        <LifeBuoy className="w-4 h-4 text-emerald-300" />
+                      </span>
+                      Support
                     </span>
                     <ChevronRight className="w-4 h-4 text-white/50" />
                   </button>
