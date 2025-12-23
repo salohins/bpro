@@ -6,7 +6,15 @@ import {
   useTransform,
   useReducedMotion,
 } from "framer-motion";
-import { Zap, Gauge, TrendingUp, Sparkles, ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  Zap,
+  Gauge,
+  TrendingUp,
+  Sparkles,
+  ArrowRight,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 
 /**
  * ✅ Stable in-view hook with hysteresis to prevent flicker at viewport edges.
@@ -121,7 +129,7 @@ function ModeCard({
 }) {
   const ref = useRef<HTMLElement | null>(null);
 
-  // ✅ Keep your stable in-view for desktop (replay), but on mobile slider we keep cards visible.
+  // ✅ desktop replay; mobile slider: always visible
   const inView = useStableInView(ref as any, {
     root: null,
     rootMargin: "0px 0px -18% 0px",
@@ -132,7 +140,7 @@ function ModeCard({
   const shouldShow = mobile ? true : inView;
   const barActive = mobile ? active : inView;
 
-  // ✅ Tilt only on desktop (mouse), never on mobile (no pointer jitter + cheaper)
+  // ✅ Tilt only on desktop (mouse)
   const mx = useMotionValue(0);
   const my = useMotionValue(0);
 
@@ -154,7 +162,6 @@ function ModeCard({
     my.set(0);
   };
 
-  // ✅ NO blur here (you asked)
   const cardVariants = {
     hidden: { opacity: 0, y: 28 },
     show: { opacity: 1, y: 0 },
@@ -164,7 +171,7 @@ function ModeCard({
     <motion.article
       ref={ref as any}
       initial="hidden"
-      animate={shouldShow ? "show" : "hidden"} // ✅ replay desktop, always visible on mobile slider
+      animate={shouldShow ? "show" : "hidden"}
       variants={cardVariants}
       transition={
         reduceMotion
@@ -182,12 +189,17 @@ function ModeCard({
         transform: "translateZ(0)",
       }}
       whileHover={reduceMotion || mobile ? {} : { y: -4 }}
-      whileTap={{ scale: 0.985 }}
-      className="group relative w-full overflow-hidden rounded-3xl"
+      // ✅ IMPORTANT: no whileTap (Framer tap gesture can interfere with native scroll on iOS)
+      className={[
+        "group relative w-full overflow-hidden rounded-3xl",
+        // ✅ keep press feedback but via CSS (doesn't block native scroll)
+        "transition-transform duration-150 active:scale-[0.985]",
+        // ✅ better touch behavior on iOS
+        "touch-manipulation select-none",
+      ].join(" ")}
     >
       {/* Frame */}
       <div className={`absolute inset-0 rounded-3xl bg-gradient-to-b ${mode.frame}`} />
-      {/* ✅ keep inner plate stable; backdrop blur stays (you want the look) */}
       <div className="absolute inset-[1px] rounded-3xl bg-[#070707]/80 backdrop-blur-xl border border-white/10" />
 
       {/* Blooms */}
@@ -208,7 +220,7 @@ function ModeCard({
         <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,.12)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,.12)_1px,transparent_1px)] bg-[size:56px_56px]" />
       </div>
 
-      {/* Sheen (only visible on hover) */}
+      {/* Sheen */}
       <motion.div
         aria-hidden="true"
         className="absolute top-0 left-[-120%] w-[240%] h-full bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100"
@@ -243,7 +255,7 @@ function ModeCard({
               <motion.div
                 className={`h-full rounded-full ${mode.intensityBar}`}
                 initial={{ width: 0 }}
-                animate={{ width: barActive ? mode.intensityWidth : 0 }} // ✅ desktop: inView, mobile: active slide
+                animate={{ width: barActive ? mode.intensityWidth : 0 }}
                 transition={
                   reduceMotion
                     ? { duration: 0.01 }
@@ -359,9 +371,21 @@ export default function TradeModes() {
     []
   );
 
-  const headerVariants = {
+  // ✅ headline animation (staggered)
+  const headerContainerVariants = {
     hidden: { opacity: 0, y: 18 },
-    show: { opacity: 1, y: 0 },
+    show: {
+      opacity: 1,
+      y: 0,
+      transition: reduceMotion
+        ? { duration: 0.01 }
+        : { duration: 0.65, ease: [0.16, 1, 0.3, 1], staggerChildren: 0.08 },
+    },
+  };
+
+  const headerItem = {
+    hidden: { opacity: 0, y: 10 },
+    show: { opacity: 1, y: 0, transition: reduceMotion ? { duration: 0.01 } : { duration: 0.65, ease: [0.16, 1, 0.3, 1] } },
   };
 
   const footerVariants = {
@@ -414,7 +438,6 @@ export default function TradeModes() {
     scroller.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onScroll);
 
-    // initial
     onScroll();
 
     return () => {
@@ -441,69 +464,63 @@ export default function TradeModes() {
 
   return (
     <section className="relative w-full py-24 md:py-28 bg-transparent text-white" id="trade-modes">
-
       <div className="relative z-10 mx-auto max-w-[1760px] px-6 sm:px-10 lg:px-16 2xl:px-20">
         <motion.div
           ref={headerRef}
           initial="hidden"
-          animate={headerInView ? "show" : "hidden"} // ✅ replay + no flicker
-          variants={headerVariants}
-          transition={reduceMotion ? { duration: 0.01 } : { duration: 0.75, ease: [0.16, 1, 0.3, 1] }}
+          animate={headerInView ? "show" : "hidden"}
+          variants={headerContainerVariants}
           className="mx-auto max-w-[920px] text-center"
         >
-          <div className="flex flex-wrap items-center justify-center gap-2 w-full">
-          <div
-            className="
-              inline-flex items-center gap-2
-              w-full sm:w-fit
-              justify-center
-              px-5 py-2
-              rounded-full
-              border border-emerald-400/20
-              bg-white/[0.03] backdrop-blur-md
-            "
-          >
-            <Sparkles className="w-4 h-4 text-emerald-300" />
-            <span className="text-emerald-300 text-xs tracking-[0.24em] font-semibold uppercase">
-              Trade Modes
-            </span>
-          </div>
-        </div>
+          <motion.div variants={headerItem} className="flex flex-wrap items-center justify-center gap-2 w-full">
+            <div
+              className="
+                inline-flex items-center gap-2
+                w-full sm:w-fit
+                justify-center
+                px-5 py-2
+                rounded-full
+                border border-emerald-400/20
+                bg-white/[0.03] backdrop-blur-md
+              "
+            >
+              <Sparkles className="w-4 h-4 text-emerald-300" />
+              <span className="text-emerald-300 text-xs tracking-[0.24em] font-semibold uppercase">
+                Trade Modes
+              </span>
+            </div>
+          </motion.div>
 
-
-          <h2 className="mt-5 text-3xl md:text-5xl font-extrabold tracking-tight leading-[1.06]">
+          <motion.h2 variants={headerItem} className="mt-5 text-3xl md:text-5xl font-extrabold tracking-tight leading-[1.06]">
             <span className="bg-gradient-to-r from-white via-emerald-200 to-emerald-500 bg-clip-text text-transparent drop-shadow-[0_0_24px_rgba(16,185,129,0.22)]">
               Pick the Timeframe.
             </span>
             <br />
             <span className="text-white/80">B:Pro Adapts the Logic.</span>
-          </h2>
+          </motion.h2>
 
-          <p className="mt-4 text-white/70 text-md leading-relaxed mx-auto max-w-[600px]">
+          <motion.p variants={headerItem} className="mt-4 text-white/70 text-md leading-relaxed mx-auto max-w-[600px]">
             Correlation: after structure + filters + scoring, choose a mode to match your timeframe.
-          </p>
+          </motion.p>
 
-          <div className="mt-4 text-xs text-white/45 flex items-center justify-center gap-2">
+          <motion.div variants={headerItem} className="mt-4 text-xs text-white/45 flex items-center justify-center gap-2">
             <ArrowRight className="w-3.5 h-3.5 text-emerald-300/70" />
             Short = faster signals • Mid = default • Long = stability
-          </div>
+          </motion.div>
         </motion.div>
 
         {/* ✅ Cards: slider on mobile, grid on desktop */}
         {mobile ? (
           <div className="mt-10 relative">
-            {/* slider */}
             <div
               ref={scrollerRef}
               className={[
-                // edge-to-edge feel while keeping your container system
                 "-mx-6 sm:-mx-10",
                 "px-6 sm:px-10",
                 "flex gap-4 overflow-x-auto",
-                // ✅ SLIDER FIX: keep snap, remove smooth (smooth is for programmatic only)
                 "snap-x snap-mandatory",
-                // ✅ SLIDER FIX: prevent iOS overscroll + reduce crazy momentum influence
-                "overscroll-x-contain touch-pan-x",
+                // ✅ IMPORTANT: remove touch-pan-x (it blocks vertical page scroll when you start touching a card)
+                "overscroll-x-contain",
                 "pb-4",
                 "[scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
               ].join(" ")}
@@ -517,21 +534,13 @@ export default function TradeModes() {
                 <div
                   key={mode.titleText}
                   ref={(el) => (slideRefs.current[i] = el)}
-                  // ✅ SLIDER FIX: stop snap from skipping multiple cards on flick
                   className="snap-center [scroll-snap-stop:always] shrink-0 w-[86vw] sm:w-[70vw] md:w-[62vw]"
                 >
-                  <ModeCard
-                    mode={mode}
-                    index={i}
-                    reduceMotion={reduceMotion}
-                    mobile
-                    active={i === activeSlide}
-                  />
+                  <ModeCard mode={mode} index={i} reduceMotion={reduceMotion} mobile active={i === activeSlide} />
                 </div>
               ))}
             </div>
 
-            {/* nav + dots (mobile only) */}
             <div className="mt-4 flex items-center justify-between">
               <button
                 type="button"
@@ -572,29 +581,17 @@ export default function TradeModes() {
         ) : (
           <div className="mt-10 grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
             {modes.map((mode, i) => (
-              <ModeCard
-                key={mode.titleText}
-                mode={mode}
-                index={i}
-                reduceMotion={reduceMotion}
-                mobile={false}
-                active={false}
-              />
+              <ModeCard key={mode.titleText} mode={mode} index={i} reduceMotion={reduceMotion} mobile={false} active={false} />
             ))}
           </div>
         )}
 
-        {/* Footer hint row */}
         <motion.div
           ref={footerRef}
           initial="hidden"
-          animate={footerInView ? "show" : "hidden"} // ✅ replay + no flicker
+          animate={footerInView ? "show" : "hidden"}
           variants={footerVariants}
-          transition={
-            reduceMotion
-              ? { duration: 0.01 }
-              : { duration: 0.65, delay: 0.06, ease: [0.16, 1, 0.3, 1] }
-          }
+          transition={reduceMotion ? { duration: 0.01 } : { duration: 0.65, delay: 0.06, ease: [0.16, 1, 0.3, 1] }}
           className="mt-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-3 text-xs text-white/45"
         >
           <span>Tip: match the mode to your patience and execution will stay clean.</span>

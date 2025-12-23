@@ -199,7 +199,7 @@ export default function AdaptiveTrendCloud() {
 
                   {/* ✅ mobile-safe: wraps + no overflow */}
                   <div className="absolute left-3 right-3 sm:left-4 sm:right-4 bottom-3 sm:bottom-4">
-                    <div className="flex flex-wrap items-center justify-between gap-2 text-[9px] sm:text-[11px] tracking-[0.14em] uppercase">
+                    <div className="flex flex-wrap items-center justify-between gap-1 text-[8px] sm:text-[11px] tracking-[0.14em] uppercase">
                       <span className="px-3 py-1.5 rounded-full border border-white/10 bg-white/[0.04] backdrop-blur-md text-red-500">
                         Downtrend
                       </span>

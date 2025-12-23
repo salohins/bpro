@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import {
     ArrowUpRight,
@@ -15,32 +15,68 @@ import breakoutShort from "../../assets/breakout-short.png";
 
 const easePremium = [0.16, 1, 0.3, 1];
 
+/** ✅ Desktop breakpoint helper (used to tune in-view behavior on mobile) */
+function useIsLgUp() {
+    const [isLgUp, setIsLgUp] = useState(() => {
+        if (typeof window === "undefined") return true;
+        return window.matchMedia("(min-width: 1024px)").matches;
+    });
+
+    useEffect(() => {
+        if (typeof window === "undefined") return;
+        const m = window.matchMedia("(min-width: 1024px)");
+        const onChange = () => setIsLgUp(m.matches);
+        onChange();
+        m.addEventListener?.("change", onChange);
+        return () => m.removeEventListener?.("change", onChange);
+    }, []);
+
+    return isLgUp;
+}
+
 export default function PrecisionEntryDetection() {
     const reduceMotion = useReducedMotion();
-    const [activeArchetype, setActiveArchetype] = useState<"long" | "short">(
-        "long"
-    );
+    const isLgUp = useIsLgUp();
+    const mobile = !isLgUp;
+
+    const [activeArchetype, setActiveArchetype] = useState<"long" | "short">("long");
 
     // ✅ dropdown open state (default open = active)
-    const [openArchetype, setOpenArchetype] = useState<"long" | "short" | null>(
-        "long"
-    );
+    const [openArchetype, setOpenArchetype] = useState<"long" | "short" | null>("long");
 
+    /**
+     * ✅ Mobile fix:
+     * - trigger earlier (viewport margin + lower amount)
+     * - keep animation (still fades in), but DON'T start at opacity:0 to avoid "blank space"
+     */
     const enter = (dir = 1, d = 0) => ({
-        initial: { opacity: 0, y: 16 * dir, filter: "blur(10px)" },
+        initial: mobile
+            ? { opacity: 0.14, y: 18 * dir, filter: "blur(10px)" } // ✅ visible (no blank), still animates
+            : { opacity: 0, y: 16 * dir, filter: "blur(10px)" },
         whileInView: { opacity: 1, y: 0, filter: "blur(0px)" },
         transition: reduceMotion
             ? { duration: 0.01 }
             : { duration: 0.85, delay: d, ease: easePremium },
-        viewport: { once: false, amount: 0.35 },
+        viewport: mobile
+            ? { once: false, amount: 0.12, margin: "0px 0px 20% 0px" } // ✅ earlier on mobile
+            : { once: false, amount: 0.35, margin: "0px 0px -18% 0px" },
     });
 
     const longItems = useMemo(
-        () => ["Bullish Continuation prints (trend building)", "Bull Reaction confirms (FAST line holds)", "Breakout / Trigger (white label) prints"],
+        () => [
+            "Bullish Continuation prints (trend building)",
+            "Bull Reaction confirms (FAST line holds)",
+            "Breakout / Trigger (white label) prints",
+        ],
         []
     );
+
     const shortItems = useMemo(
-        () => ["Bear bias holds", "Bear reaction confirms (resistance zone holds)",  "Open Short: sell on FAST-line touch, SL at mid-trend"],
+        () => [
+            "Bear bias holds",
+            "Bear reaction confirms (resistance zone holds)",
+            "Open Short: sell on FAST-line touch, SL at mid-trend",
+        ],
         []
     );
 
@@ -49,11 +85,14 @@ export default function PrecisionEntryDetection() {
     const infoText =
         activeArchetype === "long" ? (
             <>
-                Bullish Continuation = trend building. Breakout (white label) = likely no fast-line retest. Open Long = buy on fast-line touch, SL at mid-trend. Hold while trend holds. Blue diamond = take profits / close long.
+                Bullish Continuation = trend building. Breakout (white label) = likely no fast-line
+                retest. Open Long = buy on fast-line touch, SL at mid-trend. Hold while trend
+                holds. Blue diamond = take profits / close long.
             </>
         ) : (
             <>
-                Open Short = sell on the FAST-line touch, SL at mid-trend. Orange diamond = optional take-profit zone. Hold while trend holds for potential further downside.
+                Open Short = sell on the FAST-line touch, SL at mid-trend. Orange diamond = optional
+                take-profit zone. Hold while trend holds for potential further downside.
             </>
         );
 
@@ -64,7 +103,6 @@ export default function PrecisionEntryDetection() {
 
     return (
         <section className="relative w-full py-20 md:py-24 bg-transparent text-white">
-
             <div className="relative z-10 mx-auto max-w-[1760px] px-6 sm:px-10 lg:px-16 2xl:px-20">
                 {/* Header */}
                 <div className="space-y-3 mb-10">
@@ -78,21 +116,28 @@ export default function PrecisionEntryDetection() {
                         </span>
                     </div>
 
-
-                    <h2 className="text-4xl md:text-5xl xl:text-6xl font-extrabold tracking-tight leading-[1.05]">
+                    {/* ✅ Animated headline */}
+                    <motion.h2
+                        {...enter(1, 0.02)}
+                        className="text-4xl md:text-5xl xl:text-6xl font-extrabold tracking-tight leading-[1.05]"
+                    >
                         <span className="bg-gradient-to-r from-white via-emerald-200 to-emerald-500 bg-clip-text text-transparent">
                             Precise Entry Detection
                         </span>
-                    </h2>
+                    </motion.h2>
 
-                    <p className="text-white/70 text-lg leading-relaxed max-w-2xl">
-                        Structure gives direction and filters create clarity. This is where
-                        you execute only on clean reactions.
-                    </p>
+                    {/* ✅ Animated subtext */}
+                    <motion.p
+                        {...enter(1, 0.06)}
+                        className="text-white/70 text-lg leading-relaxed max-w-2xl"
+                    >
+                        Structure gives direction and filters create clarity. This is where you execute
+                        only on clean reactions.
+                    </motion.p>
                 </div>
 
                 {/* Body */}
-                <motion.div {...enter(1, 0.05)}>
+                <motion.div {...enter(1, 0.08)}>
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-7 lg:gap-10 items-start">
                         {/* LEFT — dropdown cards */}
                         <div className="lg:col-span-5 w-full space-y-4 order-2 lg:order-1">
@@ -122,11 +167,10 @@ export default function PrecisionEntryDetection() {
                             </div>
 
                             <div className="text-xs text-white/45">
-                                Pro Tip: As soon as price touches the fast line, the trade is
-                                triggered. Risk is defined by the mid-trend line, with the stop
-                                placed slightly below it. The same logic applies in reverse for
-                                short setups, with entries, risk, and invalidation mirrored to
-                                the downside.
+                                Pro Tip: As soon as price touches the fast line, the trade is triggered.
+                                Risk is defined by the mid-trend line, with the stop placed slightly below
+                                it. The same logic applies in reverse for short setups, with entries, risk,
+                                and invalidation mirrored to the downside.
                             </div>
                         </div>
 
@@ -170,9 +214,7 @@ export default function PrecisionEntryDetection() {
                                 initial={false}
                                 className="sm:hidden mt-3"
                                 transition={
-                                    reduceMotion
-                                        ? { duration: 0.01 }
-                                        : { layout: { duration: 0.35, ease: easePremium } }
+                                    reduceMotion ? { duration: 0.01 } : { layout: { duration: 0.35, ease: easePremium } }
                                 }
                             >
                                 <Glass className="rounded-2xl px-4 py-3">
@@ -180,45 +222,8 @@ export default function PrecisionEntryDetection() {
                                 </Glass>
                             </motion.div>
 
-                            {/* Pills: animate position only so it slides smoothly down/up with the info height */}
-                            <motion.div
-                                layout="position"
-                                initial={false}
-                                className="relative mt-4"
-                                transition={
-                                    reduceMotion
-                                        ? { duration: 0.01 }
-                                        : { layout: { duration: 0.35, ease: easePremium } }
-                                }
-                            >
-                                <div
-                                    aria-hidden
-                                    className="pointer-events-none absolute left-0 top-0 z-10 h-full w-8 bg-gradient-to-r from-[#0b0b0b] to-transparent md:hidden"
-                                />
-                                <div
-                                    aria-hidden
-                                    className="pointer-events-none absolute right-0 top-0 z-10 h-full w-10 bg-gradient-to-l from-[#0b0b0b] to-transparent md:hidden"
-                                />
 
-                                <div
-                                    className={[
-                                        "flex gap-2",
-                                        "md:flex-wrap",
-                                        "overflow-x-auto md:overflow-visible",
-                                        "whitespace-nowrap md:whitespace-normal",
-                                        "[-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
-                                        "pr-10 pl-2 md:pr-0 md:pl-0",
-                                        "py-1",
-                                    ].join(" ")}
-                                >
-                                    <Pill icon={<Target className="w-4 h-4 text-emerald-200/90" />}>Bias aligned</Pill>
-                                    <Pill icon={<Sparkles className="w-4 h-4 text-white/80" />}>Pressure context</Pill>
-                                    <Pill icon={<Shield className="w-4 h-4 text-emerald-200/90" />}>Fast-line entry / mid-trend stop</Pill>
-                                </div>
-                            </motion.div>
                         </div>
-
-
                     </div>
                 </motion.div>
             </div>
@@ -228,13 +233,7 @@ export default function PrecisionEntryDetection() {
 
 /* ===================== Atoms ===================== */
 
-function Glass({
-    className = "",
-    children,
-}: {
-    className?: string;
-    children: React.ReactNode;
-}) {
+function Glass({ className = "", children }: { className?: string; children: React.ReactNode }) {
     return (
         <div
             className={[
@@ -265,8 +264,7 @@ function MediaFrame({
     reduceMotion?: boolean;
     children?: React.ReactNode;
 }) {
-    const imgClass =
-        fit === "contain" ? "object-contain p-3" : "object-cover object-center";
+    const imgClass = fit === "contain" ? "object-contain p-3" : "object-cover object-center";
 
     return (
         <Glass className="overflow-hidden">
@@ -294,13 +292,7 @@ function MediaFrame({
     );
 }
 
-function Kicker({
-    children,
-    className = "",
-}: {
-    children: React.ReactNode;
-    className?: string;
-}) {
+function Kicker({ children, className = "" }: { children: React.ReactNode; className?: string }) {
     return (
         <div
             className={[
@@ -308,13 +300,10 @@ function Kicker({
                 className,
             ].join(" ")}
         >
-            <span className="text-emerald-300 text-xs tracking-[0.24em] font-semibold uppercase">
-                {children}
-            </span>
+            <span className="text-emerald-300 text-xs tracking-[0.24em] font-semibold uppercase">{children}</span>
         </div>
     );
 }
-
 
 function TagChip({
     children,
@@ -330,21 +319,13 @@ function TagChip({
                 ? "text-red-200 border-red-400/20 bg-red-400/10"
                 : "text-white/85 border-white/10 bg-black/30";
     return (
-        <span
-            className={`text-[11px] tracking-[0.18em] uppercase px-3 py-1.5 rounded-full border backdrop-blur-md ${tones}`}
-        >
+        <span className={`text-[11px] tracking-[0.18em] uppercase px-3 py-1.5 rounded-full border backdrop-blur-md ${tones}`}>
             {children}
         </span>
     );
 }
 
-function Pill({
-    icon,
-    children,
-}: {
-    icon: React.ReactNode;
-    children: React.ReactNode;
-}) {
+function Pill({ icon, children }: { icon: React.ReactNode; children: React.ReactNode }) {
     return (
         <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5 text-xs text-white/70">
             {icon}
@@ -366,10 +347,7 @@ function IconBox({
         red: "bg-red-500/10 border-red-400/20",
     };
     return (
-        <span
-            className={`inline-flex h-9 w-9 items-center justify-center rounded-xl border ${toneMap[tone] || toneMap.neutral
-                }`}
-        >
+        <span className={`inline-flex h-9 w-9 items-center justify-center rounded-xl border ${toneMap[tone] || toneMap.neutral}`}>
             {children}
         </span>
     );
@@ -412,8 +390,7 @@ function FeatureDropdownCard({
 
     const bgActive = active ? "bg-white/[0.08]" : "bg-white/[0.03]";
 
-    const chevronTone =
-        tone === "red" ? "text-red-200/70" : "text-emerald-200/70";
+    const chevronTone = tone === "red" ? "text-red-200/70" : "text-emerald-200/70";
 
     return (
         <div
@@ -438,9 +415,7 @@ function FeatureDropdownCard({
                             <IconBox tone={iconTone}>{icon}</IconBox>
                             <h3 className="text-lg font-semibold text-white/90">{title}</h3>
                         </div>
-                        <p className="mt-2 text-sm text-white/60 leading-relaxed">
-                            {subtitle}
-                        </p>
+                        <p className="mt-2 text-sm text-white/60 leading-relaxed">{subtitle}</p>
                     </div>
 
                     <span
@@ -467,9 +442,7 @@ function FeatureDropdownCard({
                     <div className="px-6 pb-5">
                         <div className="h-px w-full bg-white/10 mb-4" />
 
-                        <div className="text-xs tracking-[0.18em] uppercase text-white/45 mb-3">
-                            Details
-                        </div>
+                        <div className="text-xs tracking-[0.18em] uppercase text-white/45 mb-3">Details</div>
 
                         <ul className="text-white/70 space-y-2 text-sm leading-relaxed">
                             {items.map((t) => (
