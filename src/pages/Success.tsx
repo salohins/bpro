@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../lib/supabase";
+import { motion, useReducedMotion } from "framer-motion";
+import { Sparkles, Lock, CheckCircle2, ArrowRight, Info } from "lucide-react";
 
 type CreateUserResponse = {
   success?: boolean;
@@ -19,9 +21,12 @@ type SetPasswordResponse = {
   error?: string;
 };
 
+const easePremium: any = [0.16, 1, 0.3, 1];
+
 export default function Success() {
   const called = useRef(false);
   const navigate = useNavigate();
+  const reduceMotion = useReducedMotion();
 
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
@@ -31,9 +36,17 @@ export default function Success() {
 
   const [sessionId, setSessionId] = useState<string | null>(null);
 
-  const [emailFromServer, setEmailFromServer] = useState<string>("");
+  const [emailFromServer, setEmailFromServer] = useState<string>(""); // fallback if server doesn't return it
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
+
+  const enter = (x = 0, y = 18, d = 0) => ({
+    initial: { opacity: 0, x, y, filter: "blur(10px)" },
+    animate: { opacity: 1, x: 0, y: 0, filter: "blur(0px)" },
+    transition: reduceMotion
+      ? { duration: 0.01 }
+      : { duration: 0.7, delay: d, ease: easePremium },
+  });
 
   // 1) call create-user once
   useEffect(() => {
@@ -69,7 +82,7 @@ export default function Success() {
 
         // Messaging for magic-link email
         if (data.emailSent) {
-          setInfo("✅ We emailed you a login link as well (check spam just in case).");
+          setInfo("✅ We also emailed you a login link (check spam just in case).");
         } else if (data.rateLimited) {
           setInfo("⚠️ Login email was sent recently. Please wait ~60 seconds before resending.");
         } else if (data.otpError) {
@@ -116,7 +129,6 @@ export default function Success() {
 
       const email = data.email || emailFromServer;
       if (!email) {
-        // backend should return it; if it doesn't, you can still show "set password ok, use magic link"
         setInfo("✅ Password set. Check your email for the login link.");
         return;
       }
@@ -124,14 +136,10 @@ export default function Success() {
       setEmailFromServer(email);
 
       // Step B: login with email+password
-      const { error: loginErr } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-
+      const { error: loginErr } = await supabase.auth.signInWithPassword({ email, password });
       if (loginErr) throw loginErr;
 
-      // Step C: go to dashboard/settings
+      // Step C: go to settings
       navigate("/profile");
     } catch (err: any) {
       setError(err?.message ?? String(err));
@@ -140,64 +148,179 @@ export default function Success() {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex justify-center items-center text-xl">
-        Processing your payment...
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="min-h-screen flex justify-center items-center text-red-600 text-xl px-6 text-center">
-        Error: {error}
-      </div>
-    );
-  }
-
   return (
-    <div className="min-h-screen flex flex-col justify-center items-center text-center px-4">
-      <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8">
-        <h1 className="text-3xl font-bold mb-2">🎉 Payment Successful!</h1>
-        <p className="text-gray-600 mb-6">
-          Your account has been created. Set a password now to log in instantly.
-        </p>
+    <section className="relative w-full min-h-[calc(100vh-76px)] overflow-hidden text-white">
+      {/* Ambient background (matches site vibe) */}
+      <div aria-hidden className="absolute inset-0 pointer-events-none">
+        <div className="absolute -top-24 left-0 right-0 h-40 bg-gradient-to-b from-black/85 to-transparent" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_55%_28%,rgba(16,185,129,0.10),transparent_60%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_12%_78%,rgba(255,255,255,0.04),transparent_62%)]" />
+        <div className="absolute -bottom-24 left-0 right-0 h-40 bg-gradient-to-t from-black/75 to-transparent" />
+      </div>
 
-        {info && <p className="text-sm text-gray-700 mb-4">{info}</p>}
+      <div className="relative z-10 min-h-[calc(100vh-76px)] flex items-center">
+        <div className="w-full mx-auto max-w-[1200px] px-6 sm:px-10 lg:px-16 2xl:px-20 py-10">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 items-center">
+            {/* Left: confirmation + instructions */}
+            <motion.div {...enter(-10, 8, 0)} className="lg:col-span-6">
+              <div className="max-w-xl">
+                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/10 bg-white/[0.02]">
+                  <Sparkles className="w-4 h-4 text-emerald-300" />
+                  <span className="text-xs tracking-[0.22em] font-semibold uppercase text-white/80">
+                    Payment complete
+                  </span>
+                </div>
 
-        <div className="space-y-3 text-left">
-          <label className="block text-sm text-gray-600">New password</label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full border rounded-lg px-4 py-2"
-            placeholder="At least 6 characters"
-          />
+                <h1 className="mt-5 font-semibold tracking-[-0.04em] leading-[1.05] text-[clamp(28px,3vw,44px)]">
+                  <span className="text-white/95">You’re in</span>
+                  <span className="text-emerald-300">.</span>
+                </h1>
 
-          <label className="block text-sm text-gray-600">Confirm password</label>
-          <input
-            type="password"
-            value={confirm}
-            onChange={(e) => setConfirm(e.target.value)}
-            className="w-full border rounded-lg px-4 py-2"
-            placeholder="Repeat password"
-          />
+                <p className="mt-3 text-white/60 text-[clamp(14px,1.05vw,17px)] leading-relaxed">
+                  Your account is created. Set a password now to log in instantly — or use the magic link in your email.
+                </p>
 
-          <button
-            onClick={handleSetPasswordAndLogin}
-            disabled={busy}
-            className="w-full bg-black text-white px-6 py-3 rounded-lg text-lg hover:bg-gray-800 transition disabled:opacity-60"
-          >
-            {busy ? "Setting up..." : "Set Password & Log In →"}
-          </button>
+                {/* ✅ instruction block */}
+                <div className="mt-6 rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+                  <div className="flex items-start gap-3">
+                    <span className="mt-0.5 inline-flex h-9 w-9 items-center justify-center rounded-xl border border-white/10 bg-white/[0.03]">
+                      <Info className="w-4 h-4 text-emerald-300" />
+                    </span>
+                    <div>
+                      <div className="text-sm font-semibold text-white/85">Best TradingView experience</div>
+                      <ol className="mt-2 space-y-1 text-[13px] text-white/60 leading-relaxed list-decimal pl-5">
+                        <li>Open the indicator.</li>
+                        <li>Go to <span className="text-white/75 font-medium">Settings → Style</span>.</li>
+                        <li>Scroll to the bottom.</li>
+                        <li>
+                          Uncheck <span className="text-white/75 font-medium">“Filters in status line”</span>.
+                        </li>
+                      </ol>
+                    </div>
+                  </div>
+                </div>
 
-          <p className="text-xs text-gray-500 mt-3 text-center">
-            Prefer email login? Use the magic link we sent you.
-          </p>
+                {info && (
+                  <div className="mt-5 rounded-2xl border border-emerald-400/20 bg-emerald-400/10 px-4 py-3 text-sm text-emerald-200">
+                    {info}
+                  </div>
+                )}
+
+                <div className="mt-7 flex items-center gap-3 text-sm">
+                  <button
+                    type="button"
+                    onClick={() => navigate("/support")}
+                    className="text-white/60 hover:text-white transition"
+                  >
+                    Support →
+                  </button>
+                  <span className="text-white/15">•</span>
+                  <button
+                    type="button"
+                    onClick={() => navigate("/faq")}
+                    className="text-white/60 hover:text-white transition"
+                  >
+                    FAQ →
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Right: password set card */}
+            <motion.div {...enter(10, 8, 0.06)} className="lg:col-span-6">
+              {/* Loading / Error states inside the premium card */}
+              <div className="rounded-[26px] p-[1px] bg-gradient-to-b from-white/12 via-white/8 to-emerald-500/10">
+                <div className="relative rounded-[26px] border border-white/10 bg-[#070707]/78 backdrop-blur-2xl p-7 md:p-8">
+                  <div className="flex items-center justify-between gap-4">
+                    <div>
+                      <div className="text-sm text-white/65">
+                        {loading ? "Processing payment" : error ? "Something went wrong" : "Account ready"}
+                      </div>
+                      <div className="mt-1 text-xl font-semibold text-white/90">
+                        {loading ? "Finalizing…" : error ? "Error" : "Set password"}
+                      </div>
+                    </div>
+
+                    <span className="inline-flex items-center gap-2 text-[12px] font-semibold text-white/70 bg-white/[0.03] border border-white/10 px-3 py-2 rounded-2xl">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-300" />
+                      Secure
+                    </span>
+                  </div>
+
+                  {/* states */}
+                  {loading ? (
+                    <div className="mt-6 rounded-2xl border border-white/10 bg-white/[0.02] px-4 py-4 text-sm text-white/70">
+                      Processing your payment… please don’t close this page.
+                    </div>
+                  ) : error ? (
+                    <div className="mt-6 rounded-2xl border border-red-500/20 bg-red-500/10 px-4 py-4 text-sm text-red-200">
+                      {error}
+                    </div>
+                  ) : (
+                    <div className="mt-6 space-y-3">
+                      {/* Password */}
+                      <div className="rounded-2xl border border-white/10 bg-white/[0.02] px-4 py-3 flex items-center gap-3">
+                        <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-white/10 bg-white/[0.02]">
+                          <Lock className="w-4 h-4 text-emerald-300" />
+                        </span>
+                        <input
+                          type="password"
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
+                          className="w-full bg-transparent text-white/90 placeholder:text-white/35 outline-none text-sm"
+                          placeholder="New password (min 6 chars)"
+                        />
+                      </div>
+
+                      {/* Confirm */}
+                      <div className="rounded-2xl border border-white/10 bg-white/[0.02] px-4 py-3 flex items-center gap-3">
+                        <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-white/10 bg-white/[0.02]">
+                          <Lock className="w-4 h-4 text-emerald-300" />
+                        </span>
+                        <input
+                          type="password"
+                          value={confirm}
+                          onChange={(e) => setConfirm(e.target.value)}
+                          className="w-full bg-transparent text-white/90 placeholder:text-white/35 outline-none text-sm"
+                          placeholder="Confirm password"
+                        />
+                      </div>
+
+                      {/* CTA */}
+                      <motion.button
+                        whileHover={reduceMotion ? {} : { scale: 1.01 }}
+                        whileTap={{ scale: 0.985 }}
+                        disabled={busy || !password || !confirm}
+                        onClick={handleSetPasswordAndLogin}
+                        className="group w-full inline-flex items-center justify-center gap-3 px-6 py-4 text-base font-semibold rounded-2xl transition border border-emerald-300/25 bg-emerald-400/90 hover:bg-emerald-300 text-black shadow-[0_0_20px_rgba(16,185,129,0.16)] disabled:opacity-60"
+                      >
+                        {busy ? "Setting up..." : "Set Password & Log In"}
+                        <ArrowRight className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1" />
+                      </motion.button>
+
+                      <div className="mt-3 text-xs text-white/45 text-center">
+                        Prefer email login? Use the magic link we sent you.
+                      </div>
+
+                      {info && (
+                        <div className="mt-3 rounded-2xl border border-white/10 bg-white/[0.02] px-4 py-3 text-sm text-white/70">
+                          {info}
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  <div className="absolute -bottom-16 left-0 w-full h-32 bg-gradient-to-t from-emerald-500/8 to-transparent blur-3xl" />
+                </div>
+              </div>
+            </motion.div>
+          </div>
+
+          <div className="mt-8 text-xs text-white/35 text-center">
+            Secure auth by Supabase • Payments handled by Stripe
+          </div>
         </div>
       </div>
-    </div>
+    </section>
   );
 }

@@ -179,7 +179,7 @@ export default function SignalLanguageSection() {
                     >
                         <span className="bg-gradient-to-r from-white via-emerald-200 to-emerald-500 bg-clip-text text-transparent">
                             Read Signals with Context. <br />
-                            Trade With Clarity.
+                            Trade with Clarity.
                         </span>
                     </motion.h2>
 

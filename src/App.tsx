@@ -19,6 +19,11 @@ import FaqPage from "./pages/FAQPage";
 import PricingPage from "./pages/PricingPage";
 import SupportPage from "./pages/SupportPage";
 
+import CookieBanner from "./components/CookieBanner";
+
+// ✅ NEW: GA SPA pageviews (adjust path if needed)
+import GAPageViews from "./components/GAPageViews";
+
 function ScrollToTop() {
   const { pathname, search, hash } = useLocation();
 
@@ -86,6 +91,9 @@ function Layout() {
     <div className="relative flex min-h-[100dvh] flex-col bg-black text-gray-100">
       <GlobalBackground />
 
+      {/* ✅ GA pageviews for SPA routes */}
+      <GAPageViews />
+
       {/* ✅ scroll to top on route changes */}
       <ScrollToTop />
 
@@ -118,6 +126,9 @@ function Layout() {
       <div className="flex-shrink-0">
         <Footer />
       </div>
+
+      {/* ✅ Cookie banner (global) */}
+      <CookieBanner />
     </div>
   );
 }
