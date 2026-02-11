@@ -16,11 +16,11 @@ export default function ScoringSystem() {
 
   const lastSignals = useMemo(
     () => [
-      { type: "Open Short", safety: "1/3", quality: "2/3" },
+      { type: "Open Long", safety: "3/3", quality: "2/3" },
       { type: "Bull Continuation", safety: "3/3", quality: "2/3" },
       { type: "Cross Up", safety: "3/3", quality: "2/3" },
       { type: "Cross Down", safety: "2/3", quality: "1/3" },
-      { type: "Open Long", safety: "3/3", quality: "2/3" },
+      { type: "Open Short", safety: "1/3", quality: "2/3" },
     ],
     []
   );

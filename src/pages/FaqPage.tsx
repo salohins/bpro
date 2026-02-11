@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import {
   Plus,
   Minus,
@@ -10,8 +10,10 @@ import {
   SlidersHorizontal,
   Star,
   ArrowLeft,
-  Brain
+  Brain,
 } from "lucide-react";
+
+const easePremium: [number, number, number, number] = [0.16, 1, 0.3, 1];
 
 export default function FaqPage() {
   const reduceMotion = useReducedMotion();
@@ -48,7 +50,7 @@ export default function FaqPage() {
         a: "Yes — the system is complex under the hood, but the UX is built to be simple: follow structure first, confirm filters, then check the score before executing.",
         tag: "Learning",
       },
-            {
+      {
         icon: <Brain className="w-4 h-4 text-emerald-300" />,
         q: "Can I trade B:PRO signals mechanically, or is it meant for discretion?",
         a: "B:PRO is built as a decision framework, not a fully mechanical system. It highlights structured long/short opportunities, but position size, exact entries/exits, and risk management should always be defined by your own trading plan. Treat the signals, cloud, and scoring as a guided checklist rather than automatic “buy/sell” commands.",
@@ -70,15 +72,16 @@ export default function FaqPage() {
     []
   );
 
-  const [open, setOpen] = useState(0);
+  // Start with none open (faster initial paint + less layout work)
+  const [open, setOpen] = useState<number>(-1);
 
+  // Removed blur animations (expensive repaints). Keep opacity + translate only.
   const container = {
-    hidden: { opacity: 0, y: 18, filter: "blur(8px)" },
+    hidden: { opacity: 0, y: 18 },
     show: {
       opacity: 1,
       y: 0,
-      filter: "blur(0px)",
-      transition: { duration: 0.85, ease: [0.16, 1, 0.3, 1] },
+      transition: { duration: 0.75, ease: easePremium },
     },
   };
 
@@ -132,26 +135,29 @@ export default function FaqPage() {
           </h1>
 
           <p className="mt-4 text-white/60 max-w-[720px] mx-auto leading-relaxed">
-            Quick clarity on how the system behaves — integrity, scoring, compatibility, and learning curve.
+            Quick clarity on how the system behaves — integrity, scoring,
+            compatibility, and learning curve.
           </p>
         </motion.div>
 
         {/* Content */}
         <div className="mx-auto w-full max-w-[900px]">
           <motion.div
-            initial={{ opacity: 0, y: 10, filter: "blur(8px)" }}
-            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-            transition={{ duration: 0.85, ease: [0.16, 1, 0.3, 1] }}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.75, ease: easePremium }}
           >
             <div className="relative rounded-3xl p-[1px] bg-gradient-to-b from-emerald-400/30 via-white/10 to-emerald-500/20 shadow-[0_0_40px_rgba(16,185,129,0.08)]">
               <div className="relative rounded-3xl overflow-hidden bg-[#070707]/75 border border-white/10 backdrop-blur-xl">
-                {/* sheen sweep */}
-                <motion.div
-                  aria-hidden="true"
-                  className="absolute top-0 left-[-120%] w-[240%] h-full bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 hover:opacity-100"
-                  animate={reduceMotion ? {} : { x: ["-120%", "120%"] }}
-                  transition={{ duration: 9, repeat: Infinity, ease: "linear" }}
-                />
+                {/* sheen sweep (hover only — no infinite animation) */}
+                {!reduceMotion && (
+                  <motion.div
+                    aria-hidden="true"
+                    className="absolute top-0 left-[-120%] w-[240%] h-full bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0"
+                    whileHover={{ opacity: 1, x: ["-120%", "120%"] }}
+                    transition={{ duration: 1.15, ease: "linear" }}
+                  />
+                )}
 
                 <div className="relative p-2">
                   {faqs.map((item, idx) => {
@@ -161,7 +167,7 @@ export default function FaqPage() {
                         key={item.q}
                         idx={idx}
                         isOpen={isOpen}
-                        dim={open !== idx}
+                        dim={open !== -1 && open !== idx}
                         onToggle={() => setOpen(isOpen ? -1 : idx)}
                         reduceMotion={reduceMotion}
                         icon={item.icon}
@@ -178,7 +184,8 @@ export default function FaqPage() {
                   <div className="h-px w-full bg-gradient-to-r from-transparent via-white/10 to-transparent mb-5" />
                   <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
                     <div className="text-sm text-white/60">
-                      Still stuck? Hit support and we’ll point you to the right workflow.
+                      Still stuck? Hit support and we’ll point you to the right
+                      workflow.
                     </div>
                     <Link
                       to="/pricing"
@@ -222,13 +229,13 @@ function FAQItem({
 }) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 10 }}
+      // Keep entry animation light (no blur, no repeated in-view triggers)
+      initial={{ opacity: 0, y: 8 }}
       whileInView={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay: idx * 0.05, ease: [0.16, 1, 0.3, 1] }}
-      viewport={{ once: false, amount: 0.35 }}
-      className={`relative rounded-2xl overflow-hidden mb-2 ${
-        dim ? "opacity-80" : "opacity-100"
-      }`}
+      transition={{ duration: 0.45, delay: idx * 0.03, ease: easePremium }}
+      viewport={{ once: true, amount: 0.35 }}
+      className={`relative rounded-2xl overflow-hidden mb-2 ${dim ? "opacity-80" : "opacity-100"
+        }`}
     >
       <button
         onClick={onToggle}
@@ -258,7 +265,7 @@ function FAQItem({
 
             <motion.div
               animate={reduceMotion ? {} : { rotate: isOpen ? 180 : 0 }}
-              transition={{ duration: 0.2, ease: "easeOut" }}
+              transition={{ duration: 0.18, ease: "easeOut" }}
               className="w-10 h-10 rounded-2xl border border-white/10 bg-white/[0.03] grid place-items-center"
             >
               {isOpen ? (
@@ -271,16 +278,19 @@ function FAQItem({
         </div>
       </button>
 
-      <AnimatePresence initial={false}>
-        {isOpen && (
-          <motion.div
-            key="content"
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-            className="relative"
-          >
+      {/* Fast accordion: grid rows 0fr -> 1fr (no height: auto measuring) */}
+      <div className="relative">
+        <motion.div
+          initial={false}
+          animate={{
+            gridTemplateRows: isOpen ? "1fr" : "0fr",
+            opacity: isOpen ? 1 : 0,
+          }}
+          transition={{ duration: 0.22, ease: easePremium }}
+          className="grid"
+          style={{ willChange: "grid-template-rows, opacity" }}
+        >
+          <div className="overflow-hidden">
             <div className="px-5 pb-5 pt-1">
               <div className="text-sm text-white/70 leading-relaxed">{a}</div>
 
@@ -291,15 +301,17 @@ function FAQItem({
                 </span>
               </div>
             </div>
+          </div>
+        </motion.div>
 
-            {/* subtle glow */}
-            <div
-              aria-hidden="true"
-              className="absolute -bottom-20 -right-20 w-64 h-64 rounded-full bg-emerald-500/12 blur-[90px]"
-            />
-          </motion.div>
+        {/* subtle glow only when open (reduces constant repaint cost) */}
+        {isOpen && (
+          <div
+            aria-hidden="true"
+            className="absolute -bottom-20 -right-20 w-64 h-64 rounded-full bg-emerald-500/12 blur-[90px]"
+          />
         )}
-      </AnimatePresence>
+      </div>
     </motion.div>
   );
 }

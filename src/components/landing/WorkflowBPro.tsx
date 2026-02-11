@@ -152,17 +152,11 @@ export default function WorkflowBPro() {
     <section
       id="workflow"
       className="
-        relative w-full bg-black text-white overflow-hidden
+        relative w-full text-white overflow-hidden
         py-14 sm:py-16 md:py-20 lg:py-24
       "
     >
       {/* subtle background (doesn't hard-stop) */}
-      <div aria-hidden className="pointer-events-none absolute inset-0">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_18%,rgba(16,185,129,0.14),transparent_60%)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_78%_55%,rgba(255,255,255,0.06),transparent_62%)]" />
-
-
-      </div>
 
       <div className="relative z-10 mx-auto max-w-[1760px] px-4 sm:px-10 lg:px-16 2xl:px-20">
         <div className="flex flex-col">
@@ -374,7 +368,7 @@ export default function WorkflowBPro() {
                   <img
                     src={activeStep.img}
                     alt={`B:PRO workflow step ${active + 1}`}
-                    className="absolute inset-0 object-contain bg-black"
+                    className="absolute inset-0 object-contain w-full h-full bg-black"
                     draggable={false}
                     loading="eager"
                     decoding="async"
@@ -439,10 +433,6 @@ export default function WorkflowBPro() {
                           </div>
                         ))}
                       </div>
-
-                      <div className="mt-auto pt-4 text-[12px] text-white/45">
-                        Tip: keep it auditable — show the “why”, not promises.
-                      </div>
                     </div>
                   </div>
 
@@ -502,10 +492,6 @@ export default function WorkflowBPro() {
 
                   <div className="absolute inset-x-0 bottom-0 h-[1px]" />
                 </motion.div>
-              </div>
-
-              <div className="lg:hidden mt-3 text-xs text-white/45">
-                Tip: swipe the screenshot or use arrows — the “why” stays visible.
               </div>
             </motion.div>
           </div>

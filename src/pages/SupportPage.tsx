@@ -163,7 +163,10 @@ export default function SupportPage() {
 
       <div className="relative z-10 mx-auto max-w-[1200px] px-6 sm:px-10 lg:px-12">
         {/* Header */}
-        <motion.div {...enter(0, 18, 0)} className="text-center max-w-[880px] mx-auto">
+        <motion.div
+          {...enter(0, 18, 0)}
+          className="text-center max-w-[880px] mx-auto"
+        >
           <div className="inline-flex items-center gap-2 px-6 py-2 rounded-full border border-emerald-400/20 bg-white/[0.03] backdrop-blur-md">
             <LifeBuoy className="w-4 h-4 text-emerald-300" />
             <span className="text-emerald-300 text-xs tracking-[0.24em] font-semibold uppercase">
@@ -178,7 +181,8 @@ export default function SupportPage() {
           </h1>
 
           <p className="mt-4 text-white/65 text-[clamp(15px,1.05vw,18px)] leading-relaxed">
-            Choose a topic, send a message, and we’ll help you resolve it quickly.
+            Choose a topic, send a message, and we’ll help you resolve it
+            quickly.
           </p>
 
           <div className="mt-6 flex items-center justify-center gap-2 text-xs text-white/45">
@@ -188,7 +192,10 @@ export default function SupportPage() {
         </motion.div>
 
         {/* Quick actions */}
-        <motion.div {...enter(0, 18, 0.06)} className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-4">
+        <motion.div
+          {...enter(0, 18, 0.06)}
+          className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-4"
+        >
           {actions.map((a) => {
             const Icon = a.icon;
             return (
@@ -222,7 +229,11 @@ export default function SupportPage() {
         {/* Form + FAQ */}
         <div className="mt-8 grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
           {/* Form */}
-          <motion.div {...enter(-10, 18, 0.1)} className="lg:col-span-7" id="support-form">
+          <motion.div
+            {...enter(-10, 18, 0.1)}
+            className="lg:col-span-7"
+            id="support-form"
+          >
             <div className="rounded-[30px] p-[1px] bg-gradient-to-b from-emerald-400/22 via-white/10 to-emerald-500/16">
               <div className="rounded-[30px] border border-white/10 bg-[#070707]/75 backdrop-blur-2xl overflow-hidden">
                 <div className="p-7">
@@ -256,7 +267,9 @@ export default function SupportPage() {
                           className={[
                             "text-left rounded-2xl px-4 py-3.5 transition",
                             "bg-white/[0.02] hover:bg-white/[0.04]",
-                            active ? "ring-1 ring-emerald-400/35" : "ring-1 ring-white/10",
+                            active
+                              ? "ring-1 ring-emerald-400/35"
+                              : "ring-1 ring-white/10",
                           ].join(" ")}
                         >
                           <div className="flex items-start gap-3">
@@ -264,7 +277,9 @@ export default function SupportPage() {
                               <Icon className="w-4.5 h-4.5 text-emerald-300" />
                             </span>
                             <div className="min-w-0">
-                              <div className="text-sm font-semibold text-white/85">{t.label}</div>
+                              <div className="text-sm font-semibold text-white/85">
+                                {t.label}
+                              </div>
                               <div className="mt-1 text-xs text-white/55">{t.sub}</div>
                             </div>
                           </div>
@@ -326,10 +341,10 @@ export default function SupportPage() {
                         reduceMotion
                           ? {}
                           : {
-                              scale: 1.02,
-                              backgroundPosition: "right center",
-                              boxShadow: "0 0 55px rgba(16,185,129,0.35)",
-                            }
+                            scale: 1.02,
+                            backgroundPosition: "right center",
+                            boxShadow: "0 0 55px rgba(16,185,129,0.35)",
+                          }
                       }
                       whileTap={{ scale: 0.985 }}
                       onClick={submitTicket}
@@ -346,7 +361,8 @@ export default function SupportPage() {
                     </motion.button>
 
                     <div className="mt-2 text-xs text-white/45">
-                      Tip: If this is billing-related, include the email used at checkout.
+                      Tip: If this is billing-related, include the email used at
+                      checkout.
                     </div>
                   </div>
                 </div>
@@ -360,19 +376,28 @@ export default function SupportPage() {
           <motion.div {...enter(10, 18, 0.14)} className="lg:col-span-5">
             <div className="rounded-[30px] p-[1px] bg-gradient-to-b from-emerald-400/18 via-white/10 to-emerald-500/12">
               <div className="rounded-[30px] border border-white/10 bg-[#070707]/75 backdrop-blur-2xl overflow-hidden p-7">
-                <div className="text-xs text-white/45 tracking-widest uppercase">Quick answers</div>
-                <div className="mt-2 text-white/80 font-semibold text-lg">Common questions</div>
+                <div className="text-xs text-white/45 tracking-widest uppercase">
+                  Quick answers
+                </div>
+                <div className="mt-2 text-white/80 font-semibold text-lg">
+                  Common questions
+                </div>
 
                 <div className="mt-5 space-y-2">
                   {faqs.map((f, i) => {
                     const open = openIdx === i;
                     return (
-                      <div key={f.q} className="rounded-2xl bg-white/[0.02] border border-white/10 overflow-hidden">
+                      <div
+                        key={f.q}
+                        className="rounded-2xl bg-white/[0.02] border border-white/10 overflow-hidden"
+                      >
                         <button
                           onClick={() => setOpenIdx(open ? null : i)}
                           className="w-full px-4 py-4 flex items-center justify-between gap-3 text-left"
                         >
-                          <div className="text-sm font-semibold text-white/85">{f.q}</div>
+                          <div className="text-sm font-semibold text-white/85">
+                            {f.q}
+                          </div>
                           <ChevronDown
                             className={[
                               "w-4 h-4 text-white/55 transition-transform",
@@ -381,16 +406,22 @@ export default function SupportPage() {
                           />
                         </button>
 
+                        {/* ✅ Smooth GPU-friendly animation (no height:auto reflow) */}
                         <AnimatePresence initial={false}>
                           {open && (
                             <motion.div
-                              initial={{ opacity: 0, height: 0 }}
-                              animate={{ opacity: 1, height: "auto" }}
-                              exit={{ opacity: 0, height: 0 }}
-                              transition={{ duration: 0.25, ease: easePremium }}
-                              className="px-4 pb-4"
+                              key="content"
+                              initial={{ opacity: 0, scaleY: 0 }}
+                              animate={{ opacity: 1, scaleY: 1 }}
+                              exit={{ opacity: 0, scaleY: 0 }}
+                              transition={{ duration: 0.22, ease: easePremium }}
+                              style={{ transformOrigin: "top" }}
                             >
-                              <div className="text-sm text-white/65 leading-relaxed">{f.a}</div>
+                              <div className="px-4 pb-4">
+                                <div className="text-sm text-white/65 leading-relaxed">
+                                  {f.a}
+                                </div>
+                              </div>
                             </motion.div>
                           )}
                         </AnimatePresence>
@@ -412,7 +443,8 @@ export default function SupportPage() {
             </div>
 
             <div className="mt-4 text-xs text-white/45">
-              If you prefer, you can also contact us via your community channel (if provided).
+              If you prefer, you can also contact us via your community channel
+              (if provided).
             </div>
           </motion.div>
         </div>

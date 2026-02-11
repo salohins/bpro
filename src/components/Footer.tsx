@@ -5,7 +5,6 @@ import {
   Instagram,
   Facebook,
   Mail,
-  Sparkles,
   Music2,
 } from "lucide-react";
 
@@ -61,19 +60,23 @@ export default function Footer() {
         </div>
       </div>
 
-      {/* ✅ same width as other sections */}
       <div className="relative z-10 mx-auto max-w-[1760px] px-6 sm:px-10 lg:px-16 2xl:px-20">
         <div className="pt-14 pb-10">
-          {/* top row */}
           <div className="flex flex-col lg:flex-row gap-8 lg:items-start lg:justify-between">
             {/* brand */}
             <div className="space-y-4 max-w-xl">
               <div className="flex items-center gap-3">
-                <div className="h-11 w-11 rounded-2xl border border-emerald-400/20 bg-emerald-400/10 flex items-center justify-center">
-                  <Sparkles className="w-5 h-5 text-emerald-200" />
-                </div>
+                {/* ✅ replaced logo */}
+
+                <img
+                  src="/bpro_logo.svg"
+                  alt="Breakout PRO logo"
+                  className="h-6 md:h-10 object-contain"
+                />
+
+
                 <div className="leading-tight">
-                  <div className="text-lg font-extrabold tracking-tight">Breakout PRO</div>
+
                   <div className="text-xs text-white/45 tracking-widest uppercase">
                     Suite for discretionary traders
                   </div>
@@ -81,31 +84,9 @@ export default function Footer() {
               </div>
 
               <p className="text-white/60 leading-relaxed">
-                Clean signals, confluence-first UX, and visual clarity. Engineered to help you execute trades with confidence
-                across any timeframe.
+                Clean signals, confluence-first UX, and visual clarity. Engineered
+                to help you execute trades with confidence across any timeframe.
               </p>
-
-              {/* mini subscribe 
-              <div className="flex flex-col sm:flex-row gap-3">
-                <div className="flex-1 rounded-2xl border border-white/10 bg-black/30 px-4 py-3 flex items-center gap-3">
-                  <Mail className="w-4 h-4 text-emerald-300/80" />
-                  <input
-                    type="email"
-                    placeholder="Email for updates"
-                    className="w-full bg-transparent outline-none text-white/85 placeholder:text-white/35 text-sm"
-                  />
-                </div>
-
-                <button
-                  className="group inline-flex items-center justify-center gap-2 px-6 py-3 rounded-2xl font-semibold
-                  bg-emerald-400 text-black border border-emerald-300/30 transition hover:brightness-110"
-                >
-                  Join
-                  <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
-                </button>
-              </div> 
-
-              <div className="text-xs text-white/40">No spam. Just launches and upgrades.</div> */}
             </div>
 
             {/* links + socials */}
@@ -142,11 +123,13 @@ export default function Footer() {
 
           {/* bottom bar */}
           <div className="mt-10 pt-8 border-t border-white/10 flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
-            <div className="text-sm text-white/45">© {new Date().getFullYear()} Moostrade.com</div>
+            <div className="text-sm text-white/45">
+              © {new Date().getFullYear()} Moostrade. All rights reserved.
+            </div>
 
             <div className="text-xs text-white/40 max-w-xl">
-              Trading involves risk. Nothing here is financial advice. Always test strategies and manage risk
-              responsibly.
+              Trading involves risk. Nothing here is financial advice. Always
+              test strategies and manage risk responsibly.
             </div>
           </div>
         </div>

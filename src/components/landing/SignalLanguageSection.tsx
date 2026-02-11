@@ -144,7 +144,7 @@ export default function SignalLanguageSection() {
             {
                 key: "long-invalid",
                 title: "Long/Short Invalidated",
-                desc: "Long setup invalidation",
+                desc: "Long/Short setup invalidation",
                 tone: "purple",
                 icon: (
                     <img

@@ -214,9 +214,6 @@ export default function Subscribe() {
                     <button onClick={() => navigate("/pricing")} className="hover:text-white/70 transition">
                       ← Back to Pricing
                     </button>
-                    <button onClick={() => navigate("/support")} className="hover:text-white/70 transition">
-                      Need help? Support →
-                    </button>
                   </div>
 
                   <div className="absolute -bottom-16 left-0 w-full h-40 bg-gradient-to-t from-emerald-500/10 to-transparent blur-3xl" />

@@ -55,7 +55,7 @@ export default function ProfitCases() {
         dates: "Example (swing)",
         headline: "Mid — Standard mode long",
         bullets: [
-          "Mode 4H (mid Tmeframe) — Standard mode",
+          "Timeframe 4H - Mid Trendmode",
           "Entry: After Open Long, Signal at the Fast Line",
           "SL: at Midtrend Line",
           "TP: Close Long / Fast Line / Midtrend Line",
@@ -72,7 +72,7 @@ export default function ProfitCases() {
         dates: "Example (swing)",
         headline: "Mid — Standard mode long",
         bullets: [
-          "Mode 4H (mid Timeframe) — Standard mode",
+          "Timeframe 4H - Mid Trendmode",
           "Entry: After Open Long, Signal at the Fast Line",
           "SL: Close Long / Fast Line / Midtrend Line",
           "TP: (not specified)",
@@ -89,7 +89,7 @@ export default function ProfitCases() {
         dates: "Example",
         headline: "Mid — Standard mode breakout long",
         bullets: [
-          "Mode 2H (mid Timeframe) — Standard mode",
+          "Timeframe 2H - Mid trademode",
           "Breakout symbol: price may not touch Fast Line before continuing uptrend",
           "SL: at Midtrend Line",
           "TP: Fast Line / Midtrend Line",
@@ -106,7 +106,7 @@ export default function ProfitCases() {
         dates: "Example",
         headline: "Mid — Standard mode breakdown short",
         bullets: [
-          "Mode 1H (mid Timeframe) — Standard mode",
+          "Timeframe 1h - Mid trandemode",
           "Yellow breakdown symbol: price may not touch Fast Line before trend continues",
           "SL: at Midtrend Line",
           "TP: Close Short / Fast Line / Midtrend Line",
@@ -123,7 +123,7 @@ export default function ProfitCases() {
         dates: "Example (trend)",
         headline: "Standard mode long (no-fastline retest)",
         bullets: [
-          "Mode 2D — Standard mode (long)",
+          "Timeframe 2D — Mid Trendmode (long)",
           "White label: trend may not touch Fast Line before continuing",
           "SL: at Midtrend Line",
           "TP: Fast Line / Midtrend Line / Close Short symbol",
@@ -192,7 +192,7 @@ export default function ProfitCases() {
         headline: "Fast Timeframe Mode Bull",
         bullets: [
           "Mode 1m (fast Timeframe)",
-          "Entry: After Open Long, Signal at the Fast Line",
+          "Entry: After Open Long, at the Fast Line",
           "SL: slightly below Midtrend Line",
           "TP: Close Short / Fast Line / Midtrend Line",
         ],
@@ -209,7 +209,7 @@ export default function ProfitCases() {
         headline: "Fast Timeframe Mode bear",
         bullets: [
           "Mode 5m (fast Timeframe) — Bear mode",
-          "Entry: After Open Short, Signal at the Fast Line",
+          "Entry: After Open Short, at the Fast Line",
           "SL: at Midtrend Line",
           "TP: Fast Line / Close Short / Midtrend Line",
         ],
@@ -226,7 +226,7 @@ export default function ProfitCases() {
         headline: "Standard mode long",
         bullets: [
           "Mode 15m (short Timeframe) — Standard mode",
-          "Entry: After Open Long, Signal at the Fast Line",
+          "Entry: After Open Long, at the Fast Line",
           "SL: at Midtrend Line",
           "TP: Fast Line / Close Short / Midtrend Line",
         ],
@@ -243,7 +243,7 @@ export default function ProfitCases() {
         headline: "Fast Timeframe Mode — Standard long",
         bullets: [
           "Mode 30m (fast Timeframe) — Standard mode",
-          "Entry: After Open Long, Signal at the Fast Line",
+          "Entry: After Open Long, at the Fast Line",
           "SL: at Midtrend Line",
           "TP: Fast Line / Close Short / Midtrend Line",
         ],

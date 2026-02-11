@@ -30,7 +30,7 @@ export default function PricingPage() {
         key: "monthly" as PlanKey,
         name: "Monthly",
         badge: "7-day trial",
-        price: "USD 69",
+        price: "USD 69.99",
         period: "/ month",
         highlight: false,
         icon: Calendar,
@@ -48,7 +48,7 @@ export default function PricingPage() {
         key: "yearly" as PlanKey,
         name: "Yearly",
         badge: "Best value",
-        price: "USD 699",
+        price: "USD 699.99",
         period: "/ year",
         highlight: true,
         icon: Crown,
@@ -66,7 +66,7 @@ export default function PricingPage() {
         key: "lifetime" as PlanKey,
         name: "Lifetime",
         badge: "One-time",
-        price: "USD 899",
+        price: "USD 899.99",
         period: " forever",
         highlight: false,
         icon: Infinity,
@@ -184,26 +184,26 @@ export default function PricingPage() {
                     ].join(" ")}
                   >
                     {/* Animated glow (WAAPI-safe: no repeat: Infinity) */}
-{reduceMotion ? (
-  <div
-    aria-hidden="true"
-    className="absolute inset-0 bg-[radial-gradient(circle_at_20%_18%,rgba(16,185,129,0.10),transparent_60%),radial-gradient(circle_at_80%_75%,rgba(255,255,255,0.06),transparent_60%)]"
-    style={{ opacity: 0.18 }}
-  />
-) : (
-  <motion.div
-    aria-hidden="true"
-    className="absolute inset-0 bg-[radial-gradient(circle_at_20%_18%,rgba(16,185,129,0.10),transparent_60%),radial-gradient(circle_at_80%_75%,rgba(255,255,255,0.06),transparent_60%)]"
-    initial={{ opacity: 0.14, scale: 1 }}
-    animate={{ opacity: 0.24, scale: 1.04 }}
-    transition={{
-      duration: 6,
-      ease: "easeInOut",
-      repeat: 1000000,      // ✅ big number instead of Infinity
-      repeatType: "mirror", // ✅ ping-pong
-    }}
-  />
-)}
+                    {reduceMotion ? (
+                      <div
+                        aria-hidden="true"
+                        className="absolute inset-0 bg-[radial-gradient(circle_at_20%_18%,rgba(16,185,129,0.10),transparent_60%),radial-gradient(circle_at_80%_75%,rgba(255,255,255,0.06),transparent_60%)]"
+                        style={{ opacity: 0.18 }}
+                      />
+                    ) : (
+                      <motion.div
+                        aria-hidden="true"
+                        className="absolute inset-0 bg-[radial-gradient(circle_at_20%_18%,rgba(16,185,129,0.10),transparent_60%),radial-gradient(circle_at_80%_75%,rgba(255,255,255,0.06),transparent_60%)]"
+                        initial={{ opacity: 0.14, scale: 1 }}
+                        animate={{ opacity: 0.24, scale: 1.04 }}
+                        transition={{
+                          duration: 6,
+                          ease: "easeInOut",
+                          repeat: 1000000,      // ✅ big number instead of Infinity
+                          repeatType: "mirror", // ✅ ping-pong
+                        }}
+                      />
+                    )}
 
 
                     <div className="relative z-10 p-7 flex flex-col h-full">
@@ -258,8 +258,8 @@ export default function PricingPage() {
                                 {p.key === "monthly"
                                   ? "Recurring"
                                   : p.key === "yearly"
-                                  ? "Recurring"
-                                  : "One-time"}
+                                    ? "Recurring"
+                                    : "One-time"}
                               </div>
                             </div>
                           </div>
@@ -290,12 +290,12 @@ export default function PricingPage() {
                             reduceMotion
                               ? {}
                               : {
-                                  scale: 1.02,
-                                  backgroundPosition: "right center",
-                                  boxShadow: p.highlight
-                                    ? "0 0 60px rgba(16,185,129,0.55)"
-                                    : "0 0 45px rgba(16,185,129,0.35)",
-                                }
+                                scale: 1.02,
+                                backgroundPosition: "right center",
+                                boxShadow: p.highlight
+                                  ? "0 0 60px rgba(16,185,129,0.55)"
+                                  : "0 0 45px rgba(16,185,129,0.35)",
+                              }
                           }
                           whileTap={{ scale: 0.985 }}
                           onClick={() => onChoose(p.key)}

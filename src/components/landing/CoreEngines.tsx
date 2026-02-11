@@ -321,6 +321,24 @@ export default function CoreEngines() {
 
 /* ---------------- MOBILE SLIDER ---------------- */
 
+const sliderVariants = {
+  enter: (d: number) => ({
+    opacity: 0,
+    x: d * 22,
+    filter: "blur(10px)",
+  }),
+  center: {
+    opacity: 1,
+    x: 0,
+    filter: "blur(0px)",
+  },
+  exit: (d: number) => ({
+    opacity: 0,
+    x: d * -22,
+    filter: "blur(10px)",
+  }),
+};
+
 function MobileEnginesSlider({
   engines,
   idx,
@@ -334,44 +352,35 @@ function MobileEnginesSlider({
 }) {
   const [dir, setDir] = useState(1);
 
-  const next = () => {
-    setDir(1);
-    setIdx((p) => (p + 1) % engines.length);
-  };
-
-  const prev = () => {
-    setDir(-1);
-    setIdx((p) => (p - 1 + engines.length) % engines.length);
-  };
-
-  const variants = {
-    enter: (d: number) => ({
-      opacity: 0,
-      x: reduceMotion ? 0 : d * 22,
-      filter: "blur(10px)",
-    }),
-    center: {
-      opacity: 1,
-      x: 0,
-      filter: "blur(0px)",
-      transition: reduceMotion ? { duration: 0.01 } : { duration: 0.45, ease: easePremium },
-    },
-    exit: (d: number) => ({
-      opacity: 0,
-      x: reduceMotion ? 0 : d * -22,
-      filter: "blur(10px)",
-      transition: reduceMotion ? { duration: 0.01 } : { duration: 0.35, ease: easePremium },
-    }),
-  };
-
+  const len = engines.length;
   const active = engines[idx];
+
+  const next = React.useCallback(() => {
+    setDir(1);
+    setIdx((p) => (p + 1) % len);
+  }, [len, setIdx]);
+
+  const prev = React.useCallback(() => {
+    setDir(-1);
+    setIdx((p) => (p - 1 + len) % len);
+  }, [len, setIdx]);
+
+  const goTo = React.useCallback(
+    (i: number) => {
+      setDir(i > idx ? 1 : -1);
+      setIdx(i);
+    },
+    [idx, setIdx]
+  );
+
+  const dragEnabled = !reduceMotion;
 
   return (
     <div className="relative h-full flex flex-col min-h-0">
-      {/* arrows (fixed height) */}
+      {/* arrows */}
       <div className="mb-3 flex items-center justify-between shrink-0">
         <div className="text-xs text-white/45 tracking-widest uppercase">
-          Slide {idx + 1} / {engines.length}
+          Slide {idx + 1} / {len}
         </div>
 
         <div className="flex items-center gap-2">
@@ -394,44 +403,55 @@ function MobileEnginesSlider({
         </div>
       </div>
 
-      {/* viewport (fills remaining height, every slide same height) */}
+      {/* viewport */}
       <div className="relative overflow-hidden flex-1 min-h-0">
-        <AnimatePresence initial={false} custom={dir} mode="popLayout">
+        <AnimatePresence initial={false} custom={dir} mode="wait">
           <motion.div
             key={active.title}
             custom={dir}
-            variants={variants}
-            initial="enter"
-            animate="center"
-            exit="exit"
-            drag={reduceMotion ? false : "x"}
+            variants={reduceMotion ? undefined : sliderVariants}
+            initial={reduceMotion ? { opacity: 1 } : "enter"}
+            animate={
+              reduceMotion
+                ? { opacity: 1 }
+                : {
+                  ...sliderVariants.center,
+                  transition: { duration: 0.45, ease: easePremium },
+                }
+            }
+            exit={
+              reduceMotion
+                ? { opacity: 0 }
+                : {
+                  ...sliderVariants.exit(dir),
+                  transition: { duration: 0.35, ease: easePremium },
+                }
+            }
+            drag={dragEnabled ? "x" : false}
             dragConstraints={{ left: 0, right: 0 }}
             dragElastic={0.08}
+            dragMomentum={false}
             onDragEnd={(_, info) => {
-              if (reduceMotion) return;
+              if (!dragEnabled) return;
               if (info.offset.x < -70) next();
-              if (info.offset.x > 70) prev();
+              else if (info.offset.x > 70) prev();
             }}
             className="will-change-transform h-full"
           >
-            <MobileEngineCard engine={active} isActive index={idx} total={engines.length} />
+            <MemoMobileEngineCard engine={active} isActive />
           </motion.div>
         </AnimatePresence>
       </div>
 
-      {/* dots (fixed height) */}
+      {/* dots */}
       <div className="mt-5 flex items-center justify-center gap-2 shrink-0">
         {engines.map((_, i) => (
           <button
             key={i}
             aria-label={`Go to engine ${i + 1}`}
-            onClick={() => {
-              setDir(i > idx ? 1 : -1);
-              setIdx(i);
-            }}
-            className={`h-2.5 rounded-full transition-all ${
-              i === idx ? "w-8 bg-emerald-300/70" : "w-2.5 bg-white/15 hover:bg-white/25"
-            }`}
+            onClick={() => goTo(i)}
+            className={`h-2.5 rounded-full transition-all ${i === idx ? "w-8 bg-emerald-300/70" : "w-2.5 bg-white/15 hover:bg-white/25"
+              }`}
           />
         ))}
       </div>
@@ -440,14 +460,13 @@ function MobileEnginesSlider({
 }
 
 /* ---------------- MOBILE CARD ---------------- */
-function MobileEngineCard({
+
+const MemoMobileEngineCard = React.memo(function MobileEngineCard({
   engine,
   isActive,
 }: {
   engine: Engine;
   isActive: boolean;
-  index: number;
-  total: number;
 }) {
   const t = getTone(engine.tone);
   const Icon = engine.icon;
@@ -456,7 +475,9 @@ function MobileEngineCard({
     <div
       className={[
         "h-full rounded-[30px] p-[1px] transition-all duration-300",
-        isActive ? `bg-gradient-to-b ${t.cardGrad} shadow-[0_0_45px_rgba(255,255,255,0.07)]` : "bg-gradient-to-b from-white/10 via-white/7 to-white/10",
+        isActive
+          ? `bg-gradient-to-b ${t.cardGrad} shadow-[0_0_45px_rgba(255,255,255,0.07)]`
+          : "bg-gradient-to-b from-white/10 via-white/7 to-white/10",
       ].join(" ")}
     >
       <div
@@ -468,7 +489,6 @@ function MobileEngineCard({
         <div className={`pointer-events-none absolute inset-0 ${t.bgWash} opacity-[0.28]`} />
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/55 via-black/20 to-transparent" />
 
-        {/* Badge */}
         <span
           className={[
             "absolute left-5 top-5 inline-flex items-center px-3 py-1.5 rounded-full border text-[10px] tracking-widest uppercase",
@@ -478,7 +498,6 @@ function MobileEngineCard({
           {engine.badge}
         </span>
 
-        {/* Header block (fixed + clamped) */}
         <div className="relative mt-12">
           <div className="flex items-start gap-3">
             <span
@@ -499,7 +518,6 @@ function MobileEngineCard({
           </div>
         </div>
 
-        {/* ✅ FIXED-HEIGHT bullets (NO SCROLL) */}
         <div className="relative mt-4 overflow-hidden" style={{ height: 132 }}>
           <div className="space-y-2.5">
             {engine.points.slice(0, 3).map((p) => (
@@ -511,14 +529,14 @@ function MobileEngineCard({
           </div>
         </div>
 
-        {/* Footer pinned to bottom, also clamped */}
         <div className="relative mt-auto pt-4 border-t border-white/10 text-xs text-white/45 leading-relaxed line-clamp-2">
           {engine.footer}
         </div>
       </div>
     </div>
   );
-}
+});
+
 
 /* ---------------- UI ---------------- */
 

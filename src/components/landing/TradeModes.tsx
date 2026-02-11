@@ -503,7 +503,7 @@ export default function TradeModes() {
             Correlation: after structure + filters + scoring, choose a mode to match your timeframe.
           </motion.p>
 
-          <motion.div variants={headerItem} className="mt-4 text-xs text-white/45 flex items-center justify-center gap-2">
+          <motion.div variants={headerItem} className="mt-4 text-[12px] text-white/45 flex items-center justify-center gap-2">
             <ArrowRight className="w-3.5 h-3.5 text-emerald-300/70" />
             Short = faster signals • Mid = default • Long = stability
           </motion.div>

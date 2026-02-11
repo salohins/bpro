@@ -12,6 +12,10 @@ import {
 
 import futureTargetsImg from "../../assets/future-target-lines.png";
 import futureTargetsImg2 from "../../assets/future-target-lines2.png";
+import futureTargetsImg3 from "../../assets/future-target-lines.png";
+import futureTargetsImg4 from "../../assets/future-target-lines2.png";
+import futureTargetsIm5 from "../../assets/future-target-lines.png";
+
 
 const easePremium = [0.16, 1, 0.3, 1];
 
@@ -46,6 +50,33 @@ export default function FutureTargets() {
         captionTitle: "What to look for",
         caption:
           "After T1 taps, track whether price holds above the rail. Clean holds = continuation. Failed holds = exit or defend.",
+      },
+      {
+        key: "t1t2-3",
+        src: futureTargetsImg,
+        alt: "Example showing T1/T2 target EMA lines as dynamic support and resistance",
+        tags: ["T1 → T2 flow", "EMA-based targets"],
+        captionTitle: "How to read it",
+        caption:
+          "Watch rejection / acceptance at T1 and T2. Acceptance = continuation. Rejection = weakness / potential reversal pressure.",
+      },
+      {
+        key: "t1t2-4",
+        src: futureTargetsImg2,
+        alt: "Second example showing T1/T2 lines interaction after breakout",
+        tags: ["T1 / T2 lines", "Continuation / failure"],
+        captionTitle: "What to look for",
+        caption:
+          "After T1 taps, track whether price holds above the rail. Clean holds = continuation. Failed holds = exit or defend.",
+      },
+      {
+        key: "t1t2-5",
+        src: futureTargetsImg,
+        alt: "Example showing T1/T2 target EMA lines as dynamic support and resistance",
+        tags: ["T1 → T2 flow", "EMA-based targets"],
+        captionTitle: "How to read it",
+        caption:
+          "Watch rejection / acceptance at T1 and T2. Acceptance = continuation. Rejection = weakness / potential reversal pressure.",
       },
     ],
     []

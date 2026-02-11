@@ -168,6 +168,11 @@ export default function HeroSection() {
                 className="font-[var(--font-display)] font-semibold tracking-[-0.05em] leading-[0.95]
                 text-[clamp(40px,4.4vw,76px)] text-white"
               >
+                <img
+                  src="/bpro_logo.svg"
+                  alt="Breakout PRO logo"
+                  className="h-6 md:h-10 object-contain"
+                />
                 <span className="text-white/92 text-bold ">
                   All-in-one
                   <br /> breakout system.

@@ -140,7 +140,7 @@ export default function FilterEngine() {
 
             <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight leading-[1.05]">
               <span className="bg-gradient-to-r from-white via-emerald-200 to-emerald-500 bg-clip-text text-transparent drop-shadow-[0_0_24px_rgba(16,185,129,0.20)]">
-                Filter Engine Decides if Trading Conditions are Met.
+                Filter Engine decides if Trading Conditions are met.
               </span>
             </h2>
 

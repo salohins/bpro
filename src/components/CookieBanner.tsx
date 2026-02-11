@@ -92,7 +92,7 @@ export default function CookieBanner() {
             aria-label="Cookie preferences"
           >
             <div className="mx-auto w-full max-w-[980px] rounded-[22px] sm:rounded-[26px] p-[1px] bg-gradient-to-b from-white/12 via-white/8 to-emerald-500/10 shadow-[0_22px_70px_rgba(0,0,0,0.55)]">
-              <div className="relative overflow-hidden rounded-[22px] sm:rounded-[26px] border border-white/10 bg-[#070707]/82 backdrop-blur-2xl">
+              <div className="relative overflow-hidden rounded-[22px] sm:rounded-[26px] border border-white/10 bg-[#070707]">
                 {/* ambient */}
                 <div aria-hidden className="absolute inset-0 pointer-events-none">
                   <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_25%,rgba(16,185,129,0.10),transparent_60%)]" />
