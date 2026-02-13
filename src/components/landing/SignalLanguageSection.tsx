@@ -51,9 +51,9 @@ export default function SignalLanguageSection() {
      */
     const enter = (dir = 1, d = 0) => ({
         initial: mobile
-            ? { opacity: 0.14, y: 18 * dir, filter: "blur(10px)" } // ✅ visible, still animates
-            : { opacity: 0, y: 16 * dir, filter: "blur(10px)" },
-        whileInView: { opacity: 1, y: 0, filter: "blur(0px)" },
+            ? { opacity: 0.14, y: 18 * dir,  } // ✅ visible, still animates
+            : { opacity: 0, y: 16 * dir,  },
+        whileInView: { opacity: 1, y: 0,  },
         transition: reduceMotion
             ? { duration: 0.01 }
             : { duration: 0.85, delay: d, ease: easePremium },
@@ -246,12 +246,11 @@ function VerticalLegendSlider({ items, perPage = 6 }: { items: any[]; perPage?: 
     };
 
     const variants = {
-        enter: (d: number) => ({ opacity: 0, y: reduceMotion ? 0 : d * 18, filter: "blur(10px)" }),
-        center: { opacity: 1, y: 0, filter: "blur(0px)", transition: { duration: 0.55, ease: easePremium } },
+        enter: (d: number) => ({ opacity: 0, y: reduceMotion ? 0 : d * 18,}),
+        center: { opacity: 1, y: 0, transition: { duration: 0.55, ease: easePremium } },
         exit: (d: number) => ({
             opacity: 0,
             y: reduceMotion ? 0 : d * -18,
-            filter: "blur(10px)",
             transition: { duration: 0.45, ease: easePremium },
         }),
     };

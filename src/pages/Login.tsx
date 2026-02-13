@@ -32,7 +32,10 @@ export default function Login() {
     setLoading(true);
 
     try {
-      const { error: signInErr } = await supabase.auth.signInWithPassword({ email, password });
+      const { error: signInErr } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
       if (signInErr) throw signInErr;
 
       const {
@@ -66,10 +69,17 @@ export default function Login() {
     setLoading(true);
 
     try {
+      if (!email) throw new Error("Please enter your email.");
+
+      // ✅ Send user to your real reset page (where they set a new password)
+      const redirectTo = `${window.location.origin}/reset-password`;
+
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/auth/callback`,
+        redirectTo,
       });
+
       if (error) throw error;
+
       setMessage("Password reset link sent to your email ✅");
     } catch (err: any) {
       setError(err?.message ?? "Failed to send reset email");
@@ -103,7 +113,9 @@ export default function Login() {
                 </div>
 
                 <h1 className="mt-5 font-semibold tracking-[-0.04em] leading-[1.05] text-[clamp(28px,3vw,44px)]">
-                  <span className="text-white/95">{forgotMode ? "Reset password" : "Sign in"}</span>
+                  <span className="text-white/95">
+                    {forgotMode ? "Reset password" : "Sign in"}
+                  </span>
                   <span className="text-emerald-300">.</span>
                 </h1>
 

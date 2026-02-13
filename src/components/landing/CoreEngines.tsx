@@ -122,8 +122,8 @@ export default function CoreEngines() {
   const tone = getTone(active.tone);
 
   const enter = (d = 0) => ({
-    initial: { opacity: 0, y: reduceMotion ? 0 : 14, filter: "blur(10px)" },
-    whileInView: { opacity: 1, y: 0, filter: "blur(0px)" },
+    initial: { opacity: 0, y: reduceMotion ? 0 : 14, },
+    whileInView: { opacity: 1, y: 0, },
     transition: reduceMotion ? { duration: 0.01 } : { duration: 0.8, delay: d, ease: easePremium },
     viewport: { once: false, amount: 0.35 },
   });
@@ -325,17 +325,14 @@ const sliderVariants = {
   enter: (d: number) => ({
     opacity: 0,
     x: d * 22,
-    filter: "blur(10px)",
   }),
   center: {
     opacity: 1,
     x: 0,
-    filter: "blur(0px)",
   },
   exit: (d: number) => ({
     opacity: 0,
     x: d * -22,
-    filter: "blur(10px)",
   }),
 };
 

@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
+import emailjs from "@emailjs/browser";
 import {
   LifeBuoy,
   Mail,
@@ -30,6 +31,9 @@ export default function SupportPage() {
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // simple anti-spam honeypot (hidden)
+  const [hp, setHp] = useState("");
 
   const enter = (x = 0, y = 18, d = 0) => ({
     initial: { opacity: 0, x, y, filter: "blur(10px)" },
@@ -115,8 +119,9 @@ export default function SupportPage() {
     []
   );
 
-  // ✅ Placeholder: wire to your API later
-  // endpoint example: POST /support-ticket { email, topic, subject, message, tvName }
+  // ✅ EmailJS send (browser)
+  // Your EmailJS template variables:
+  // {{name}}, {{email}}, {{tradingview_username}}, {{time}}, {{message}}
   const submitTicket = async () => {
     setError(null);
     setSent(false);
@@ -126,25 +131,47 @@ export default function SupportPage() {
       return;
     }
 
+    // honeypot filled => likely bot
+    if (hp) return;
+
+    const serviceId = import.meta.env.VITE_EMAILJS_SERVICE_ID;
+    const templateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
+    const publicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
+
+    if (!serviceId || !templateId || !publicKey) {
+      setError("Email service is not configured. (Missing env variables.)");
+      return;
+    }
+
     try {
       setSending(true);
 
-      // Replace with your real endpoint when ready:
-      // const res = await fetch(`${import.meta.env.VITE_API_URL}/support-ticket`, {
-      //   method: "POST",
-      //   headers: { "Content-Type": "application/json" },
-      //   body: JSON.stringify({ email, topic, subject, message, tradingview_name: tvName }),
-      // });
-      // const data = await res.json();
-      // if (!res.ok) throw new Error(data.error || "Failed to send.");
+      // Use topic/subject to build a nicer "name" line in the template
+      const nameLine =
+        subject?.trim()
+          ? `[${topic.toUpperCase()}] ${subject.trim()}`
+          : `[${topic.toUpperCase()}] Support message`;
 
-      await new Promise((r) => setTimeout(r, 650)); // demo
+      await emailjs.send(
+        serviceId,
+        templateId,
+        {
+          // MUST match your EmailJS template placeholders:
+          name: nameLine,
+          email,
+          tradingview_username: tvName?.trim() || "(not provided)",
+          time: new Date().toLocaleString(),
+          message,
+        },
+        { publicKey }
+      );
 
       setSent(true);
       setSubject("");
       setMessage("");
     } catch (e: any) {
-      setError(e?.message || "Something went wrong.");
+      // EmailJS often returns error in e.text
+      setError(e?.text || e?.message || "Failed to send. Please try again.");
     } finally {
       setSending(false);
     }
@@ -181,8 +208,7 @@ export default function SupportPage() {
           </h1>
 
           <p className="mt-4 text-white/65 text-[clamp(15px,1.05vw,18px)] leading-relaxed">
-            Choose a topic, send a message, and we’ll help you resolve it
-            quickly.
+            Choose a topic, send a message, and we’ll help you resolve it quickly.
           </p>
 
           <div className="mt-6 flex items-center justify-center gap-2 text-xs text-white/45">
@@ -280,7 +306,9 @@ export default function SupportPage() {
                               <div className="text-sm font-semibold text-white/85">
                                 {t.label}
                               </div>
-                              <div className="mt-1 text-xs text-white/55">{t.sub}</div>
+                              <div className="mt-1 text-xs text-white/55">
+                                {t.sub}
+                              </div>
                             </div>
                           </div>
                         </button>
@@ -321,6 +349,16 @@ export default function SupportPage() {
                       className="w-full bg-[#0f0f0f] border border-white/10 rounded-2xl px-4 py-3 text-white/85 focus:ring-2 focus:ring-emerald-300/30 outline-none transition resize-none"
                     />
 
+                    {/* honeypot field (hidden) */}
+                    <input
+                      type="text"
+                      value={hp}
+                      onChange={(e) => setHp(e.target.value)}
+                      className="hidden"
+                      tabIndex={-1}
+                      autoComplete="off"
+                    />
+
                     {error && <div className="text-sm text-red-400">{error}</div>}
 
                     <AnimatePresence>
@@ -331,7 +369,7 @@ export default function SupportPage() {
                           exit={{ opacity: 0, y: 8 }}
                           className="text-sm text-emerald-300"
                         >
-                          ✅ Message queued. We’ll reply to your email.
+                          ✅ Message sent. We’ll reply to your email.
                         </motion.div>
                       )}
                     </AnimatePresence>
@@ -341,10 +379,10 @@ export default function SupportPage() {
                         reduceMotion
                           ? {}
                           : {
-                            scale: 1.02,
-                            backgroundPosition: "right center",
-                            boxShadow: "0 0 55px rgba(16,185,129,0.35)",
-                          }
+                              scale: 1.02,
+                              backgroundPosition: "right center",
+                              boxShadow: "0 0 55px rgba(16,185,129,0.35)",
+                            }
                       }
                       whileTap={{ scale: 0.985 }}
                       onClick={submitTicket}
@@ -361,8 +399,7 @@ export default function SupportPage() {
                     </motion.button>
 
                     <div className="mt-2 text-xs text-white/45">
-                      Tip: If this is billing-related, include the email used at
-                      checkout.
+                      Tip: If this is billing-related, include the email used at checkout.
                     </div>
                   </div>
                 </div>
@@ -406,7 +443,6 @@ export default function SupportPage() {
                           />
                         </button>
 
-                        {/* ✅ Smooth GPU-friendly animation (no height:auto reflow) */}
                         <AnimatePresence initial={false}>
                           {open && (
                             <motion.div
@@ -443,8 +479,7 @@ export default function SupportPage() {
             </div>
 
             <div className="mt-4 text-xs text-white/45">
-              If you prefer, you can also contact us via your community channel
-              (if provided).
+              If you prefer, you can also contact us via your community channel (if provided).
             </div>
           </motion.div>
         </div>

@@ -23,6 +23,7 @@ import CookieBanner from "./components/CookieBanner";
 
 // ✅ NEW: GA SPA pageviews (adjust path if needed)
 import GAPageViews from "./components/GAPageViews";
+import ResetPassword from "./pages/ResetPassword";
 
 function ScrollToTop() {
   const { pathname, search, hash } = useLocation();
@@ -120,6 +121,8 @@ function Layout() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/pricing" element={<PricingPage />} />
           <Route path="/support" element={<SupportPage />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
+
         </Routes>
       </main>
 

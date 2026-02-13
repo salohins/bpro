@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { motion, useReducedMotion } from "framer-motion";
 import { ArrowRight, Map, Filter, Target, ShieldCheck } from "lucide-react";
@@ -32,6 +32,22 @@ export default function HeroSection() {
   const isMdUp = useMediaQuery("(min-width: 768px)");
   const allowMotion = !reduceMotion && isMdUp; // ✅ key optimization: disable heavy motion on mobile
 
+  // ✅ Start video at 50s
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+
+  const handleVideoLoaded = () => {
+    const v = videoRef.current;
+    if (!v) return;
+
+    const target = 50;
+    const dur = Number.isFinite(v.duration) ? v.duration : 0;
+
+    // clamp if video shorter than 50s
+    v.currentTime = dur && dur < target ? Math.max(0, dur - 0.1) : target;
+
+    // Safari sometimes needs an explicit play() after seeking
+    v.play().catch(() => {});
+  };
 
   const wrap = { hidden: {}, show: {} };
 
@@ -98,9 +114,14 @@ export default function HeroSection() {
           aria-hidden="true"
           className="absolute inset-0"
           animate={allowMotion ? { scale: [1.02, 1.06, 1.02] } : undefined}
-          transition={allowMotion ? { duration: 18, repeat: Infinity, ease: "easeInOut" } : undefined}
+          transition={
+            allowMotion
+              ? { duration: 18, repeat: Infinity, ease: "easeInOut" }
+              : undefined
+          }
         >
           <video
+            ref={videoRef}
             className="absolute inset-0 w-full h-full object-cover"
             src={tradingVideo}
             autoPlay
@@ -110,6 +131,7 @@ export default function HeroSection() {
             // ✅ Mobile perf: don’t force full download immediately
             preload={isMdUp ? "auto" : "metadata"}
             controls={false}
+            onLoadedMetadata={handleVideoLoaded}
           />
         </motion.div>
 
@@ -133,7 +155,11 @@ export default function HeroSection() {
             aria-hidden="true"
             className="absolute inset-0 heroSeam"
             animate={allowMotion ? { opacity: [0.35, 0.75, 0.38] } : undefined}
-            transition={allowMotion ? { duration: 5.8, repeat: Infinity, ease: "easeInOut" } : undefined}
+            transition={
+              allowMotion
+                ? { duration: 5.8, repeat: Infinity, ease: "easeInOut" }
+                : undefined
+            }
             style={{ clipPath: "polygon(58% 0%, 60% 0%, 50% 100%, 48% 100%)" }}
           />
         </div>
@@ -142,8 +168,16 @@ export default function HeroSection() {
         <motion.div
           aria-hidden="true"
           className="absolute -top-[30rem] -left-[30rem] w-[1150px] h-[1150px] rounded-full bg-emerald-500/10 blur-[320px] hidden md:block"
-          animate={allowMotion ? { x: [0, 22, -10, 0], y: [0, 14, -10, 0], scale: [1, 1.06, 1.02, 1] } : undefined}
-          transition={allowMotion ? { duration: 18, repeat: Infinity, ease: "easeInOut" } : undefined}
+          animate={
+            allowMotion
+              ? { x: [0, 22, -10, 0], y: [0, 14, -10, 0], scale: [1, 1.06, 1.02, 1] }
+              : undefined
+          }
+          transition={
+            allowMotion
+              ? { duration: 18, repeat: Infinity, ease: "easeInOut" }
+              : undefined
+          }
         />
 
         {/* ✅ Small + cheap mobile ambient glow */}
@@ -193,7 +227,11 @@ export default function HeroSection() {
                 <motion.button
                   whileHover={
                     allowMotion
-                      ? { scale: 1.02, backgroundPosition: "right center", boxShadow: "0 0 90px rgba(16,185,129,0.52)" }
+                      ? {
+                          scale: 1.02,
+                          backgroundPosition: "right center",
+                          boxShadow: "0 0 90px rgba(16,185,129,0.52)",
+                        }
                       : undefined
                   }
                   whileTap={{ scale: 0.985 }}
