@@ -23,8 +23,8 @@ export default function FutureTargets() {
   const reduceMotion = useReducedMotion();
 
   const enter = (dir = 1, d = 0) => ({
-    initial: { opacity: 0, y: 16 * dir, filter: "blur(10px)" },
-    whileInView: { opacity: 1, y: 0, filter: "blur(0px)" },
+    initial: { opacity: 0, y: 16 * dir },
+    whileInView: { opacity: 1, y: 0 },
     transition: reduceMotion
       ? { duration: 0.01 }
       : { duration: 0.85, delay: d, ease: easePremium },
@@ -116,12 +116,10 @@ export default function FutureTargets() {
     enter: (d: number) => ({
       opacity: 0,
       x: reduceMotion ? 0 : d * 16,
-      filter: "blur(10px)",
     }),
     center: {
       opacity: 1,
       x: 0,
-      filter: "blur(0px)",
       transition: reduceMotion
         ? { duration: 0.01 }
         : { duration: 0.55, ease: easePremium },
@@ -129,7 +127,6 @@ export default function FutureTargets() {
     exit: (d: number) => ({
       opacity: 0,
       x: reduceMotion ? 0 : d * -16,
-      filter: "blur(10px)",
       transition: reduceMotion
         ? { duration: 0.01 }
         : { duration: 0.45, ease: easePremium },

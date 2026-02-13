@@ -51,9 +51,9 @@ export default function PrecisionEntryDetection() {
      */
     const enter = (dir = 1, d = 0) => ({
         initial: mobile
-            ? { opacity: 0.14, y: 18 * dir, filter: "blur(10px)" } // ✅ visible (no blank), still animates
-            : { opacity: 0, y: 16 * dir, filter: "blur(10px)" },
-        whileInView: { opacity: 1, y: 0, filter: "blur(0px)" },
+            ? { opacity: 0.14, y: 18 * dir, } // ✅ visible (no blank), still animates
+            : { opacity: 0, y: 16 * dir, },
+        whileInView: { opacity: 1, y: 0, },
         transition: reduceMotion
             ? { duration: 0.01 }
             : { duration: 0.85, delay: d, ease: easePremium },

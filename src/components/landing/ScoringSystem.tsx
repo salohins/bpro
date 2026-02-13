@@ -38,8 +38,8 @@ export default function ScoringSystem() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-start">
           {/* LEFT — shorter, calmer */}
           <motion.div
-            initial={{ opacity: 0, x: -18, y: 6, filter: "blur(10px)" }}
-            whileInView={{ opacity: 1, x: 0, y: 0, filter: "blur(0px)" }}
+            initial={{ opacity: 0, x: -18, y: 6, }}
+            whileInView={{ opacity: 1, x: 0, y: 0, }}
             transition={
               reduceMotion
                 ? { duration: 0.01 }
@@ -116,8 +116,8 @@ export default function ScoringSystem() {
 
           {/* RIGHT — premium HUD (no hover / no sheen / no group hover) */}
           <motion.div
-            initial={{ opacity: 0, x: 18, y: 6, filter: "blur(10px)" }}
-            whileInView={{ opacity: 1, x: 0, y: 0, filter: "blur(0px)" }}
+            initial={{ opacity: 0, x: 18, y: 6, }}
+            whileInView={{ opacity: 1, x: 0, y: 0, }}
             transition={
               reduceMotion
                 ? { duration: 0.01 }
@@ -250,11 +250,11 @@ function SignalsHudCard({
         {/* blooms */}
         <div
           aria-hidden="true"
-          className="absolute -top-24 -right-24 h-[340px] w-[340px] rounded-full bg-emerald-500/18 blur-[95px] opacity-30"
+          className="absolute -top-24 -right-24 h-[340px] w-[340px] rounded-full bg-emerald-500/18  opacity-30"
         />
         <div
           aria-hidden="true"
-          className="absolute -bottom-28 -left-24 h-[380px] w-[380px] rounded-full bg-cyan-500/10 blur-[110px] opacity-25"
+          className="absolute -bottom-28 -left-24 h-[380px] w-[380px] rounded-full bg-cyan-500/10  opacity-25"
         />
 
         {/* micro grid */}
@@ -302,8 +302,8 @@ function SignalsHudCard({
                 <motion.li
                   key={`${row.type}-${idx}`}
                   variants={{
-                    hidden: { opacity: 0, y: 10, filter: "blur(8px)" },
-                    show: { opacity: 1, y: 0, filter: "blur(0px)" },
+                    hidden: { opacity: 0, y: 10, },
+                    show: { opacity: 1, y: 0, },
                   }}
                   transition={
                     reduceMotion

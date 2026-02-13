@@ -113,8 +113,8 @@ export default function FilterEngine() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-start">
           {/* LEFT */}
           <motion.div
-            initial={{ opacity: 0, x: -18, y: 6, filter: "blur(10px)" }}
-            whileInView={{ opacity: 1, x: 0, y: 0, filter: "blur(0px)" }}
+            initial={{ opacity: 0, x: -18, y: 6, }}
+            whileInView={{ opacity: 1, x: 0, y: 0, }}
             transition={
               shouldReduceMotion
                 ? { duration: 0.01 }
@@ -244,8 +244,8 @@ export default function FilterEngine() {
 
           {/* RIGHT — panel (NO 3D / NO tilt) */}
           <motion.div
-            initial={{ opacity: 0, x: 18, y: 6, filter: "blur(10px)" }}
-            whileInView={{ opacity: 1, x: 0, y: 0, filter: "blur(0px)" }}
+            initial={{ opacity: 0, x: 18, y: 6, }}
+            whileInView={{ opacity: 1, x: 0, y: 0, }}
             transition={
               shouldReduceMotion
                 ? { duration: 0.01 }

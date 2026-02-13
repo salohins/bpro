@@ -21,8 +21,8 @@ export default function CTABreakoutPro() {
   );
 
   const enter = (x = 0, y = 18, d = 0) => ({
-    initial: { opacity: 0, x, y, filter: "blur(10px)" },
-    whileInView: { opacity: 1, x: 0, y: 0, filter: "blur(0px)" },
+    initial: { opacity: 0, x, y },
+    whileInView: { opacity: 1, x: 0, y: 0 },
     transition: reduceMotion ? { duration: 0.01 } : { duration: 0.85, delay: d, ease: easePremium },
     viewport: { once: false, amount: 0.35 },
   });
@@ -31,37 +31,9 @@ export default function CTABreakoutPro() {
     <section className="relative w-full py-20 md:py-28 overflow-hidden text-white">
       {/* ✅ Shiny background system (contained + tasteful) */}
       <div aria-hidden className="absolute inset-0 pointer-events-none">
-        {/* base wash */}
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_55%_18%,rgba(16,185,129,0.10),transparent_55%)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_12%_70%,rgba(255,255,255,0.06),transparent_60%)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_88%_72%,rgba(16,185,129,0.08),transparent_62%)]" />
-
-        {/* grid */}
-        <div className="absolute inset-0 opacity-[0.06] [mask-image:radial-gradient(ellipse_at_center,black,transparent_72%)]">
-          <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,.10)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,.10)_1px,transparent_1px)] bg-[size:84px_84px]" />
-        </div>
 
         {/* animated aurora */}
-        {!reduceMotion && (
-          <motion.div
-            className="absolute inset-0 opacity-60"
-            animate={{ opacity: [0.35, 0.6, 0.35] }}
-            transition={{ duration: 8.5, repeat: Infinity, ease: "easeInOut" }}
-          >
-            <motion.div
-              className="absolute -inset-[20%] blur-3xl"
-              animate={{ x: [-30, 30, -30], y: [12, -12, 12] }}
-              transition={{ duration: 16, repeat: Infinity, ease: "easeInOut" }}
-              style={{
-                background:
-                  "radial-gradient(circle at 35% 30%, rgba(16,185,129,0.16), transparent 55%), radial-gradient(circle at 75% 70%, rgba(255,255,255,0.08), transparent 60%)",
-              }}
-            />
-          </motion.div>
-        )}
 
-        {/* subtle sparkles */}
-        {!reduceMotion && <SparkleField />}
       </div>
 
       <div className="relative z-10 mx-auto max-w-[1760px] pb-20 px-6 sm:px-10 lg:px-16 2xl:px-20">
@@ -90,7 +62,7 @@ export default function CTABreakoutPro() {
                   {!reduceMotion && (
                     <motion.div
                       aria-hidden
-                      className="absolute -inset-6 rounded-[28px] blur-2xl opacity-60"
+                      className="absolute -inset-6 rounded-[28px]  opacity-60"
                       animate={{ opacity: [0.18, 0.32, 0.18] }}
                       transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
                       style={{
@@ -100,7 +72,7 @@ export default function CTABreakoutPro() {
                     />
                   )}
 
-                  <div className="relative inline-flex items-center gap-2 px-5 py-2 rounded-full border border-emerald-400/20 bg-white/[0.03] backdrop-blur-md">
+                  <div className="relative inline-flex items-center gap-2 px-5 py-2 rounded-full border border-emerald-400/20 bg-white/[0.03] ">
                     <span className="w-2 h-2 rounded-full bg-emerald-300 animate-pulse" />
                     <span className="text-emerald-200 text-xs tracking-[0.22em] font-semibold uppercase">Try 7 days free</span>
                   </div>
@@ -135,7 +107,7 @@ export default function CTABreakoutPro() {
 
                           <div
                             aria-hidden
-                            className="pointer-events-none absolute -top-16 -right-16 h-48 w-48 rounded-full bg-emerald-400/14 blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                            className="pointer-events-none absolute -top-16 -right-16 h-48 w-48 rounded-full bg-emerald-400/14  opacity-0 group-hover:opacity-100 transition-opacity duration-500"
                           />
 
                           {!reduceMotion && (
@@ -341,46 +313,4 @@ export default function CTABreakoutPro() {
   );
 }
 
-/* ✅ real “particles”: tiny floating sparkles (no external deps) */
-function SparkleField() {
-  const specs = [
-    { left: "12%", top: "18%", size: 6, d: 0, dur: 6.5, o: 0.22 },
-    { left: "28%", top: "64%", size: 4, d: 0.6, dur: 7.2, o: 0.16 },
-    { left: "48%", top: "26%", size: 5, d: 1.1, dur: 8.0, o: 0.18 },
-    { left: "66%", top: "72%", size: 6, d: 0.3, dur: 7.8, o: 0.20 },
-    { left: "82%", top: "22%", size: 4, d: 0.9, dur: 6.8, o: 0.14 },
-    { left: "90%", top: "58%", size: 5, d: 1.4, dur: 8.6, o: 0.16 },
-  ];
 
-  return (
-    <div className="absolute inset-0">
-      {specs.map((s, i) => (
-        <motion.div
-          key={i}
-          className="absolute rounded-full"
-          style={{
-            left: s.left,
-            top: s.top,
-            width: s.size,
-            height: s.size,
-            opacity: s.o,
-            background: "rgba(255,255,255,0.95)",
-            boxShadow: "0 0 22px rgba(16,185,129,0.35)",
-          }}
-          initial={{ y: 0, scale: 1 }}
-          animate={{
-            y: [0, -14, 0],
-            scale: [1, 1.25, 1],
-            opacity: [s.o * 0.8, s.o, s.o * 0.8],
-          }}
-          transition={{
-            duration: s.dur,
-            delay: s.d,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-        />
-      ))}
-    </div>
-  );
-}

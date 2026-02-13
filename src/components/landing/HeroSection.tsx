@@ -166,13 +166,15 @@ export default function HeroSection() {
               <motion.h1
                 variants={item}
                 className="font-[var(--font-display)] font-semibold tracking-[-0.05em] leading-[0.95]
-                text-[clamp(40px,4.4vw,76px)] text-white"
+                text-[clamp(40px,4.4vw,76px)] text-white "
               >
-                <img
-                  src="/bpro_logo.svg"
-                  alt="Breakout PRO logo"
-                  className="h-6 md:h-10 object-contain"
-                />
+                <div className="border-3 border-green-500 rounded-full px-6 py-3 w-max mb-5">
+                  <img
+                    src="/bpro_logo.svg"
+                    alt="Breakout PRO logo"
+                    className="h-6 md:h-10 object-contain "
+                  />
+                </div>
                 <span className="text-white/92 text-bold ">
                   All-in-one
                   <br /> breakout system.

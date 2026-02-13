@@ -21,33 +21,31 @@ export default function AdaptiveTrendCloud() {
   };
 
   const fadeLeft = {
-    hidden: { opacity: 0, x: -18, y: 6, filter: "blur(10px)" },
+    hidden: { opacity: 0, x: -18, y: 6, },
     show: {
       opacity: 1,
       x: 0,
       y: 0,
-      filter: "blur(0px)",
+
       transition: reduceMotion ? { duration: 0.01 } : { duration: 0.85, ease: easePremium },
     },
   };
 
   const fadeRight = {
-    hidden: { opacity: 0, x: 18, y: 6, filter: "blur(10px)" },
+    hidden: { opacity: 0, x: 18, y: 6, },
     show: {
       opacity: 1,
       x: 0,
       y: 0,
-      filter: "blur(0px)",
       transition: reduceMotion ? { duration: 0.01 } : { duration: 0.85, ease: easePremium },
     },
   };
 
   const bullet = {
-    hidden: { opacity: 0, y: 10, filter: "blur(8px)" },
+    hidden: { opacity: 0, y: 10, },
     show: {
       opacity: 1,
       y: 0,
-      filter: "blur(0px)",
       transition: reduceMotion ? { duration: 0.01 } : { duration: 0.7, ease: easePremium },
     },
   };
