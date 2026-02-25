@@ -50,16 +50,10 @@ export default function SignalLanguageSection() {
      * - keep animation but avoid "blank space" by not starting at opacity:0 on mobile
      */
     const enter = (dir = 1, d = 0) => ({
-        initial: mobile
-            ? { opacity: 0.14, y: 18 * dir,  } // ✅ visible, still animates
-            : { opacity: 0, y: 16 * dir,  },
-        whileInView: { opacity: 1, y: 0,  },
-        transition: reduceMotion
-            ? { duration: 0.01 }
-            : { duration: 0.85, delay: d, ease: easePremium },
-        viewport: mobile
-            ? { once: false, amount: 0.12, margin: "0px 0px 22% 0px" } // ✅ earlier on mobile
-            : { once: false, amount: 0.35 },
+        initial: mobile ? { opacity: 0.14, y: 18 * dir } : { opacity: 0, y: 16 * dir },
+        whileInView: { opacity: 1, y: 0 },
+        transition: reduceMotion ? { duration: 0.01 } : { duration: 0.85, delay: d, ease: easePremium },
+        viewport: mobile ? { once: false, amount: 0.12, margin: "0px 0px 22% 0px" } : { once: false, amount: 0.35 },
     });
 
     const signalLegend = useMemo(
@@ -173,10 +167,7 @@ export default function SignalLanguageSection() {
                     </motion.div>
 
                     {/* ✅ Animated headline */}
-                    <motion.h2
-                        {...enter(1, 0.05)}
-                        className="text-4xl md:text-5xl xl:text-6xl font-extrabold tracking-tight leading-[1.05]"
-                    >
+                    <motion.h2 {...enter(1, 0.05)} className="text-4xl md:text-5xl xl:text-6xl font-extrabold tracking-tight leading-[1.05]">
                         <span className="bg-gradient-to-r from-white via-emerald-200 to-emerald-500 bg-clip-text text-transparent">
                             Read Signals with Context. <br />
                             Trade with Clarity.
@@ -200,6 +191,7 @@ export default function SignalLanguageSection() {
                                 alt="Breakout Logic screenshot showing squeeze, invalidation and continuation icons"
                                 caption="Use the icons at reaction zones to reduce guesswork."
                                 reduceMotion={reduceMotion}
+                                mobile={mobile}
                             />
                         </motion.div>
 
@@ -210,10 +202,7 @@ export default function SignalLanguageSection() {
                     </div>
                 </div>
 
-                <motion.div
-                    {...enter(1, 0.14)}
-                    className="mt-7 pt-4 border-t border-white/10 flex items-center justify-between text-xs text-white/45"
-                >
+                <motion.div {...enter(1, 0.14)} className="mt-7 pt-4 border-t border-white/10 flex items-center justify-between text-xs text-white/45">
                     <span>Signal language • visual legend</span>
                 </motion.div>
             </div>
@@ -246,7 +235,7 @@ function VerticalLegendSlider({ items, perPage = 6 }: { items: any[]; perPage?: 
     };
 
     const variants = {
-        enter: (d: number) => ({ opacity: 0, y: reduceMotion ? 0 : d * 18,}),
+        enter: (d: number) => ({ opacity: 0, y: reduceMotion ? 0 : d * 18 }),
         center: { opacity: 1, y: 0, transition: { duration: 0.55, ease: easePremium } },
         exit: (d: number) => ({
             opacity: 0,
@@ -354,27 +343,47 @@ function Kicker({ children, className = "" }: { children: React.ReactNode; class
     );
 }
 
+/**
+ * ✅ No crop / full image visible everywhere:
+ * - uses object-contain (never cuts)
+ * - frame is responsive (no fixed height), uses aspect-video to keep clean shape
+ * ✅ Caption behavior:
+ * - mobile: caption BELOW image
+ * - desktop: caption OVERLAY (same as before)
+ */
 function CinematicImage({
     src,
     alt,
     tags = [],
     caption,
     reduceMotion,
+    mobile,
 }: {
     src: string;
     alt: string;
     tags?: Array<{ text: string; tone?: string }>;
     caption?: string;
     reduceMotion: boolean;
+    mobile: boolean;
 }) {
     return (
-        <div className="relative w-full overflow-hidden rounded-[26px] border border-white/10">
-            <div className="relative h-[460px]">
-                <img src={src} alt={alt} className="absolute inset-0 w-full h-full object-cover object-center" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/15 to-black/10" />
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_15%,rgba(16,185,129,0.18),transparent_55%)]" />
+        <div className="w-full">
+            {/* ✅ Frame height now matches the image height perfectly */}
+            <div className="relative w-full overflow-hidden rounded-[26px] border border-white/10 bg-black/20">
+                {/* Image determines height */}
+                <img
+                    src={src}
+                    alt={alt}
+                    className="block w-full h-auto object-contain"
+                    draggable={false}
+                />
 
-                <div className="absolute left-5 top-5 flex flex-wrap gap-2">
+                {/* overlays (sit on top of image; frame auto-sizes to image height) */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/10 to-black/5 pointer-events-none" />
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_15%,rgba(16,185,129,0.16),transparent_55%)] pointer-events-none" />
+
+                {/* tags */}
+                <div className="absolute left-5 top-5 flex flex-wrap gap-2 pointer-events-none">
                     {tags.map((t, i) => (
                         <TagChip key={i} tone={t.tone || "neutral"}>
                             {t.text}
@@ -382,25 +391,37 @@ function CinematicImage({
                     ))}
                 </div>
 
-                {caption && (
-                    <div className="absolute left-5 right-5 bottom-5">
+                {/* ✅ caption overlay only on desktop */}
+                {!mobile && caption && (
+                    <div className="absolute left-5 right-5 bottom-5 pointer-events-none">
                         <div className="rounded-2xl bg-black/35 px-4 py-3 backdrop-blur-md border border-white/10">
                             <div className="text-sm text-white/70 leading-relaxed">{caption}</div>
                         </div>
                     </div>
                 )}
 
+                {/* shimmer */}
                 <motion.div
                     aria-hidden="true"
-                    className="absolute top-0 left-[-120%] w-[240%] h-full bg-gradient-to-r from-transparent via-white/10 to-transparent"
+                    className="absolute top-0 left-[-120%] w-[240%] h-full bg-gradient-to-r from-transparent via-white/10 to-transparent pointer-events-none"
                     animate={reduceMotion ? {} : { x: ["-120%", "120%"] }}
                     transition={{ duration: 18, repeat: Infinity, ease: "linear" }}
                     style={{ opacity: 0.05 }}
                 />
             </div>
+
+            {/* ✅ caption below image on mobile */}
+            {mobile && caption && (
+                <div className="mt-4">
+                    <div className="rounded-2xl bg-white/[0.03] px-4 py-3 backdrop-blur-md border border-white/10">
+                        <div className="text-sm text-white/70 leading-relaxed">{caption}</div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
+
 
 function TagChip({ children, tone = "neutral" }: { children: React.ReactNode; tone?: string }) {
     const tones =

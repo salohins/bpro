@@ -40,7 +40,7 @@ export default function ImprintPage() {
       icon: User,
       content: (
         <div className="space-y-3">
-          
+
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <InfoRow label="Full name" value="Karl Moos" />
@@ -98,11 +98,6 @@ export default function ImprintPage() {
               Imprint
             </span>
           </h1>
-
-          <p className="text-white/60 leading-relaxed text-[14.5px] sm:text-lg max-w-[760px]">
-            Replace the placeholders with your details. This page is intended for a Switzerland-based private operator and
-            should be updated if your legal setup changes.
-          </p>
         </motion.div>
 
         <div className="mt-6 sm:mt-8 space-y-6">

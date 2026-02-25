@@ -58,8 +58,8 @@ export default function PrecisionEntryDetection() {
             ? { duration: 0.01 }
             : { duration: 0.85, delay: d, ease: easePremium },
         viewport: mobile
-            ? { once: false, amount: 0.12, margin: "0px 0px 20% 0px" } // ✅ earlier on mobile
-            : { once: false, amount: 0.35, margin: "0px 0px -18% 0px" },
+            ? { once: false, amount: 0.1, margin: "0px 0px 20% 0px" } // ✅ earlier on mobile
+            : { once: false, amount: 0.1, margin: "0px 0px -18% 0px" },
     });
 
     const longItems = useMemo(
@@ -73,9 +73,9 @@ export default function PrecisionEntryDetection() {
 
     const shortItems = useMemo(
         () => [
-            "Bear bias holds",
+            "Bearish Continuation prints (trend fading)",
             "Bear reaction confirms (resistance zone holds)",
-            "Open Short: sell on FAST-line touch, SL at mid-trend",
+            "Breakdown / Trigger (yellow label) prints."
         ],
         []
     );
@@ -85,9 +85,9 @@ export default function PrecisionEntryDetection() {
     const infoText =
         activeArchetype === "long" ? (
             <>
-                Bullish Continuation = trend building. Breakout (white label) = likely no fast-line
-                retest. Open Long = buy on fast-line touch, SL at mid-trend. Hold while trend
-                holds. Blue diamond = take profits / close long.
+                Open Long = buy on fast-line touch, SL at mid-trend. Bullish Continuation = trend building. Blue diamond = take profits / close long. Breakout (white label) = likely no fast-line
+                retest.  Hold while trend
+                holds.
             </>
         ) : (
             <>

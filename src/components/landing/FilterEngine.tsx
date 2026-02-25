@@ -80,7 +80,6 @@ export default function FilterEngine() {
     setPreviewOpen(true);
   }, []);
 
-  // ✅ selected modules (fast + scalable)
   // ✅ selected modules (ACTIVE by default)
   const [selected, setSelected] = useState<Set<string>>(() => {
     const init = new Set<string>();
@@ -102,19 +101,36 @@ export default function FilterEngine() {
     });
   }, []);
 
+  // ✅ NEW: bottom-row toggles (separate from dropdown modules)
+  const [extras, setExtras] = useState<{
+    futureTargetLines: boolean;
+    divergenceArrows: boolean;
+    enableAlarms: boolean;
+  }>({
+    futureTargetLines: true,
+    divergenceArrows: true,
+    enableAlarms: true,
+  });
+
+  const toggleExtra = useCallback(
+    (key: "futureTargetLines" | "divergenceArrows" | "enableAlarms") => {
+      setExtras((prev) => ({ ...prev, [key]: !prev[key] }));
+    },
+    []
+  );
+
   return (
     <section
       className="relative w-full py-24 md:py-28 bg-transparent text-white"
       id="filter-engine"
     >
-
       {/* ✅ same width as your other premium sections */}
       <div className="relative z-10 mx-auto max-w-[1760px] px-6 sm:px-10 lg:px-16 2xl:px-20">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-start">
           {/* LEFT */}
           <motion.div
-            initial={{ opacity: 0, x: -18, y: 6, }}
-            whileInView={{ opacity: 1, x: 0, y: 0, }}
+            initial={{ opacity: 0, x: -18, y: 6 }}
+            whileInView={{ opacity: 1, x: 0, y: 0 }}
             transition={
               shouldReduceMotion
                 ? { duration: 0.01 }
@@ -136,7 +152,6 @@ export default function FilterEngine() {
                 Permission gates
               </span>
             </div>
-
 
             <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight leading-[1.05]">
               <span className="bg-gradient-to-r from-white via-emerald-200 to-emerald-500 bg-clip-text text-transparent drop-shadow-[0_0_24px_rgba(16,185,129,0.20)]">
@@ -171,7 +186,7 @@ export default function FilterEngine() {
                   "overflow-x-auto sm:overflow-visible",
                   "whitespace-nowrap sm:whitespace-normal",
                   "[-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
-                  "pl-2 pr-12 sm:pl-0 sm:pr-0", // ✅ keeps pills readable under fades
+                  "pl-2 pr-12 sm:pl-0 sm:pr-0",
                   "py-1",
                 ].join(" ")}
               >
@@ -183,9 +198,6 @@ export default function FilterEngine() {
                 <MiniPill icon={<Check className="w-4 h-4 text-emerald-300" />} text="Per-filter toggles" />
               </div>
             </div>
-
-
-
 
             {/* overlays */}
             <div className="rounded-[28px] p-[1px] bg-gradient-to-b from-emerald-400/22 via-white/10 to-emerald-500/14">
@@ -244,8 +256,8 @@ export default function FilterEngine() {
 
           {/* RIGHT — panel (NO 3D / NO tilt) */}
           <motion.div
-            initial={{ opacity: 0, x: 18, y: 6, }}
-            whileInView={{ opacity: 1, x: 0, y: 0, }}
+            initial={{ opacity: 0, x: 18, y: 6 }}
+            whileInView={{ opacity: 1, x: 0, y: 0 }}
             transition={
               shouldReduceMotion
                 ? { duration: 0.01 }
@@ -283,6 +295,28 @@ export default function FilterEngine() {
                       toggleItem={toggleItem}
                     />
                   ))}
+
+                  {/* ✅ NEW: bottom row toggles (3 checkboxes in one row) */}
+                  <div className="pt-3">
+                    <div className="h-px w-full bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+                    <div className="pt-4 grid grid-cols-1 sm:grid-cols-3 gap-2">
+                      <ExtraToggle
+                        label="Future target lines"
+                        checked={extras.futureTargetLines}
+                        onToggle={() => toggleExtra("futureTargetLines")}
+                      />
+                      <ExtraToggle
+                        label="Show divergence arrows"
+                        checked={extras.divergenceArrows}
+                        onToggle={() => toggleExtra("divergenceArrows")}
+                      />
+                      <ExtraToggle
+                        label="Enable alarms"
+                        checked={extras.enableAlarms}
+                        onToggle={() => toggleExtra("enableAlarms")}
+                      />
+                    </div>
+                  </div>
                 </div>
 
                 {/* Footer */}
@@ -405,7 +439,9 @@ const AccordionGroup = React.memo(function AccordionGroup({
           <div className="text-emerald-300 text-xs font-semibold uppercase tracking-[0.22em]">
             {group.category}
           </div>
-          <span className="text-[11px] text-white/45 shrink-0">{group.items.length} modules</span>
+          <span className="text-[11px] text-white/45 shrink-0">
+            {group.items.length} modules
+          </span>
         </div>
 
         <span
@@ -423,7 +459,6 @@ const AccordionGroup = React.memo(function AccordionGroup({
         ].join(" ")}
       >
         <div className="overflow-hidden">
-          {/* ✅ spacing between headline and items */}
           <div className="px-4 pt-3 pb-4">
             <ul role="list" className="grid grid-cols-1 xl:grid-cols-2 gap-2">
               {group.items.map((item) => {
@@ -482,10 +517,9 @@ const AccordionGroup = React.memo(function AccordionGroup({
   );
 });
 
-
 /* ---------------- tiny atoms ---------------- */
 
-function MiniPill({ icon, text }) {
+function MiniPill({ icon, text }: { icon: React.ReactNode; text: string }) {
   return (
     <span className="inline-flex shrink-0 items-center gap-2 rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-white/80">
       {icon}
@@ -494,3 +528,50 @@ function MiniPill({ icon, text }) {
   );
 }
 
+function ExtraToggle({
+  label,
+  checked,
+  onToggle,
+}: {
+  label: string;
+  checked: boolean;
+  onToggle: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      role="checkbox"
+      aria-checked={checked}
+      onClick={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        onToggle();
+      }}
+      className={[
+        "w-full text-left group relative flex items-center gap-2 rounded-xl px-3 py-2 min-w-0",
+        "border bg-white/[0.02]",
+        "transition-transform transition-colors duration-150 ease-out",
+        "hover:bg-white/[0.05] hover:-translate-y-[1px] active:translate-y-0 active:scale-[0.99]",
+        checked ? "border-emerald-400/30" : "border-white/10 hover:border-emerald-400/20",
+      ].join(" ")}
+    >
+      <div
+        className={[
+          "relative w-5 h-5 rounded-full flex items-center justify-center shrink-0 border",
+          checked ? "border-emerald-400/40 bg-emerald-400/15" : "border-emerald-400/25 bg-emerald-400/10",
+        ].join(" ")}
+      >
+        <Check
+          className={[
+            "w-3 h-3 text-emerald-300 transition-opacity duration-150",
+            checked ? "opacity-100" : "opacity-0",
+          ].join(" ")}
+        />
+      </div>
+
+      <span className="text-sm text-white/75 group-hover:text-white/90 transition-colors min-w-0 truncate">
+        {label}
+      </span>
+    </button>
+  );
+}

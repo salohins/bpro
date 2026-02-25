@@ -194,12 +194,7 @@ export default function SupportPage() {
           {...enter(0, 18, 0)}
           className="text-center max-w-[880px] mx-auto"
         >
-          <div className="inline-flex items-center gap-2 px-6 py-2 rounded-full border border-emerald-400/20 bg-white/[0.03] backdrop-blur-md">
-            <LifeBuoy className="w-4 h-4 text-emerald-300" />
-            <span className="text-emerald-300 text-xs tracking-[0.24em] font-semibold uppercase">
-              SUPPORT
-            </span>
-          </div>
+
 
           <h1 className="mt-5 font-semibold tracking-[-0.045em] leading-[1.02] text-[clamp(34px,3.1vw,54px)]">
             <span className="bg-gradient-to-r from-white via-emerald-200 to-emerald-500 bg-clip-text text-transparent">
@@ -379,10 +374,10 @@ export default function SupportPage() {
                         reduceMotion
                           ? {}
                           : {
-                              scale: 1.02,
-                              backgroundPosition: "right center",
-                              boxShadow: "0 0 55px rgba(16,185,129,0.35)",
-                            }
+                            scale: 1.02,
+                            backgroundPosition: "right center",
+                            boxShadow: "0 0 55px rgba(16,185,129,0.35)",
+                          }
                       }
                       whileTap={{ scale: 0.985 }}
                       onClick={submitTicket}

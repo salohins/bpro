@@ -2,7 +2,14 @@ import React, { useState } from "react";
 import { supabase } from "../lib/supabase";
 import { useNavigate } from "react-router-dom";
 import { motion, useReducedMotion } from "framer-motion";
-import { Sparkles, Mail, Lock, ArrowRight } from "lucide-react";
+import {
+  Sparkles,
+  Mail,
+  Lock,
+  ArrowRight,
+  Eye,
+  EyeOff,
+} from "lucide-react";
 
 const easePremium: any = [0.16, 1, 0.3, 1];
 
@@ -13,14 +20,16 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  const [showPassword, setShowPassword] = useState(false);
+
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const [forgotMode, setForgotMode] = useState(false);
 
   const enter = (x = 0, y = 18, d = 0) => ({
-    initial: { opacity: 0, x, y, filter: "blur(10px)" },
-    animate: { opacity: 1, x: 0, y: 0, filter: "blur(0px)" },
+    initial: { opacity: 0, x, y },
+    animate: { opacity: 1, x: 0, y: 0 },
     transition: reduceMotion
       ? { duration: 0.01 }
       : { duration: 0.7, delay: d, ease: easePremium },
@@ -189,13 +198,28 @@ export default function Login() {
                         <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-white/10 bg-white/[0.02]">
                           <Lock className="w-4 h-4 text-emerald-300" />
                         </span>
+
                         <input
-                          type="password"
+                          type={showPassword ? "text" : "password"}
                           placeholder="Password"
                           value={password}
                           onChange={(e) => setPassword(e.target.value)}
                           className="w-full bg-transparent text-white/90 placeholder:text-white/35 outline-none text-sm"
                         />
+
+                        {/* 👁️ Show/Hide */}
+                        <button
+                          type="button"
+                          onClick={() => setShowPassword((v) => !v)}
+                          aria-label={showPassword ? "Hide password" : "Show password"}
+                          className="shrink-0 inline-flex h-9 w-9 items-center justify-center rounded-xl border border-white/10 bg-white/[0.02] hover:bg-white/[0.06] transition"
+                        >
+                          {showPassword ? (
+                            <EyeOff className="w-4 h-4 text-white/70" />
+                          ) : (
+                            <Eye className="w-4 h-4 text-white/70" />
+                          )}
+                        </button>
                       </div>
                     )}
 

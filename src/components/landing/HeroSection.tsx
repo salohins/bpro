@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { motion, useReducedMotion } from "framer-motion";
 import { ArrowRight, Map, Filter, Target, ShieldCheck } from "lucide-react";
@@ -32,22 +32,67 @@ export default function HeroSection() {
   const isMdUp = useMediaQuery("(min-width: 768px)");
   const allowMotion = !reduceMotion && isMdUp; // ✅ key optimization: disable heavy motion on mobile
 
-  // ✅ Start video at 50s
   const videoRef = useRef<HTMLVideoElement | null>(null);
 
-  const handleVideoLoaded = () => {
+  // ✅ Opera/mobile-safe autoplay + seek
+  const hasSeekedRef = useRef(false);
+  const TARGET_START = 50;
+
+  const requestPlay = async () => {
     const v = videoRef.current;
     if (!v) return;
 
-    const target = 50;
-    const dur = Number.isFinite(v.duration) ? v.duration : 0;
+    // ✅ set as properties too (some mobile browsers care)
+    v.muted = true;
+    // @ts-ignore
+    v.playsInline = true;
 
-    // clamp if video shorter than 50s
-    v.currentTime = dur && dur < target ? Math.max(0, dur - 0.1) : target;
-
-    // Safari sometimes needs an explicit play() after seeking
-    v.play().catch(() => {});
+    try {
+      await v.play();
+    } catch {
+      // Autoplay blocked — fallback gesture unlock will handle it
+    }
   };
+
+  const requestSeekToTarget = () => {
+    const v = videoRef.current;
+    if (!v || hasSeekedRef.current) return;
+
+    const dur = Number.isFinite(v.duration) ? v.duration : 0;
+    const t = dur && dur < TARGET_START ? Math.max(0, dur - 0.1) : TARGET_START;
+
+    try {
+      // @ts-ignore
+      if (typeof v.fastSeek === "function") v.fastSeek(t);
+      else v.currentTime = t;
+      hasSeekedRef.current = true;
+    } catch {
+      // If seek fails (not buffered yet), we'll retry on next canplay
+    }
+  };
+
+  // ✅ 1) attempt autoplay on mount
+  useEffect(() => {
+    requestPlay();
+  }, []);
+
+  // ✅ 2) unlock playback on first user gesture (touch/click)
+  useEffect(() => {
+    const unlock = () => {
+      requestPlay();
+      requestSeekToTarget();
+      window.removeEventListener("touchstart", unlock);
+      window.removeEventListener("click", unlock);
+    };
+
+    window.addEventListener("touchstart", unlock, { passive: true });
+    window.addEventListener("click", unlock);
+
+    return () => {
+      window.removeEventListener("touchstart", unlock);
+      window.removeEventListener("click", unlock);
+    };
+  }, []);
 
   const wrap = { hidden: {}, show: {} };
 
@@ -62,34 +107,50 @@ export default function HeroSection() {
     },
   };
 
-  // ✅ Smooth scroll when URL contains #core-engines
+  // ✅ Smooth scroll when URL contains #core-engines (with mobile offset)
   useEffect(() => {
     if (location.hash === "#core-engines") {
       requestAnimationFrame(() => {
         const el = document.getElementById("core-engines");
         if (!el) return;
 
-        el.scrollIntoView({
+        const isMobile = window.matchMedia("(max-width: 767px)").matches;
+        const yOffset = isMobile ? -76 : 0; // ⬅️ adjust if your mobile header is different
+        const y = el.getBoundingClientRect().top + window.pageYOffset + yOffset;
+
+        window.scrollTo({
+          top: y,
           behavior: reduceMotion ? "auto" : "smooth",
-          block: "start",
         });
       });
     }
   }, [location.hash, reduceMotion]);
 
   const handleSeeItInAction = () => {
-    if (location.pathname === "/") {
-      navigate("#core-engines", { replace: false });
+    const scrollToCoreEngines = () => {
       const el = document.getElementById("core-engines");
-      if (el) {
-        el.scrollIntoView({
-          behavior: reduceMotion ? "auto" : "smooth",
-          block: "start",
-        });
-      }
+      if (!el) return;
+
+      const isMobile = window.matchMedia("(max-width: 767px)").matches;
+      const yOffset = isMobile ? -76 : 0; // ⬅️ same offset here
+      const y = el.getBoundingClientRect().top + window.pageYOffset + yOffset;
+
+      window.scrollTo({
+        top: y,
+        behavior: reduceMotion ? "auto" : "smooth",
+      });
+    };
+
+    if (location.pathname === "/") {
+      // Keep URL hash consistent + scroll with offset
+      navigate("#core-engines", { replace: false });
+
+      // ensure DOM has applied hash update before measuring
+      requestAnimationFrame(scrollToCoreEngines);
       return;
     }
 
+    // On other pages, route to home with hash (home effect will handle the scroll)
     navigate("/#core-engines");
   };
 
@@ -127,11 +188,23 @@ export default function HeroSection() {
             autoPlay
             loop
             muted
+            defaultMuted
             playsInline
+            // @ts-ignore
+            webkit-playsinline="true"
             // ✅ Mobile perf: don’t force full download immediately
             preload={isMdUp ? "auto" : "metadata"}
             controls={false}
-            onLoadedMetadata={handleVideoLoaded}
+            // ✅ don't seek+play here (can be blocked on Opera mobile)
+            onLoadedMetadata={() => {
+              // best effort: try playing once metadata is ready
+              requestPlay();
+            }}
+            onCanPlay={() => {
+              // ✅ once it can play, safely seek then try to play again
+              requestSeekToTarget();
+              requestPlay();
+            }}
           />
         </motion.div>
 
@@ -145,10 +218,10 @@ export default function HeroSection() {
         />
 
         {/* Desktop-only scrim geometry (clipPath can be expensive) */}
-        <div className="absolute inset-0 pointer-events-none hidden md:block">
+        <div className="absolute inset-0 pointer-events-none md:block">
           <div
             className="absolute inset-0 heroScrim"
-            style={{ clipPath: "polygon(0% 0%, 60% 0%, 50% 100%, 0% 100%)" }}
+            style={{ clipPath: "polygon(0% 0%, 70% 0%, 30% 100%, 0% 100%)" }}
           />
 
           <motion.div
@@ -160,7 +233,17 @@ export default function HeroSection() {
                 ? { duration: 5.8, repeat: Infinity, ease: "easeInOut" }
                 : undefined
             }
-            style={{ clipPath: "polygon(58% 0%, 60% 0%, 50% 100%, 48% 100%)" }}
+            style={
+              isMdUp
+                ? {
+                  clipPath:
+                    "polygon(68% 0%, 70% 0%, 30% 100%, 28% 100%)",
+                }
+                : {
+                  clipPath:
+                    "polygon(60% 0%, 70% 0%, 30% 100%, 20% 100%)",
+                }
+            }
           />
         </div>
 
@@ -170,7 +253,11 @@ export default function HeroSection() {
           className="absolute -top-[30rem] -left-[30rem] w-[1150px] h-[1150px] rounded-full bg-emerald-500/10 blur-[320px] hidden md:block"
           animate={
             allowMotion
-              ? { x: [0, 22, -10, 0], y: [0, 14, -10, 0], scale: [1, 1.06, 1.02, 1] }
+              ? {
+                x: [0, 22, -10, 0],
+                y: [0, 14, -10, 0],
+                scale: [1, 1.06, 1.02, 1],
+              }
               : undefined
           }
           transition={
@@ -202,13 +289,21 @@ export default function HeroSection() {
                 className="font-[var(--font-display)] font-semibold tracking-[-0.05em] leading-[0.95]
                 text-[clamp(40px,4.4vw,76px)] text-white "
               >
-                <div className="border-3 border-green-500 rounded-full px-6 py-3 w-max mb-5">
-                  <img
-                    src="/bpro_logo.svg"
-                    alt="Breakout PRO logo"
-                    className="h-6 md:h-10 object-contain "
-                  />
+                <div
+                  className="
+    mb-5 w-max rounded-full p-[3px]
+    bg-gradient-to-r from-emerald-500 via-emerald-400 to-emerald-300
+  "
+                >
+                  <div className="rounded-full bg-black/90 px-6 py-3">
+                    <img
+                      src="/bpro_logo.svg"
+                      alt="Breakout PRO logo"
+                      className="h-6 md:h-10 object-contain"
+                    />
+                  </div>
                 </div>
+
                 <span className="text-white/92 text-bold ">
                   All-in-one
                   <br /> breakout system.
@@ -219,19 +314,23 @@ export default function HeroSection() {
                 variants={item}
                 className="heroSubcopy text-white/70 text-[clamp(20px,2vw,32px)] leading-[1.5] max-w-[600px]"
               >
-                Built for traders who want clean confirmations and decisive entries.
+                Built for traders who want clean confirmations and decisive
+                entries.
               </motion.p>
 
               {/* CTAs */}
-              <motion.div variants={item} className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-1.5">
+              <motion.div
+                variants={item}
+                className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-1.5"
+              >
                 <motion.button
                   whileHover={
                     allowMotion
                       ? {
-                          scale: 1.02,
-                          backgroundPosition: "right center",
-                          boxShadow: "0 0 90px rgba(16,185,129,0.52)",
-                        }
+                        scale: 1.02,
+                        backgroundPosition: "right center",
+                        boxShadow: "0 0 90px rgba(16,185,129,0.52)",
+                      }
                       : undefined
                   }
                   whileTap={{ scale: 0.985 }}
@@ -263,12 +362,6 @@ export default function HeroSection() {
                     <span className="absolute left-0 -bottom-1 h-px w-0 bg-white/40 group-hover:w-full transition-all duration-300" />
                   </span>
                 </motion.button>
-              </motion.div>
-
-              <motion.div variants={item} className="pt-1 space-y-2">
-                <p className="text-[12.5px] text-white/45">
-                  7-day free trial. <span className="text-emerald-300/70">Cancel anytime.</span>
-                </p>
               </motion.div>
             </div>
           </div>

@@ -173,13 +173,7 @@ function ModeCard({
       initial="hidden"
       animate={shouldShow ? "show" : "hidden"}
       variants={cardVariants}
-      transition={
-        reduceMotion
-          ? { duration: 0.01 }
-          : { duration: 0.75, delay: mobile ? 0 : index * 0.08, ease: [0.16, 1, 0.3, 1] }
-      }
-      onMouseMove={onMove}
-      onMouseLeave={onLeave}
+
       style={{
         rotateX,
         rotateY,
@@ -193,7 +187,7 @@ function ModeCard({
       className={[
         "group relative w-full overflow-hidden rounded-3xl",
         // ✅ keep press feedback but via CSS (doesn't block native scroll)
-        "transition-transform duration-150 active:scale-[0.985]",
+
         // ✅ better touch behavior on iOS
         "touch-manipulation select-none",
       ].join(" ")}
@@ -503,8 +497,8 @@ export default function TradeModes() {
             Correlation: after structure + filters + scoring, choose a mode to match your timeframe.
           </motion.p>
 
-          <motion.div variants={headerItem} className="mt-4 text-[12px] text-white/45 flex items-center justify-center gap-2">
-            <ArrowRight className="w-3.5 h-3.5 text-emerald-300/70" />
+          <motion.div variants={headerItem} className="mt-4 text-[11px] text-white/45 flex items-center justify-center gap-2">
+            <ArrowRight className="w-3.5 h-3.5 text-emerald-300/70 text-[11px]" />
             Short = faster signals • Mid = default • Long = stability
           </motion.div>
         </motion.div>

@@ -20,24 +20,31 @@ export default function CTABreakoutPro() {
     []
   );
 
+  const signals = useMemo(
+    () => [
+      { type: "Cross Up", s: "2/3", q: "1/3" },
+      { type: "Close Short", s: "2/3", q: "1/3" },
+      { type: "Open Short", s: "2/3", q: "1/3" },
+      { type: "Cross Down", s: "3/3", q: "2/3" },
+      { type: "Open Short", s: "3/3", q: "2/3" },
+    ],
+    []
+  );
+
   const enter = (x = 0, y = 18, d = 0) => ({
     initial: { opacity: 0, x, y },
     whileInView: { opacity: 1, x: 0, y: 0 },
     transition: reduceMotion ? { duration: 0.01 } : { duration: 0.85, delay: d, ease: easePremium },
-    viewport: { once: false, amount: 0.35 },
+    viewport: { once: false, amount: 0.1 },
   });
 
   return (
     <section className="relative w-full py-20 md:py-28 overflow-hidden text-white">
-      {/* ✅ Shiny background system (contained + tasteful) */}
       <div aria-hidden className="absolute inset-0 pointer-events-none">
-
         {/* animated aurora */}
-
       </div>
 
       <div className="relative z-10 mx-auto max-w-[1760px] pb-20 px-6 sm:px-10 lg:px-16 2xl:px-20">
-        {/* Header */}
         <motion.div {...enter(0, 18, 0)} className="text-center max-w-[980px] mx-auto mb-10 md:mb-12">
           <h2 className="mt-5 font-semibold tracking-[-0.045em] leading-[1.02] text-[clamp(34px,3.1vw,56px)]">
             <span className="bg-gradient-to-r from-white via-emerald-200 to-emerald-500 bg-clip-text text-transparent">
@@ -51,28 +58,16 @@ export default function CTABreakoutPro() {
           </p>
         </motion.div>
 
-        {/* layout */}
         <div className="flex justify-center">
           <div className="w-full max-w-[1120px]">
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-center gap-10 lg:gap-4">
               {/* RIGHT (content) */}
               <motion.div {...enter(16, 10, 0.03)} className="order-1 lg:order-2 lg:w-[600px] lg:max-w-[600px]">
                 <div className="lg:-translate-y-6 relative">
-                  {/* shine veil behind the right column */}
-                  {!reduceMotion && (
-                    <motion.div
-                      aria-hidden
-                      className="absolute -inset-6 rounded-[28px]  opacity-60"
-                      animate={{ opacity: [0.18, 0.32, 0.18] }}
-                      transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
-                      style={{
-                        background:
-                          "radial-gradient(circle at 30% 20%, rgba(16,185,129,0.18), transparent 60%), radial-gradient(circle at 80% 75%, rgba(255,255,255,0.10), transparent 60%)",
-                      }}
-                    />
-                  )}
+                  {/* ✅ Right-column shine (CSS loop like reference) */}
 
-                  <div className="relative inline-flex items-center gap-2 px-5 py-2 rounded-full border border-emerald-400/20 bg-white/[0.03] ">
+
+                  <div className="relative inline-flex items-center gap-2 px-5 py-2 rounded-full border border-emerald-400/20 bg-white/[0.03]">
                     <span className="w-2 h-2 rounded-full bg-emerald-300 animate-pulse" />
                     <span className="text-emerald-200 text-xs tracking-[0.22em] font-semibold uppercase">Try 7 days free</span>
                   </div>
@@ -82,10 +77,9 @@ export default function CTABreakoutPro() {
                   </div>
 
                   <p className="mt-3 text-white/60 leading-relaxed">
-                    Breakout PRO reduces noise and forces alignment — so you take cleaner trades and manage them with confidence.
+                    Breakout PRO reduces noise and forces alignment - so you take cleaner trades and manage them with confidence.
                   </p>
 
-                  {/* benefit cards */}
                   <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {[
                       { title: "Structure first", text: "Trend Cloud + HTF structure so you always know the regime.", icon: Layers, meta: "Regime map" },
@@ -107,23 +101,9 @@ export default function CTABreakoutPro() {
 
                           <div
                             aria-hidden
-                            className="pointer-events-none absolute -top-16 -right-16 h-48 w-48 rounded-full bg-emerald-400/14  opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                            className="pointer-events-none absolute -top-16 -right-16 h-48 w-48 rounded-full bg-emerald-400/14 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
                           />
 
-                          {!reduceMotion && (
-                            <motion.div aria-hidden className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100">
-                              <motion.div
-                                className="absolute -inset-x-24 top-0 h-full opacity-[0.12]"
-                                style={{
-                                  background:
-                                    "linear-gradient(110deg, transparent 0%, rgba(255,255,255,0.55) 40%, transparent 80%)",
-                                  transform: "translateX(-60%)",
-                                }}
-                                whileHover={{ transform: "translateX(60%)" }}
-                                transition={{ duration: 0.9, ease: "easeInOut" }}
-                              />
-                            </motion.div>
-                          )}
 
                           <div className="relative p-5">
                             <div className="flex items-start justify-between gap-4">
@@ -141,17 +121,13 @@ export default function CTABreakoutPro() {
                               <div className="mt-1.5 text-sm text-white/60 leading-relaxed">{c.text}</div>
                             </div>
 
-                            <div className="mt-4 flex items-center gap-2 text-[11px] text-white/45">
-                              <span className="h-1.5 w-1.5 rounded-full bg-emerald-300/70" />
-                              <span className="tracking-widest uppercase">Built for discretion</span>
-                            </div>
+
                           </div>
                         </motion.div>
                       );
                     })}
                   </div>
 
-                  {/* CTA */}
                   <div className="mt-8 flex flex-col sm:flex-row gap-3">
                     <motion.button
                       whileHover={
@@ -170,8 +146,7 @@ export default function CTABreakoutPro() {
                           aria-hidden
                           className="absolute inset-0 opacity-55"
                           style={{
-                            background:
-                              "linear-gradient(110deg, transparent 0%, rgba(255,255,255,0.40) 40%, transparent 80%)",
+                            background: "linear-gradient(110deg, transparent 0%, rgba(255,255,255,0.40) 40%, transparent 80%)",
                             transform: "translateX(-70%)",
                           }}
                           animate={{ transform: ["translateX(-70%)", "translateX(70%)"] }}
@@ -185,132 +160,140 @@ export default function CTABreakoutPro() {
                     </motion.button>
                   </div>
 
-                  <div className="mt-4 text-xs text-white/45">
-                    No commitments • Works on any market • Any timeframe
-                  </div>
+                  <div className="mt-4 text-xs text-white/45">No commitments • Works on any market • Any timeframe</div>
                 </div>
               </motion.div>
 
               {/* LEFT — phone (HIDDEN ON MOBILE) */}
-              <motion.div
-                {...enter(-16, 10, 0.02)}
-                className="hidden lg:block order-2 lg:order-1 lg:shrink-0"
-              >
+              <motion.div {...enter(-16, 10, 0.02)} className="hidden lg:block order-2 lg:order-1 lg:shrink-0">
                 <div className="relative w-[min(440px,94vw)] aspect-[10/19.5] rounded-[56px] bg-[#0a0a0a] border border-white/10 shadow-[0_30px_120px_rgba(0,0,0,0.70)] overflow-hidden">
-                  <div
-                    aria-hidden
-                    className="absolute inset-0 rounded-[56px] bg-[linear-gradient(135deg,rgba(255,255,255,0.10),transparent_40%,rgba(255,255,255,0.06))] opacity-60"
-                  />
-
-                  {!reduceMotion && (
-                    <motion.div
+                  {/* ✅ Clip wrapper (like your reference) */}
+                  <div className="absolute inset-0 rounded-[56px] overflow-hidden">
+                    <div
                       aria-hidden
-                      className="absolute inset-0 opacity-[0.16]"
-                      initial={{ x: "-60%" }}
-                      animate={{ x: ["-60%", "60%"] }}
-                      transition={{ duration: 3.4, repeat: Infinity, ease: "easeInOut" }}
+                      className="absolute inset-0 rounded-[56px] bg-[linear-gradient(135deg,rgba(255,255,255,0.10),transparent_40%,rgba(255,255,255,0.06))] opacity-60"
+                    />
+
+                    {/* ✅ bezel shine (CSS loop like reference) */}
+                    <div
+                      aria-hidden
+                      className="pointer-events-none absolute inset-0 opacity-[0.9] motion-safe:animate-[shine_3.8s_ease-in-out_infinite] motion-reduce:hidden"
                       style={{
-                        background:
-                          "linear-gradient(110deg, transparent 0%, rgba(255,255,255,0.55) 40%, transparent 80%)",
+                        background: "linear-gradient(110deg, transparent 0%, rgba(255, 255, 255, 0.2) 40%, transparent 80%)",
                       }}
                     />
-                  )}
 
-                  <div aria-hidden className="absolute -left-[3px] top-[140px] h-10 w-[3px] rounded-full bg-white/15" />
-                  <div aria-hidden className="absolute -left-[3px] top-[195px] h-16 w-[3px] rounded-full bg-white/15" />
-                  <div aria-hidden className="absolute -right-[3px] top-[175px] h-20 w-[3px] rounded-full bg-white/15" />
+                    {/* side buttons */}
+                    <div aria-hidden className="absolute -left-[3px] top-[140px] z-30 h-10 w-[3px] rounded-full bg-white/15" />
+                    <div aria-hidden className="absolute -left-[3px] top-[195px] z-30 h-16 w-[3px] rounded-full bg-white/15" />
+                    <div aria-hidden className="absolute -right-[3px] top-[175px] z-30 h-20 w-[3px] rounded-full bg-white/15" />
 
-                  <div className="absolute inset-[10px] rounded-[46px] overflow-hidden bg-[#050505] border border-white/10">
-                    <img
-                      src={bproScreenshot}
-                      alt="Breakout PRO screenshot"
-                      className="absolute inset-0 h-full w-full object-cover object-center"
-                      loading="lazy"
-                      decoding="async"
-                    />
-
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/25 to-black/10" />
-                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(16,185,129,0.16),transparent_55%),radial-gradient(circle_at_85%_85%,rgba(255,255,255,0.06),transparent_60%)]" />
-
-                    {!reduceMotion && (
-                      <motion.div
-                        aria-hidden
-                        className="absolute inset-0"
-                        animate={{ opacity: [0.0, 0.08, 0.0] }}
-                        transition={{ duration: 8.5, repeat: Infinity, ease: "easeInOut" }}
-                        style={{
-                          background:
-                            "radial-gradient(circle at 18% 22%, rgba(255,255,255,0.14), transparent 48%)",
-                        }}
+                    {/* SCREEN */}
+                    <div className="absolute inset-[10px] rounded-[46px] overflow-hidden bg-[#050505] border border-white/10">
+                      <img
+                        src={bproScreenshot}
+                        alt="Breakout PRO screenshot"
+                        className="absolute inset-0 h-full w-full object-cover object-center"
+                        loading="lazy"
+                        decoding="async"
                       />
-                    )}
 
-                    <div className="absolute left-1/2 -translate-x-1/2 top-[10px] h-[28px] w-[180px] rounded-full bg-black/80 border border-white/10" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/25 to-black/10" />
+                      <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(16,185,129,0.16),transparent_55%),radial-gradient(circle_at_85%_85%,rgba(255,255,255,0.06),transparent_60%)]" />
 
-                    <div className="relative pt-14 px-6 pb-5 h-full flex flex-col">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <img src="/bpro_logo.svg" alt="Breakout PRO" className="h-8 object-contain" />
-                          <span className="text-[10px] text-white/45 tracking-widest uppercase">Decision Suite</span>
-                        </div>
-
-                        <span className="inline-flex items-center px-3 py-1.5 rounded-full border border-emerald-400/20 bg-emerald-400/10 text-emerald-100 text-[10px] tracking-widest uppercase">
-                          Live
-                        </span>
+                      {/* ✅ screen shine (CSS loop like reference) */}
+                      <div
+                        aria-hidden
+                        className="pointer-events-none absolute inset-0 z-20 opacity-[0.18] motion-safe:animate-[shine_3.8s_ease-in-out_infinite] motion-reduce:hidden mix-blend-overlay"
+                      >
+                        <div
+                          className="absolute -left-1/2 top-0 h-full w-[200%]"
+                          style={{
+                            background: "linear-gradient(110deg, transparent 0%, rgba(255,255,255,0.70) 42%, transparent 75%)",
+                          }}
+                        />
                       </div>
 
-                      <div className="mt-auto space-y-3">
-                        <div className="grid grid-cols-2 gap-3">
-                          <div className="rounded-2xl border border-white/10 bg-black/45 backdrop-blur-md p-4">
-                            <div className="text-[10px] text-white/45 tracking-widest uppercase">Regime</div>
-                            <div className="mt-2 text-sm font-semibold text-white/85">Trend</div>
-                            <div className="mt-2 h-1.5 rounded-full bg-white/10 overflow-hidden">
-                              <div className="h-full w-[74%] bg-emerald-300/70" />
-                            </div>
+                      {!reduceMotion && (
+                        <motion.div
+                          aria-hidden
+                          className="absolute inset-0"
+                          animate={{ opacity: [0.0, 0.08, 0.0] }}
+                          transition={{ duration: 8.5, repeat: Infinity, ease: "easeInOut" }}
+                          style={{
+                            background: "radial-gradient(circle at 18% 22%, rgba(255,255,255,0.14), transparent 48%)",
+                          }}
+                        />
+                      )}
+
+                      {/* notch */}
+                      <div className="absolute left-1/2 -translate-x-1/2 top-[10px] h-[28px] w-[180px] rounded-full bg-black/80 border border-white/10" />
+
+                      <div className="relative pt-14 px-6 pb-5 h-full flex flex-col">
+                        {/* top bar */}
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <img src="/bpro_logo.svg" alt="Breakout PRO" className="h-8 object-contain" />
+                            <span className="text-[10px] text-white/45 tracking-widest uppercase">Decision Suite</span>
                           </div>
 
-                          <div className="rounded-2xl border border-white/10 bg-black/45 backdrop-blur-md p-4">
-                            <div className="text-[10px] text-white/45 tracking-widest uppercase">Quality</div>
-                            <div className="mt-2 text-sm font-semibold text-white/85">A-</div>
-                            <div className="mt-2 h-1.5 rounded-full bg-white/10 overflow-hidden">
-                              <div className="h-full w-[62%] bg-emerald-300/70" />
-                            </div>
-                          </div>
+                          <span className="inline-flex items-center px-3 py-1.5 rounded-full border border-emerald-400/20 bg-emerald-400/10 text-emerald-100 text-[10px] tracking-widest uppercase">
+                            Live
+                          </span>
                         </div>
 
-                        <div className="rounded-2xl border border-white/10 bg-black/50 backdrop-blur-md p-4">
-                          <div className="flex items-center justify-between">
-                            <div className="text-[10px] text-white/45 tracking-widest uppercase">Trigger</div>
-                            <span className="text-[10px] text-emerald-200/90 tracking-widest uppercase">Open Long</span>
-                          </div>
-                          <div className="mt-3 space-y-2">
-                            <div className="flex items-center justify-between text-xs text-white/70">
-                              <span>Permission</span>
-                              <span className="text-white/85">9/9</span>
+                        {/* bottom table */}
+                        <div className="mt-auto space-y-3">
+                          <div className="rounded-2xl border border-white/10 bg-black/55 backdrop-blur-md overflow-hidden">
+                            <div className="px-4 pt-4 pb-2">
+                              <div className="text-[11px] font-semibold tracking-widest uppercase text-white/85">
+                                Last 5 Trade Signals
+                              </div>
                             </div>
-                            <div className="flex items-center justify-between text-xs text-white/70">
-                              <span>Safety</span>
-                              <span className="text-white/85">High</span>
-                            </div>
-                            <div className="flex items-center justify-between text-xs text-white/70">
-                              <span>Volatility</span>
-                              <span className="text-white/85">Normal</span>
-                            </div>
-                          </div>
-                        </div>
 
-                        <div aria-hidden className="mx-auto h-1.5 w-28 rounded-full bg-white/15" />
+                            <div aria-hidden className="h-px w-full bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+
+                            <div className="px-4 py-2">
+                              <div className="grid grid-cols-[1fr_48px_48px] gap-2 text-[10px] tracking-widest uppercase text-white/45">
+                                <div>Type</div>
+                                <div className="text-right">S</div>
+                                <div className="text-right">Q</div>
+                              </div>
+                            </div>
+
+                            <div className="divide-y divide-white/10">
+                              {signals.map((r, idx) => (
+                                <div key={idx} className="px-4 py-2.5">
+                                  <div className="grid grid-cols-[1fr_48px_48px] gap-2 text-[12px] text-white/80">
+                                    <div className="truncate">{r.type}</div>
+                                    <div className="text-right tabular-nums text-white/75">{r.s}</div>
+                                    <div className="text-right tabular-nums text-white/75">{r.q}</div>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+
+                          <div aria-hidden className="mx-auto h-1.5 w-28 rounded-full bg-white/15" />
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
               </motion.div>
             </div>
+
+            {/* ✅ keyframes (same as your reference) */}
+            <style>{`
+              @keyframes shine {
+                0% { transform: translateX(-60%); }
+                50% { transform: translateX(60%); }
+                100% { transform: translateX(-60%); }
+              }
+            `}</style>
           </div>
         </div>
       </div>
     </section>
   );
 }
-
-

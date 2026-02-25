@@ -5,12 +5,20 @@ import { User, Lock, Shield, CreditCard, LifeBuoy, Copy } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 
 // Types
+type TvStatus = "pending" | "confirmed" | "missing";
+
 type Profile = {
   email?: string | null;
   tradingview_name?: string | null;
   created_at?: string | null;
   must_change_password?: boolean | null;
+
+  // ✅ NEW
+  tradingview_username_status?: TvStatus | null;
+  tradingview_username_reviewed_at?: string | null;
 };
+
+type ActiveTab = "account" | "security" | "sessions" | "subscription" | "support";
 
 export default function ProfileSettings() {
   const [profile, setProfile] = useState<Profile | null>(null);
@@ -21,9 +29,7 @@ export default function ProfileSettings() {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
-  const [activeTab, setActiveTab] = useState<
-    "account" | "security" | "sessions" | "subscription" | "support"
-  >("account");
+  const [activeTab, setActiveTab] = useState<ActiveTab>("account");
   const [loadingPortal, setLoadingPortal] = useState(false);
   const [copied, setCopied] = useState(false);
 
@@ -49,12 +55,13 @@ export default function ProfileSettings() {
           return;
         }
 
-        // Try to select must_change_password if it exists
         let data: any = null;
 
         const attempt = await supabase
           .from("profiles")
-          .select("email, tradingview_name, created_at, must_change_password")
+          .select(
+            "email, tradingview_name, created_at, must_change_password, tradingview_username_status, tradingview_username_reviewed_at"
+          )
           .eq("id", user.id)
           .maybeSingle();
 
@@ -62,7 +69,9 @@ export default function ProfileSettings() {
           // Fallback if column doesn't exist yet (or schema mismatch)
           const fallback = await supabase
             .from("profiles")
-            .select("email, tradingview_name, created_at")
+            .select(
+              "email, tradingview_name, created_at, tradingview_username_status, tradingview_username_reviewed_at"
+            )
             .eq("id", user.id)
             .maybeSingle();
 
@@ -70,7 +79,6 @@ export default function ProfileSettings() {
           data = fallback.data;
 
           // Best-effort: show modal on magic-link login
-          // (Works often for magic-link/recovery style sessions)
           const isMagicLinkLogin = !!(user as any).recovery_sent_at;
 
           // If you want "only once" without DB column, use localStorage:
@@ -115,12 +123,29 @@ export default function ProfileSettings() {
       } = await supabase.auth.getUser();
       if (!user) throw new Error("Not logged in");
 
+      // ✅ When user changes username, set status back to pending
       const { error } = await supabase
         .from("profiles")
-        .update({ tradingview_name: tradingview })
+        .update({
+          tradingview_name: tradingview,
+          tradingview_username_status: "pending",
+        })
         .eq("id", user.id);
 
       if (error) throw error;
+
+      // keep local UI in sync
+      setProfile((p) =>
+        p
+          ? {
+            ...p,
+            tradingview_name: tradingview,
+            tradingview_username_status: "pending",
+            tradingview_username_reviewed_at: null,
+          }
+          : p
+      );
+
       setMessage("Profile updated successfully ✅");
     } catch (err: any) {
       setError(err?.message ?? String(err));
@@ -149,10 +174,7 @@ export default function ProfileSettings() {
         } = await supabase.auth.getUser();
 
         if (user) {
-          await supabase
-            .from("profiles")
-            .update({ must_change_password: false })
-            .eq("id", user.id);
+          await supabase.from("profiles").update({ must_change_password: false }).eq("id", user.id);
         }
       } catch {
         // ignore schema mismatch
@@ -258,138 +280,6 @@ export default function ProfileSettings() {
       </div>
     );
 
-  // --- Section Components ---
-  const AccountSection: React.FC = () => (
-    <section>
-      <h2 className="text-xl font-semibold mb-6 flex items-center gap-2 text-emerald-400">
-        <User className="w-5 h-5" /> Account Info
-      </h2>
-      <div className="space-y-4">
-        <div>
-          <label className="block text-gray-400 text-sm mb-1">Email</label>
-          <input
-            value={profile?.email || ""}
-            disabled
-            className="w-full border border-white/10 bg-[#1a1a1a] text-gray-400 rounded-lg px-4 py-2 cursor-not-allowed"
-          />
-        </div>
-
-        <div>
-          <label className="block text-gray-400 text-sm mb-1">TradingView Username</label>
-          <input
-            value={tradingview}
-            onChange={(e) => setTradingview(e.target.value)}
-            placeholder="Enter your TradingView username"
-            className="w-full border border-white/10 bg-[#1a1a1a] text-gray-100 rounded-lg px-4 py-2 focus:ring-2 focus:ring-emerald-500/30 outline-none transition"
-          />
-        </div>
-
-        <button
-          onClick={handleUpdateProfile}
-          disabled={saving}
-          className="w-full bg-emerald-500/20 hover:bg-emerald-500/30 text-white py-2 rounded-lg transition font-medium"
-        >
-          {saving ? "Saving..." : "Save Changes"}
-        </button>
-      </div>
-    </section>
-  );
-
-  const SecuritySection: React.FC = () => (
-    <section>
-      <h2 className="text-xl font-semibold mb-6 flex items-center gap-2 text-emerald-400">
-        <Lock className="w-5 h-5" /> Security
-      </h2>
-
-      <div className="space-y-4">
-        <input
-          type="password"
-          value={newPassword}
-          onChange={(e) => setNewPassword(e.target.value)}
-          placeholder="New password"
-          className="w-full border border-white/10 bg-[#1a1a1a] text-gray-100 rounded-lg px-4 py-2"
-        />
-        <input
-          type="password"
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
-          placeholder="Confirm new password"
-          className="w-full border border-white/10 bg-[#1a1a1a] text-gray-100 rounded-lg px-4 py-2"
-        />
-
-        <button
-          onClick={handleChangePassword}
-          className="w-full bg-white/10 hover:bg-white/20 text-white py-2 rounded-lg transition font-medium"
-        >
-          Change Password
-        </button>
-      </div>
-    </section>
-  );
-
-  const SessionsSection: React.FC = () => (
-    <section>
-      <h2 className="text-xl font-semibold mb-6 flex items-center gap-2 text-emerald-400">
-        <Shield className="w-5 h-5" /> Sessions
-      </h2>
-
-      <div className="flex flex-col sm:flex-row gap-3">
-        <button
-          onClick={handleLogout}
-          className="flex-1 bg-white/10 hover:bg-white/20 text-white font-semibold py-2 rounded-lg transition"
-        >
-          Logout
-        </button>
-        <button
-          onClick={handleLogoutEverywhere}
-          className="flex-1 bg-red-600 hover:bg-red-700 text-white font-semibold py-2 rounded-lg transition"
-        >
-          Logout Everywhere
-        </button>
-      </div>
-    </section>
-  );
-
-  const SubscriptionSection: React.FC = () => (
-    <section>
-      <h2 className="text-xl font-semibold mb-6 flex items-center gap-2 text-emerald-400">
-        <CreditCard className="w-5 h-5" /> Manage Subscription
-      </h2>
-      <p className="text-gray-400 mb-4">
-        You can update your payment method, view invoices, or cancel your plan anytime via the billing
-        portal.
-      </p>
-      <button
-        onClick={handleOpenBillingPortal}
-        disabled={loadingPortal}
-        className="w-full bg-emerald-500/20 hover:bg-emerald-500/30 text-white py-3 rounded-lg transition font-medium"
-      >
-        {loadingPortal ? "Opening Portal..." : "Open Billing Portal"}
-      </button>
-    </section>
-  );
-
-  const SupportSection: React.FC = () => (
-    <section>
-      <h2 className="text-xl font-semibold mb-6 flex items-center gap-2 text-emerald-400">
-        <LifeBuoy className="w-5 h-5" /> Support
-      </h2>
-      <p className="text-gray-400 mb-4">
-        Need help? Contact our support team — we usually respond within 24 hours.
-      </p>
-      <div className="flex items-center justify-between bg-[#1a1a1a] border border-white/10 rounded-lg px-4 py-3">
-        <span className="text-gray-300 text-sm">support@bpro.io</span>
-        <button
-          onClick={handleCopyEmail}
-          className="text-emerald-400 hover:text-emerald-300 transition flex items-center gap-1 text-sm"
-        >
-          <Copy className="w-4 h-4" />
-          {copied ? "Copied!" : "Copy"}
-        </button>
-      </div>
-    </section>
-  );
-
   return (
     <div className="min-h-screen flex text-gray-100">
       {/* Sidebar */}
@@ -401,21 +291,22 @@ export default function ProfileSettings() {
         </div>
 
         <nav className="flex flex-col mt-6">
-          {[
-            { key: "account", icon: <User className="w-4 h-4" />, label: "Account Info" },
-            { key: "security", icon: <Lock className="w-4 h-4" />, label: "Security" },
-            { key: "sessions", icon: <Shield className="w-4 h-4" />, label: "Sessions" },
-            { key: "subscription", icon: <CreditCard className="w-4 h-4" />, label: "Subscription" },
-            { key: "support", icon: <LifeBuoy className="w-4 h-4" />, label: "Support" },
-          ].map(({ key, icon, label }) => (
+          {(
+            [
+              { key: "account", icon: <User className="w-4 h-4" />, label: "Account Info" },
+              { key: "security", icon: <Lock className="w-4 h-4" />, label: "Security" },
+              { key: "sessions", icon: <Shield className="w-4 h-4" />, label: "Sessions" },
+              { key: "subscription", icon: <CreditCard className="w-4 h-4" />, label: "Subscription" },
+              { key: "support", icon: <LifeBuoy className="w-4 h-4" />, label: "Support" },
+            ] as const
+          ).map(({ key, icon, label }) => (
             <button
               key={key}
-              onClick={() => setActiveTab(key as any)}
+              onClick={() => setActiveTab(key)}
               className={`flex items-center gap-3 px-6 py-3 transition-all duration-200
-                ${
-                  activeTab === key
-                    ? "bg-emerald-500/10 text-emerald-400 border-l-2 border-emerald-400"
-                    : "text-gray-300 hover:text-white hover:bg-white/5"
+                ${activeTab === key
+                  ? "bg-emerald-500/10 text-emerald-400 border-l-2 border-emerald-400"
+                  : "text-gray-300 hover:text-white hover:bg-white/5"
                 }`}
             >
               {icon}
@@ -440,27 +331,49 @@ export default function ProfileSettings() {
             <AnimatePresence mode="wait">
               {activeTab === "account" && (
                 <motion.div key="account" {...animProps} className="absolute w-full">
-                  <AccountSection />
+                  <AccountSection
+                    profile={profile}
+                    tradingview={tradingview}
+                    setTradingview={setTradingview}
+                    saving={saving}
+                    onSave={handleUpdateProfile}
+                  />
                 </motion.div>
               )}
+
               {activeTab === "security" && (
                 <motion.div key="security" {...animProps} className="absolute w-full">
-                  <SecuritySection />
+                  <SecuritySection
+                    newPassword={newPassword}
+                    confirmPassword={confirmPassword}
+                    setNewPassword={setNewPassword}
+                    setConfirmPassword={setConfirmPassword}
+                    onChangePassword={handleChangePassword}
+                  />
                 </motion.div>
               )}
+
               {activeTab === "sessions" && (
                 <motion.div key="sessions" {...animProps} className="absolute w-full">
-                  <SessionsSection />
+                  <SessionsSection
+                    onLogout={handleLogout}
+                    onLogoutEverywhere={handleLogoutEverywhere}
+                  />
                 </motion.div>
               )}
+
               {activeTab === "subscription" && (
                 <motion.div key="subscription" {...animProps} className="absolute w-full">
-                  <SubscriptionSection />
+                  <SubscriptionSection
+                    loadingPortal={loadingPortal}
+                    onOpenPortal={handleOpenBillingPortal}
+                  />
                 </motion.div>
               )}
+
               {activeTab === "support" && (
                 <motion.div key="support" {...animProps} className="absolute w-full">
-                  <SupportSection />
+                  <SupportSection copied={copied} onCopy={handleCopyEmail} />
                 </motion.div>
               )}
             </AnimatePresence>
@@ -468,11 +381,23 @@ export default function ProfileSettings() {
 
           {/* --- Mobile: stacked --- */}
           <div className="space-y-12 md:hidden">
-            <AccountSection />
-            <SecuritySection />
-            <SessionsSection />
-            <SubscriptionSection />
-            <SupportSection />
+            <AccountSection
+              profile={profile}
+              tradingview={tradingview}
+              setTradingview={setTradingview}
+              saving={saving}
+              onSave={handleUpdateProfile}
+            />
+            <SecuritySection
+              newPassword={newPassword}
+              confirmPassword={confirmPassword}
+              setNewPassword={setNewPassword}
+              setConfirmPassword={setConfirmPassword}
+              onChangePassword={handleChangePassword}
+            />
+            <SessionsSection onLogout={handleLogout} onLogoutEverywhere={handleLogoutEverywhere} />
+            <SubscriptionSection loadingPortal={loadingPortal} onOpenPortal={handleOpenBillingPortal} />
+            <SupportSection copied={copied} onCopy={handleCopyEmail} />
           </div>
 
           {(message || error) && (
@@ -540,6 +465,227 @@ export default function ProfileSettings() {
         )}
       </AnimatePresence>
     </div>
+  );
+}
+
+function AccountSection({
+  profile,
+  tradingview,
+  setTradingview,
+  saving,
+  onSave,
+}: {
+  profile: Profile | null;
+  tradingview: string;
+  setTradingview: (v: string) => void;
+  saving: boolean;
+  onSave: () => void;
+}) {
+  return (
+    <section>
+      <h2 className="text-xl font-semibold mb-6 flex items-center gap-2 text-emerald-400">
+        <User className="w-5 h-5" /> Account Info
+      </h2>
+      <div className="space-y-4">
+        <div>
+          <label className="block text-gray-400 text-sm mb-1">Email</label>
+          <input
+            value={profile?.email || ""}
+            disabled
+            className="w-full border border-white/10 bg-[#1a1a1a] text-gray-400 rounded-lg px-4 py-2 cursor-not-allowed"
+          />
+        </div>
+
+        <div>
+          <label className="block text-gray-400 text-sm mb-1">TradingView Username</label>
+          <input
+            value={tradingview}
+            onChange={(e) => setTradingview(e.target.value)}
+            placeholder="Enter your TradingView username"
+            className="w-full border border-white/10 bg-[#1a1a1a] text-gray-100 rounded-lg px-4 py-2 focus:ring-2 focus:ring-emerald-500/30 outline-none transition"
+          />
+
+          {/* ✅ Status under the username */}
+          <div className="mt-2 flex items-center justify-between gap-3">
+            <TvStatusBadge status={profile?.tradingview_username_status ?? "pending"} />
+            {profile?.tradingview_username_reviewed_at ? (
+              <span className="text-xs text-gray-500">
+                Reviewed {new Date(profile.tradingview_username_reviewed_at).toLocaleDateString()}
+              </span>
+            ) : null}
+          </div>
+        </div>
+
+        <button
+          onClick={onSave}
+          disabled={saving}
+          className="w-full bg-emerald-500/20 hover:bg-emerald-500/30 text-white py-2 rounded-lg transition font-medium"
+        >
+          {saving ? "Saving..." : "Save Changes"}
+        </button>
+      </div>
+    </section>
+  );
+}
+
+function SecuritySection({
+  newPassword,
+  confirmPassword,
+  setNewPassword,
+  setConfirmPassword,
+  onChangePassword,
+}: {
+  newPassword: string;
+  confirmPassword: string;
+  setNewPassword: (v: string) => void;
+  setConfirmPassword: (v: string) => void;
+  onChangePassword: () => void;
+}) {
+  return (
+    <section>
+      <h2 className="text-xl font-semibold mb-6 flex items-center gap-2 text-emerald-400">
+        <Lock className="w-5 h-5" /> Security
+      </h2>
+
+      <div className="space-y-4">
+        <input
+          type="password"
+          value={newPassword}
+          onChange={(e) => setNewPassword(e.target.value)}
+          placeholder="New password"
+          className="w-full border border-white/10 bg-[#1a1a1a] text-gray-100 rounded-lg px-4 py-2"
+        />
+        <input
+          type="password"
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
+          placeholder="Confirm new password"
+          className="w-full border border-white/10 bg-[#1a1a1a] text-gray-100 rounded-lg px-4 py-2"
+        />
+
+        <button
+          onClick={onChangePassword}
+          className="w-full bg-white/10 hover:bg-white/20 text-white py-2 rounded-lg transition font-medium"
+        >
+          Change Password
+        </button>
+      </div>
+    </section>
+  );
+}
+
+function SessionsSection({
+  onLogout,
+  onLogoutEverywhere,
+}: {
+  onLogout: () => void;
+  onLogoutEverywhere: () => void;
+}) {
+  return (
+    <section>
+      <h2 className="text-xl font-semibold mb-6 flex items-center gap-2 text-emerald-400">
+        <Shield className="w-5 h-5" /> Sessions
+      </h2>
+
+      <div className="flex flex-col sm:flex-row gap-3">
+        <button
+          onClick={onLogout}
+          className="flex-1 bg-white/10 hover:bg-white/20 text-white font-semibold py-2 rounded-lg transition"
+        >
+          Logout
+        </button>
+        <button
+          onClick={onLogoutEverywhere}
+          className="flex-1 bg-red-600 hover:bg-red-700 text-white font-semibold py-2 rounded-lg transition"
+        >
+          Logout Everywhere
+        </button>
+      </div>
+    </section>
+  );
+}
+
+function SubscriptionSection({
+  loadingPortal,
+  onOpenPortal,
+}: {
+  loadingPortal: boolean;
+  onOpenPortal: () => void;
+}) {
+  return (
+    <section>
+      <h2 className="text-xl font-semibold mb-6 flex items-center gap-2 text-emerald-400">
+        <CreditCard className="w-5 h-5" /> Manage Subscription
+      </h2>
+      <p className="text-gray-400 mb-4">
+        You can update your payment method, view invoices, or cancel your plan anytime via the billing
+        portal.
+      </p>
+      <button
+        onClick={onOpenPortal}
+        disabled={loadingPortal}
+        className="w-full bg-emerald-500/20 hover:bg-emerald-500/30 text-white py-3 rounded-lg transition font-medium"
+      >
+        {loadingPortal ? "Opening Portal..." : "Open Billing Portal"}
+      </button>
+    </section>
+  );
+}
+
+function SupportSection({
+  copied,
+  onCopy,
+}: {
+  copied: boolean;
+  onCopy: () => void;
+}) {
+  return (
+    <section>
+      <h2 className="text-xl font-semibold mb-6 flex items-center gap-2 text-emerald-400">
+        <LifeBuoy className="w-5 h-5" /> Support
+      </h2>
+      <p className="text-gray-400 mb-4">
+        Need help? Contact our support team — we usually respond within 24 hours.
+      </p>
+      <div className="flex items-center justify-between bg-[#1a1a1a] border border-white/10 rounded-lg px-4 py-3">
+        <span className="text-gray-300 text-sm">support@bpro.io</span>
+        <button
+          onClick={onCopy}
+          className="text-emerald-400 hover:text-emerald-300 transition flex items-center gap-1 text-sm"
+        >
+          <Copy className="w-4 h-4" />
+          {copied ? "Copied!" : "Copy"}
+        </button>
+      </div>
+    </section>
+  );
+}
+
+function TvStatusBadge({ status }: { status: TvStatus }) {
+  const ui =
+    status === "confirmed"
+      ? {
+        label: "Confirmed",
+        cls: "bg-emerald-500/15 text-emerald-300 border-emerald-500/20",
+        dot: "bg-emerald-400",
+      }
+      : status === "missing"
+        ? {
+          label: "Username not found",
+          cls: "bg-red-500/15 text-red-300 border-red-500/20",
+          dot: "bg-red-400",
+        }
+        : {
+          label: "Pending review",
+          cls: "bg-yellow-500/15 text-yellow-200 border-yellow-500/20",
+          dot: "bg-yellow-300",
+        };
+
+  return (
+    <span className={`inline-flex items-center gap-2 px-2.5 py-1 rounded-full border text-xs ${ui.cls}`}>
+      <span className={`h-1.5 w-1.5 rounded-full ${ui.dot}`} />
+      {ui.label}
+    </span>
   );
 }
 

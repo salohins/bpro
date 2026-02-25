@@ -85,8 +85,8 @@ export default function PricingPage() {
   );
 
   const enter = (x = 0, y = 18, d = 0) => ({
-    initial: { opacity: 0, x, y, filter: "blur(10px)" },
-    whileInView: { opacity: 1, x: 0, y: 0, filter: "blur(0px)" },
+    initial: { opacity: 0, x, y, },
+    whileInView: { opacity: 1, x: 0, y: 0, },
     transition: reduceMotion
       ? { duration: 0.01 }
       : { duration: 0.85, delay: d, ease: easePremium },
@@ -117,12 +117,7 @@ export default function PricingPage() {
           {...enter(0, 18, 0)}
           className="text-center max-w-[980px] mx-auto mb-10"
         >
-          <div className="inline-flex items-center gap-2 px-6 py-2 rounded-full border border-emerald-400/20 bg-white/[0.03] backdrop-blur-md">
-            <Sparkles className="w-4 h-4 text-emerald-300" />
-            <span className="text-emerald-300 text-xs tracking-[0.24em] font-semibold uppercase">
-              B:PRO PRICING
-            </span>
-          </div>
+
 
           <h1 className="mt-5 font-semibold tracking-[-0.045em] leading-[1.02] text-[clamp(34px,3.1vw,58px)]">
             <span className="bg-gradient-to-r from-white via-emerald-200 to-emerald-500 bg-clip-text text-transparent">
@@ -134,7 +129,7 @@ export default function PricingPage() {
           <p className="mt-4 text-white/65 text-[clamp(15px,1.05vw,18px)] leading-relaxed">
             Start with a{" "}
             <span className="text-white/85 font-semibold">{TRIAL_DAYS}-day trial</span>{" "}
-            on subscriptions — or grab{" "}
+            on subscriptions - or grab{" "}
             <span className="text-white/85 font-semibold">lifetime access</span> in
             one payment.
           </p>

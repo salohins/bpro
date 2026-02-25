@@ -76,14 +76,14 @@ export default function AdaptiveTrendCloud() {
           variants={container}
           initial="hidden"
           whileInView="show"
-          viewport={{ once: false, amount: 0.35 }}
+          viewport={{ once: false, amount: 0.1 }}
           // ✅ mobile: normal flow | desktop: center vertically
           className="w-full grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-10 lg:gap-14 lg:items-center lg:h-full"
         >
           {/* LEFT */}
           <motion.div variants={fadeLeft} className="lg:col-span-5 space-y-5 sm:space-y-6">
             <div className="flex flex-wrap items-center gap-2">
-              <div className="flex flex-wrap items-center justify-center gap-2 w-full">
+              <div className="flex flex-wrap items-center justify-center md:justify-start gap-2 w-full">
                 <div
                   className="
       inline-flex items-center gap-2
@@ -137,21 +137,21 @@ export default function AdaptiveTrendCloud() {
               <motion.li variants={bullet} className="flex gap-3">
                 <span className="mt-1.5 w-2 h-2 rounded-full bg-emerald-400 shrink-0" />
                 <div className="text-[13.5px] sm:text-sm text-white/75 leading-relaxed">
-                  <span className="text-white/90 font-semibold">3-layer EMA geometry</span> — fast/mid/slow stack defines regime.
+                  <span className="text-white/90 font-semibold">3-layer EMA geometry</span> - fast/mid/slow stack defines regime.
                 </div>
               </motion.li>
 
               <motion.li variants={bullet} className="flex gap-3">
                 <span className="mt-1.5 w-2 h-2 rounded-full bg-emerald-300/80 shrink-0" />
                 <div className="text-[13.5px] sm:text-sm text-white/75 leading-relaxed">
-                  <span className="text-white/90 font-semibold">ATR padding</span> — smooth transitions, fewer fake flips.
+                  <span className="text-white/90 font-semibold">ATR padding</span> - smooth transitions, fewer fake flips.
                 </div>
               </motion.li>
 
               <motion.li variants={bullet} className="flex gap-3">
                 <span className="mt-1.5 w-2 h-2 rounded-full bg-emerald-200/70 shrink-0" />
                 <div className="text-[13.5px] sm:text-sm text-white/75 leading-relaxed">
-                  <span className="text-white/90 font-semibold">Breakout rails</span> — upper/lower cloud boundaries act as trigger context.
+                  <span className="text-white/90 font-semibold">Breakout rails</span> - upper/lower cloud boundaries act as trigger context.
                 </div>
               </motion.li>
             </motion.ul>

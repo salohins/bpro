@@ -526,7 +526,7 @@ const MemoMobileEngineCard = React.memo(function MobileEngineCard({
           </div>
         </div>
 
-        <div className="relative mt-auto pt-4 border-t border-white/10 text-xs text-white/45 leading-relaxed line-clamp-2">
+        <div className="relative mt-auto pt-4 pb-10 border-t border-white/10 text-xs text-white/45 leading-relaxed line-clamp-2">
           {engine.footer}
         </div>
       </div>

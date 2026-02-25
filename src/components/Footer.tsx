@@ -27,7 +27,7 @@ export default function Footer() {
       },
       {
         label: "Instagram",
-        href: "https://www.instagram.com/moostraders/",
+        href: "https://www.instagram.com/moostrades/",
         icon: <Instagram className="w-4 h-4" />,
       },
       {

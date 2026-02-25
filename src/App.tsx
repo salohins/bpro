@@ -1,5 +1,7 @@
-import { useEffect } from "react";
-import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { ReactNode, useEffect, useState } from "react";
+import { BrowserRouter, Routes, Route, useLocation, useNavigate } from "react-router-dom";
+import { supabase } from "./lib/supabase";
+
 import Landing from "./pages/Landing";
 import Success from "./pages/Success";
 import Dashboard from "./pages/Dashboard";
@@ -24,6 +26,63 @@ import CookieBanner from "./components/CookieBanner";
 // ✅ NEW: GA SPA pageviews (adjust path if needed)
 import GAPageViews from "./components/GAPageViews";
 import ResetPassword from "./pages/ResetPassword";
+
+function RequireAdmin({ children }: { children: ReactNode }) {
+  const navigate = useNavigate();
+  const [checking, setChecking] = useState(true);
+
+  useEffect(() => {
+    let alive = true;
+
+    (async () => {
+      try {
+        // 1) must be logged in
+        const { data: userData } = await supabase.auth.getUser();
+        const user = userData?.user;
+
+        if (!user) {
+          navigate("/login", { replace: true });
+          return;
+        }
+
+        // 2) must be admin
+        const { data, error } = await supabase
+          .from("profiles")
+          .select("is_admin")
+          .eq("id", user.id)
+          .maybeSingle();
+
+        if (error) {
+          console.warn("RequireAdmin: failed to read is_admin:", error.message);
+          navigate("/", { replace: true });
+          return;
+        }
+
+        const isAdmin = Boolean((data as any)?.is_admin);
+        if (!isAdmin) {
+          navigate("/", { replace: true });
+          return;
+        }
+      } finally {
+        if (alive) setChecking(false);
+      }
+    })();
+
+    return () => {
+      alive = false;
+    };
+  }, [navigate]);
+
+  if (checking) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-gray-400">
+        Checking access…
+      </div>
+    );
+  }
+
+  return <>{children}</>;
+}
 
 function ScrollToTop() {
   const { pathname, search, hash } = useLocation();
@@ -61,16 +120,6 @@ function GlobalBackground() {
         <div className="absolute inset-0 bg-black md:[mask-image:radial-gradient(ellipse_at_center,black,transparent_70%)]" />
       </div>
 
-      {/* particles (flying dollars) */}
-      <style>{`
-        @keyframes floatParticle {
-          0%   { transform: translate3d(0, 0, 0) scale(0.98); opacity: 0; }
-          12%  { opacity: var(--op); }
-          55%  { transform: translate3d(var(--drift), calc(var(--rise) * -0.55), 0) scale(1.06); opacity: var(--op); }
-          88%  { opacity: var(--op); }
-          100% { transform: translate3d(calc(var(--drift) * 0.3), calc(var(--rise) * -1), 0) scale(1.02); opacity: 0; }
-        }
-      `}</style>
 
       {/* film grain (disable blend mode on mobile; blend modes often flash during scroll) */}
       <div
@@ -112,7 +161,17 @@ function Layout() {
           <Route path="/subscribe" element={<Subscribe />} />
           <Route path="/subscription" element={<Subscription />} />
           <Route path="/profile" element={<ProfileSettings />} />
-          <Route path="/admin" element={<AdminOnboarding />} />
+
+          {/* ✅ PROTECTED ADMIN ROUTE */}
+          <Route
+            path="/admin"
+            element={
+              <RequireAdmin>
+                <AdminOnboarding />
+              </RequireAdmin>
+            }
+          />
+
           <Route path="/login" element={<Login />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/imprint" element={<ImprintPage />} />
@@ -122,7 +181,6 @@ function Layout() {
           <Route path="/pricing" element={<PricingPage />} />
           <Route path="/support" element={<SupportPage />} />
           <Route path="/reset-password" element={<ResetPassword />} />
-
         </Routes>
       </main>
 

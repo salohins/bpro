@@ -10,11 +10,11 @@ import {
   ChevronRight,
 } from "lucide-react";
 
-import futureTargetsImg from "../../assets/future-target-lines.png";
-import futureTargetsImg2 from "../../assets/future-target-lines2.png";
-import futureTargetsImg3 from "../../assets/future-target-lines.png";
-import futureTargetsImg4 from "../../assets/future-target-lines2.png";
-import futureTargetsIm5 from "../../assets/future-target-lines.png";
+import ftImg1 from "../../assets/ft-1.png";
+import ftImg2 from "../../assets/ft-2.png";
+import ftImg3 from "../../assets/ft-3.png";
+import ftImg4 from "../../assets/ft-4.png";
+import ftImg5 from "../../assets/ft-5.png";
 
 
 const easePremium = [0.16, 1, 0.3, 1];
@@ -34,53 +34,54 @@ export default function FutureTargets() {
   const shots = useMemo(
     () => [
       {
-        key: "t1t2-1",
-        src: futureTargetsImg,
-        alt: "Example showing T1/T2 target EMA lines as dynamic support and resistance",
-        tags: ["T1 → T2 flow", "EMA-based targets"],
-        captionTitle: "How to read it",
+        key: "ft-1",
+        src: ftImg1,
+        alt: "From a bullish structure, price rotates downward, interacts with T1 then T2, consolidates between them, and breaks lower.",
+        tags: ["T1 → T2 flow", "Breakdown setup"],
+        captionTitle: "What it shows",
         caption:
-          "Watch rejection / acceptance at T1 and T2. Acceptance = continuation. Rejection = weakness / potential reversal pressure.",
+          "From a bullish structure, price rotates downward, first interacting with T1, then T2. After consolidating between these levels, it breaks lower. Future target lines can therefore serve not only as structural references but also as reactive levels that price can respect before failing.",
       },
       {
-        key: "t1t2-2",
-        src: futureTargetsImg2,
-        alt: "Second example showing T1/T2 lines interaction after breakout",
-        tags: ["T1 / T2 lines", "Continuation / failure"],
-        captionTitle: "What to look for",
+        key: "ft-2",
+        src: ftImg2,
+        alt: "Price respects T1 and T2 as reactive levels: breaks above T1, reaches T2, and gets rejected.",
+        tags: ["T1 / T2 respect", "Rejection at T2"],
+        captionTitle: "Key takeaway",
         caption:
-          "After T1 taps, track whether price holds above the rail. Clean holds = continuation. Failed holds = exit or defend.",
+          "Here, price consistently respects the future target levels. It struggles below T1, breaks above it, reaches T2, and gets rejected. The key takeaway is the clear technical respect for T1 and T2 as reactive levels.",
       },
       {
-        key: "t1t2-3",
-        src: futureTargetsImg,
-        alt: "Example showing T1/T2 target EMA lines as dynamic support and resistance",
-        tags: ["T1 → T2 flow", "EMA-based targets"],
-        captionTitle: "How to read it",
+        key: "ft-3",
+        src: ftImg3,
+        alt: "Price hits T1, extends to T2, then breaks down decisively—confirming bearish reversal and reaction zones.",
+        tags: ["Bearish reversal", "Reaction zones"],
+        captionTitle: "What it confirms",
         caption:
-          "Watch rejection / acceptance at T1 and T2. Acceptance = continuation. Rejection = weakness / potential reversal pressure.",
+          "Price reaches T1, then extends to T2. After a brief bounce, it breaks down decisively. This sequence confirms a bearish trend reversal and reinforces the significance of the future target levels as reaction zones.",
       },
       {
-        key: "t1t2-4",
-        src: futureTargetsImg2,
-        alt: "Second example showing T1/T2 lines interaction after breakout",
-        tags: ["T1 / T2 lines", "Continuation / failure"],
-        captionTitle: "What to look for",
+        key: "ft-4",
+        src: ftImg4,
+        alt: "Trend shift from downtrend to uptrend: touch and consolidate at T1, then push toward T2.",
+        tags: ["Trend shift", "Bullish continuation"],
+        captionTitle: "Market shift",
         caption:
-          "After T1 taps, track whether price holds above the rail. Clean holds = continuation. Failed holds = exit or defend.",
+          "Price shifts from a downtrend into an uptrend. After touching T1 and consolidating, it pushes toward T2. This progression reflects a change in market sentiment from bearish to bullish.",
       },
       {
-        key: "t1t2-5",
-        src: futureTargetsImg,
-        alt: "Example showing T1/T2 target EMA lines as dynamic support and resistance",
-        tags: ["T1 → T2 flow", "EMA-based targets"],
-        captionTitle: "How to read it",
+        key: "ft-5",
+        src: ftImg5,
+        alt: "Uptrend breaks down: holds at T1, breaks through, reaches T2, consolidates, then moves lower confirming trend shift.",
+        tags: ["Support failure", "Trend shift"],
+        captionTitle: "How to interpret",
         caption:
-          "Watch rejection / acceptance at T1 and T2. Acceptance = continuation. Rejection = weakness / potential reversal pressure.",
+          "Price transitions from an uptrend into a breakdown. It initially holds at T1 support, then breaks through, reaches T2, and consolidates briefly within that range. The subsequent move lower confirms a broader trend shift.",
       },
     ],
     []
   );
+
 
   const [shotIdx, setShotIdx] = useState(0);
   const [dir, setDir] = useState(1);
@@ -148,7 +149,7 @@ export default function FutureTargets() {
             {...enter(1)}
             className="lg:col-span-5 space-y-5 sm:space-y-6 order-1 lg:order-2"
           >
-            <div className="flex flex-wrap items-center justify-center gap-2 w-full">
+            <div className="flex flex-wrap items-center justify-center md:justify-start gap-2 w-full">
               <div className="inline-flex items-center gap-2 px-4 sm:px-5 py-2 rounded-full border border-emerald-400/20 bg-white/[0.03] backdrop-blur-md w-full sm:w-fit justify-center">
                 <Sparkles className="w-4 h-4 text-emerald-300" />
                 <span className="text-emerald-300 text-[11px] sm:text-xs tracking-[0.24em] font-semibold uppercase">
@@ -381,8 +382,8 @@ function TagChip({
   return (
     <span
       className={[
-        "px-3 py-1.5 rounded-full border backdrop-blur-md",
-        "text-[10px] sm:text-[11px] tracking-[0.18em] uppercase",
+        "px-2 py-1.5 rounded-full border backdrop-blur-md",
+        "text-[9px] sm:text-[10px] tracking-[0.18em] uppercase",
         tones,
       ].join(" ")}
     >

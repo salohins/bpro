@@ -12,6 +12,7 @@ import {
   X,
   ChevronDown,
   Sparkles,
+  ShieldCheck, // ✅ NEW: admin icon
   // ✅ section icons
   Layers,
   SlidersHorizontal,
@@ -29,7 +30,7 @@ import {
 import Logo from "../assets/Logo.svg";
 
 export default function TopBar() {
-  const { user } = useSession();
+  const { user, isAdmin } = useSession(); // ✅ now includes isAdmin
 
   const [open, setOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -157,12 +158,7 @@ export default function TopBar() {
           className="flex items-center gap-3 cursor-pointer select-none"
           aria-label="Go to home"
         >
-          <img
-            src={Logo}
-            alt="moostrade"
-            className="h-5 w-auto sm:h-5"
-            draggable={false}
-          />
+          <img src={Logo} alt="moostrade" className="h-5 w-auto sm:h-5" draggable={false} />
         </motion.button>
 
         {/* CENTER MENU (desktop) */}
@@ -206,8 +202,6 @@ export default function TopBar() {
                       </div>
 
                       <div className="relative z-10 p-5">
-
-
                         {/* grid of section tiles */}
                         <div className="mt-5 grid grid-cols-2 gap-3">
                           {bproSections.map((l) => {
@@ -238,8 +232,6 @@ export default function TopBar() {
                             );
                           })}
                         </div>
-
-
                       </div>
 
                       {/* glow footer */}
@@ -311,8 +303,7 @@ export default function TopBar() {
                 onClick={() => navigate("/pricing")}
                 className="relative inline-flex items-center gap-3 px-5 py-2.5 rounded-2xl text-sm font-semibold text-black shadow-[0_0_20px_rgba(16,185,129,0.2)]"
                 style={{
-                  background:
-                    "linear-gradient(90deg, rgba(16,185,129,1) 0%, rgba(110,231,183,1) 100%)",
+                  background: "linear-gradient(90deg, rgba(16,185,129,1) 0%, rgba(110,231,183,1) 100%)",
                 }}
               >
                 <Tag className="w-4 h-4" />
@@ -322,10 +313,7 @@ export default function TopBar() {
             </div>
           ) : (
             <div className="hidden md:block relative" ref={menuRef}>
-              <button
-                onClick={() => setOpen((v) => !v)}
-                className="group flex items-center gap-3 text-white/80 hover:text-white transition"
-              >
+              <button onClick={() => setOpen((v) => !v)} className="group flex items-center gap-3 text-white/80 hover:text-white transition">
                 <div className="relative">
                   <div className="w-10 h-10 rounded-full border border-white/10 bg-white/[0.03] backdrop-blur-md flex items-center justify-center font-semibold text-white">
                     {initial}
@@ -338,12 +326,7 @@ export default function TopBar() {
                   <span className="text-[14px] text-white/90 font-medium max-w-[520px] truncate">{user.email}</span>
                 </div>
 
-                <ChevronRight
-                  className={[
-                    "w-4 h-4 transition-transform duration-200",
-                    open ? "rotate-90" : "",
-                  ].join(" ")}
-                />
+                <ChevronRight className={["w-4 h-4 transition-transform duration-200", open ? "rotate-90" : ""].join(" ")} />
               </button>
 
               <AnimatePresence>
@@ -364,12 +347,14 @@ export default function TopBar() {
                         icon={<User className="w-4 h-4 text-emerald-300" />}
                         label="Profile Settings"
                       />
+
                       <MenuItem
                         onClick={openBillingPortal}
                         icon={<CreditCard className="w-4 h-4 text-emerald-300" />}
                         label={loading ? "Opening Portal..." : "Manage Subscription"}
                         disabled={loading}
                       />
+
                       <MenuItem
                         onClick={() => {
                           setOpen(false);
@@ -378,13 +363,22 @@ export default function TopBar() {
                         icon={<LifeBuoy className="w-4 h-4 text-emerald-300" />}
                         label="Support"
                       />
+
+                      {/* ✅ Admin only */}
+                      {isAdmin && (
+                        <MenuItem
+                          onClick={() => {
+                            setOpen(false);
+                            navigate("/admin");
+                          }}
+                          icon={<ShieldCheck className="w-4 h-4 text-emerald-300" />}
+                          label="Admin Panel"
+                        />
+                      )}
+
                       <div className="my-2 h-px bg-white/10" />
-                      <MenuItem
-                        onClick={handleLogout}
-                        icon={<LogOut className="w-4 h-4 text-red-300" />}
-                        label="Logout"
-                        danger
-                      />
+
+                      <MenuItem onClick={handleLogout} icon={<LogOut className="w-4 h-4 text-red-300" />} label="Logout" danger />
                     </div>
                   </motion.div>
                 )}
@@ -429,7 +423,7 @@ export default function TopBar() {
         </div>
       </div>
 
-      {/* === MOBILE MENU (unchanged except it still works) === */}
+      {/* === MOBILE MENU === */}
       <AnimatePresence>
         {menuOpen && (
           <motion.div
@@ -463,7 +457,6 @@ export default function TopBar() {
                   FAQ
                 </button>
 
-                {/* Support on mobile grid */}
                 <button
                   onClick={() => {
                     navigate("/support");
@@ -528,8 +521,7 @@ export default function TopBar() {
                     }}
                     className="w-full py-2.5 rounded-xl text-[15px] font-semibold text-black inline-flex items-center justify-center gap-2"
                     style={{
-                      background:
-                        "linear-gradient(90deg, rgba(16,185,129,1) 0%, rgba(110,231,183,1) 100%)",
+                      background: "linear-gradient(90deg, rgba(16,185,129,1) 0%, rgba(110,231,183,1) 100%)",
                     }}
                   >
                     <Tag className="w-4 h-4" />
@@ -587,6 +579,25 @@ export default function TopBar() {
                     <ChevronRight className="w-4 h-4 text-white/50" />
                   </button>
 
+                  {/* ✅ Admin only (mobile) */}
+                  {isAdmin && (
+                    <button
+                      onClick={() => {
+                        navigate("/admin");
+                        closeAllMenus();
+                      }}
+                      className="w-full flex items-center justify-between gap-3 px-4 py-3 rounded-xl text-sm border border-white/10 bg-white/[0.04] text-white/85"
+                    >
+                      <span className="flex items-center gap-3">
+                        <span className="w-9 h-9 rounded-xl border border-white/10 bg-white/[0.03] flex items-center justify-center">
+                          <ShieldCheck className="w-4 h-4 text-emerald-300" />
+                        </span>
+                        Admin Panel
+                      </span>
+                      <ChevronRight className="w-4 h-4 text-white/50" />
+                    </button>
+                  )}
+
                   <button
                     onClick={handleLogout}
                     className="w-full flex items-center justify-between gap-3 px-4 py-3 rounded-xl text-sm border border-red-500/20 bg-red-500/10 text-red-200"
@@ -637,15 +648,11 @@ function MenuItem({
       className={[
         "w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition",
         "border border-transparent",
-        danger
-          ? "text-red-200 hover:bg-red-500/10 hover:border-red-500/20"
-          : "text-white/85 hover:bg-white/[0.04] hover:border-white/10",
+        danger ? "text-red-200 hover:bg-red-500/10 hover:border-red-500/20" : "text-white/85 hover:bg-white/[0.04] hover:border-white/10",
         disabled ? "opacity-50 cursor-not-allowed" : "",
       ].join(" ")}
     >
-      <span className="w-9 h-9 rounded-xl border border-white/10 bg-white/[0.03] flex items-center justify-center">
-        {icon}
-      </span>
+      <span className="w-9 h-9 rounded-xl border border-white/10 bg-white/[0.03] flex items-center justify-center">{icon}</span>
       <span className="font-medium">{label}</span>
     </button>
   );
