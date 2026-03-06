@@ -101,7 +101,7 @@ export default function CoreEngines() {
     []
   );
 
-  const desktopDefaultIdx = Math.max(0, engines.findIndex((e) => e.title === "Decision Intelligence"));
+  const desktopDefaultIdx = Math.max(0, engines.findIndex((e) => e.title === "Market Structure Engine"));
 
   const initialIdx = (() => {
     if (typeof window === "undefined") return desktopDefaultIdx;

@@ -2,23 +2,13 @@ import React, { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, useReducedMotion } from "framer-motion";
 import { ArrowRight, Layers, SlidersHorizontal, ShieldCheck, Brain } from "lucide-react";
-import bproScreenshot from "../../assets/bpro.png";
+import bproScreenshot from "../../assets/ft-5.png";
 
 const easePremium = [0.16, 1, 0.3, 1];
 
 export default function CTABreakoutPro() {
   const reduceMotion = useReducedMotion();
   const navigate = useNavigate();
-
-  const benefits = useMemo(
-    () => [
-      { title: "Structure first", text: "Trend Cloud + HTF structure so you always know the regime." },
-      { title: "Permission gating", text: "Confluence filters + sentiment so you only trade what fits." },
-      { title: "Decision grading", text: "Safety / Quality scoring to stay selective under pressure." },
-      { title: "Lifecycle management", text: "Risk + exits built around invalidation and ATR logic." },
-    ],
-    []
-  );
 
   const signals = useMemo(
     () => [
@@ -60,13 +50,10 @@ export default function CTABreakoutPro() {
 
         <div className="flex justify-center">
           <div className="w-full max-w-[1120px]">
-            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-center gap-10 lg:gap-4">
+            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-center gap-10 lg:gap-6 xl:gap-8">
               {/* RIGHT (content) */}
               <motion.div {...enter(16, 10, 0.03)} className="order-1 lg:order-2 lg:w-[600px] lg:max-w-[600px]">
                 <div className="lg:-translate-y-6 relative">
-                  {/* ✅ Right-column shine (CSS loop like reference) */}
-
-
                   <div className="relative inline-flex items-center gap-2 px-5 py-2 rounded-full border border-emerald-400/20 bg-white/[0.03]">
                     <span className="w-2 h-2 rounded-full bg-emerald-300 animate-pulse" />
                     <span className="text-emerald-200 text-xs tracking-[0.22em] font-semibold uppercase">Try 7 days free</span>
@@ -104,7 +91,6 @@ export default function CTABreakoutPro() {
                             className="pointer-events-none absolute -top-16 -right-16 h-48 w-48 rounded-full bg-emerald-400/14 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
                           />
 
-
                           <div className="relative p-5">
                             <div className="flex items-start justify-between gap-4">
                               <div className="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-emerald-400/20 bg-emerald-400/10">
@@ -120,8 +106,6 @@ export default function CTABreakoutPro() {
                               <div className="text-sm font-semibold text-white/90 tracking-tight">{c.title}</div>
                               <div className="mt-1.5 text-sm text-white/60 leading-relaxed">{c.text}</div>
                             </div>
-
-
                           </div>
                         </motion.div>
                       );
@@ -164,44 +148,59 @@ export default function CTABreakoutPro() {
                 </div>
               </motion.div>
 
-              {/* LEFT — phone (HIDDEN ON MOBILE) */}
+              {/* LEFT — phone */}
               <motion.div {...enter(-16, 10, 0.02)} className="hidden lg:block order-2 lg:order-1 lg:shrink-0">
-                <div className="relative w-[min(440px,94vw)] aspect-[10/19.5] rounded-[56px] bg-[#0a0a0a] border border-white/10 shadow-[0_30px_120px_rgba(0,0,0,0.70)] overflow-hidden">
-                  {/* ✅ Clip wrapper (like your reference) */}
-                  <div className="absolute inset-0 rounded-[56px] overflow-hidden">
+                <div className="relative w-[280px] xl:w-[320px] 2xl:w-[360px] max-w-[32vw] aspect-[10/19.5] rounded-[42px] xl:rounded-[48px] 2xl:rounded-[56px] bg-[#0a0a0a] border border-white/10 shadow-[0_20px_80px_rgba(0,0,0,0.55)] overflow-hidden">
+                  <div className="absolute inset-0 rounded-[inherit] overflow-hidden">
                     <div
                       aria-hidden
-                      className="absolute inset-0 rounded-[56px] bg-[linear-gradient(135deg,rgba(255,255,255,0.10),transparent_40%,rgba(255,255,255,0.06))] opacity-60"
+                      className="absolute inset-0 rounded-[inherit] bg-[linear-gradient(135deg,rgba(255,255,255,0.10),transparent_40%,rgba(255,255,255,0.06))] opacity-60"
                     />
 
-                    {/* ✅ bezel shine (CSS loop like reference) */}
                     <div
                       aria-hidden
                       className="pointer-events-none absolute inset-0 opacity-[0.9] motion-safe:animate-[shine_3.8s_ease-in-out_infinite] motion-reduce:hidden"
                       style={{
-                        background: "linear-gradient(110deg, transparent 0%, rgba(255, 255, 255, 0.2) 40%, transparent 80%)",
+                        background: "radial-gradient( rgba(255, 255, 255, 0.2) 40%, transparent 80%)",
                       }}
                     />
 
-                    {/* side buttons */}
-                    <div aria-hidden className="absolute -left-[3px] top-[140px] z-30 h-10 w-[3px] rounded-full bg-white/15" />
-                    <div aria-hidden className="absolute -left-[3px] top-[195px] z-30 h-16 w-[3px] rounded-full bg-white/15" />
-                    <div aria-hidden className="absolute -right-[3px] top-[175px] z-30 h-20 w-[3px] rounded-full bg-white/15" />
+                    <div aria-hidden className="absolute -left-[3px] top-[26%] z-30 h-8 xl:h-10 w-[3px] rounded-full bg-white/15" />
+                    <div aria-hidden className="absolute -left-[3px] top-[36%] z-30 h-12 xl:h-16 w-[3px] rounded-full bg-white/15" />
+                    <div aria-hidden className="absolute -right-[3px] top-[32%] z-30 h-14 xl:h-20 w-[3px] rounded-full bg-white/15" />
 
                     {/* SCREEN */}
-                    <div className="absolute inset-[10px] rounded-[46px] overflow-hidden bg-[#050505] border border-white/10">
-                      <img
+                    <div className="absolute inset-[8px] xl:inset-[10px] rounded-[34px] xl:rounded-[40px] 2xl:rounded-[46px] overflow-hidden bg-[#050505] border border-white/10">
+                      <motion.img
                         src={bproScreenshot}
                         alt="Breakout PRO screenshot"
-                        className="absolute inset-0 h-full w-full object-cover object-center"
+                        className="absolute top-0 h-full max-w-none object-cover"
+                        style={{
+                          width: "auto",
+                        }}
                         loading="lazy"
                         decoding="async"
+                        animate={
+                          reduceMotion
+                            ? {}
+                            : {
+                                x: ["-22%", "-50%", "-22%"],
+                              }
+                        }
+                        transition={
+                          reduceMotion
+                            ? { duration: 0.01 }
+                            : {
+                                duration: 14,
+                                repeat: Infinity,
+                                ease: "easeInOut",
+                              }
+                        }
                       />
 
                       <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/25 to-black/10" />
                       <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(16,185,129,0.16),transparent_55%),radial-gradient(circle_at_85%_85%,rgba(255,255,255,0.06),transparent_60%)]" />
 
-                      {/* ✅ screen shine (CSS loop like reference) */}
                       <div
                         aria-hidden
                         className="pointer-events-none absolute inset-0 z-20 opacity-[0.18] motion-safe:animate-[shine_3.8s_ease-in-out_infinite] motion-reduce:hidden mix-blend-overlay"
@@ -226,56 +225,53 @@ export default function CTABreakoutPro() {
                         />
                       )}
 
-                      {/* notch */}
-                      <div className="absolute left-1/2 -translate-x-1/2 top-[10px] h-[28px] w-[180px] rounded-full bg-black/80 border border-white/10" />
+                      <div className="absolute left-1/2 -translate-x-1/2 top-[8px] h-[22px] xl:h-[26px] 2xl:h-[28px] w-[120px] xl:w-[150px] 2xl:w-[180px] rounded-full bg-black/80 border border-white/10" />
 
-                      <div className="relative pt-14 px-6 pb-5 h-full flex flex-col">
-                        {/* top bar */}
+                      <div className="relative pt-10 xl:pt-12 2xl:pt-14 px-4 xl:px-5 2xl:px-6 pb-4 xl:pb-5 h-full flex flex-col">
                         <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-3">
-                            <img src="/bpro_logo.svg" alt="Breakout PRO" className="h-8 object-contain" />
-                            <span className="text-[10px] text-white/45 tracking-widest uppercase">Decision Suite</span>
+                          <div className="flex items-center gap-2 xl:gap-3">
+                            <img src="/bpro_logo.svg" alt="Breakout PRO" className="h-6 xl:h-7 2xl:h-8 object-contain" />
+                            <span className="text-[9px] xl:text-[10px] text-white/45 tracking-widest uppercase">Decision Suite</span>
                           </div>
 
-                          <span className="inline-flex items-center px-3 py-1.5 rounded-full border border-emerald-400/20 bg-emerald-400/10 text-emerald-100 text-[10px] tracking-widest uppercase">
+                          <span className="inline-flex items-center px-2.5 py-1 xl:px-3 xl:py-1.5 rounded-full border border-emerald-400/20 bg-emerald-400/10 text-emerald-100 text-[9px] xl:text-[10px] tracking-widest uppercase">
                             Live
                           </span>
                         </div>
 
-                        {/* bottom table */}
-                        <div className="mt-auto space-y-3">
-                          <div className="rounded-2xl border border-white/10 bg-black/55 backdrop-blur-md overflow-hidden">
-                            <div className="px-4 pt-4 pb-2">
-                              <div className="text-[11px] font-semibold tracking-widest uppercase text-white/85">
+                        <div className="absolute bottom-4 left-4 xl:bottom-5 xl:left-5 2xl:left-6">
+                          <div className="w-[112px] xl:w-[126px] 2xl:w-[142px] rounded-[12px] border border-white/10 bg-black/55 backdrop-blur-md overflow-hidden shadow-[0_8px_24px_rgba(0,0,0,0.28)]">
+                            <div className="px-2 pt-2 pb-1">
+                              <div className="text-[6px] xl:text-[7px] font-semibold tracking-[0.18em] uppercase text-white/80">
                                 Last 5 Trade Signals
                               </div>
                             </div>
 
-                            <div aria-hidden className="h-px w-full bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+                            <div aria-hidden className="h-px w-full bg-gradient-to-r from-transparent via-white/15 to-transparent" />
 
-                            <div className="px-4 py-2">
-                              <div className="grid grid-cols-[1fr_48px_48px] gap-2 text-[10px] tracking-widest uppercase text-white/45">
+                            <div className="px-2 py-1">
+                              <div className="grid grid-cols-[1fr_20px_20px] xl:grid-cols-[1fr_22px_22px] gap-1 text-[6px] xl:text-[7px] tracking-[0.16em] uppercase text-white/40">
                                 <div>Type</div>
                                 <div className="text-right">S</div>
                                 <div className="text-right">Q</div>
                               </div>
                             </div>
 
-                            <div className="divide-y divide-white/10">
+                            <div className="divide-y divide-white/8">
                               {signals.map((r, idx) => (
-                                <div key={idx} className="px-4 py-2.5">
-                                  <div className="grid grid-cols-[1fr_48px_48px] gap-2 text-[12px] text-white/80">
+                                <div key={idx} className="px-2 py-1">
+                                  <div className="grid grid-cols-[1fr_20px_20px] xl:grid-cols-[1fr_22px_22px] gap-1 text-[7px] xl:text-[8px] text-white/78 leading-tight">
                                     <div className="truncate">{r.type}</div>
-                                    <div className="text-right tabular-nums text-white/75">{r.s}</div>
-                                    <div className="text-right tabular-nums text-white/75">{r.q}</div>
+                                    <div className="text-right tabular-nums text-white/70">{r.s}</div>
+                                    <div className="text-right tabular-nums text-white/70">{r.q}</div>
                                   </div>
                                 </div>
                               ))}
                             </div>
                           </div>
-
-                          <div aria-hidden className="mx-auto h-1.5 w-28 rounded-full bg-white/15" />
                         </div>
+
+                        <div aria-hidden className="mt-auto mx-auto h-1.5 w-20 xl:w-24 rounded-full bg-white/15" />
                       </div>
                     </div>
                   </div>
@@ -283,7 +279,6 @@ export default function CTABreakoutPro() {
               </motion.div>
             </div>
 
-            {/* ✅ keyframes (same as your reference) */}
             <style>{`
               @keyframes shine {
                 0% { transform: translateX(-60%); }
