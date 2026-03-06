@@ -102,7 +102,7 @@ export default function HeroSection() {
     const v = demoVideoRef.current;
     if (v) {
       v.currentTime = 0;
-      void v.play().catch(() => {});
+      void v.play().catch(() => { });
     }
 
     const onKeyDown = (e: KeyboardEvent) => {
@@ -232,13 +232,13 @@ export default function HeroSection() {
               style={
                 isMdUp
                   ? {
-                      clipPath:
-                        "polygon(68% 0%, 70% 0%, 30% 100%, 28% 100%)",
-                    }
+                    clipPath:
+                      "polygon(68% 0%, 70% 0%, 30% 100%, 28% 100%)",
+                  }
                   : {
-                      clipPath:
-                        "polygon(60% 0%, 70% 0%, 30% 100%, 20% 100%)",
-                    }
+                    clipPath:
+                      "polygon(60% 0%, 70% 0%, 30% 100%, 20% 100%)",
+                  }
               }
             />
           </div>
@@ -249,10 +249,10 @@ export default function HeroSection() {
             animate={
               allowMotion
                 ? {
-                    x: [0, 22, -10, 0],
-                    y: [0, 14, -10, 0],
-                    scale: [1, 1.06, 1.02, 1],
-                  }
+                  x: [0, 22, -10, 0],
+                  y: [0, 14, -10, 0],
+                  scale: [1, 1.06, 1.02, 1],
+                }
                 : undefined
             }
             transition={
@@ -295,7 +295,7 @@ export default function HeroSection() {
                     </div>
                   </div>
 
-                  <span className="text-white/92 text-bold ">
+                  <span className="text-white/92 text-bold " style={{ textShadow: "0 2px 10px rgba(0,0,0,1)" }}>
                     All-in-one
                     <br /> breakout system.
                   </span>
@@ -304,6 +304,7 @@ export default function HeroSection() {
                 <motion.p
                   variants={item}
                   className="heroSubcopy text-white/70 text-[clamp(20px,2vw,32px)] leading-[1.5] max-w-[600px]"
+                  style={{ textShadow: "0 2px 10px rgba(0,0,0,1)" }}
                 >
                   Built for traders who want clean confirmations and decisive
                   entries.
@@ -317,10 +318,10 @@ export default function HeroSection() {
                     whileHover={
                       allowMotion
                         ? {
-                            scale: 1.02,
-                            backgroundPosition: "right center",
-                            boxShadow: "0 0 90px rgba(16,185,129,0.52)",
-                          }
+                          scale: 1.02,
+                          backgroundPosition: "right center",
+                          boxShadow: "0 0 90px rgba(16,185,129,0.52)",
+                        }
                         : undefined
                     }
                     whileTap={{ scale: 0.985 }}
@@ -345,10 +346,10 @@ export default function HeroSection() {
                     whileHover={
                       allowMotion
                         ? {
-                            y: -2,
-                            boxShadow:
-                              "0 0 0 1px rgba(16,185,129,0.24), 0 0 24px rgba(16,185,129,0.18), 0 0 60px rgba(16,185,129,0.12)",
-                          }
+                          y: -2,
+                          boxShadow:
+                            "0 0 0 1px rgba(16,185,129,0.24), 0 0 24px rgba(16,185,129,0.18), 0 0 60px rgba(16,185,129,0.12)",
+                        }
                         : undefined
                     }
                     whileTap={{ scale: 0.985 }}
