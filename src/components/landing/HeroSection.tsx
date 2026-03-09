@@ -184,26 +184,30 @@ export default function HeroSection() {
             }
           >
             <video
-              ref={videoRef}
-              className="absolute inset-0 w-full h-full object-cover"
-              src={tradingVideo}
-              autoPlay
-              loop
-              muted
-              defaultMuted
-              playsInline
-              // @ts-ignore
-              webkit-playsinline="true"
-              preload={isMdUp ? "auto" : "metadata"}
-              controls={false}
-              onLoadedMetadata={() => {
-                requestPlay();
-              }}
-              onCanPlay={() => {
-                requestSeekToTarget();
-                requestPlay();
-              }}
-            />
+            ref={videoRef}
+            className="absolute inset-0 w-full h-full object-cover"
+            src={tradingVideo}
+            autoPlay
+            loop
+            muted
+            defaultMuted
+            playsInline
+            // @ts-ignore
+            webkit-playsinline="true"
+            // ✅ Mobile perf: don’t force full download immediately
+            preload={isMdUp ? "auto" : "metadata"}
+            controls={false}
+            // ✅ don't seek+play here (can be blocked on Opera mobile)
+            onLoadedMetadata={() => {
+              // best effort: try playing once metadata is ready
+              requestPlay();
+            }}
+            onCanPlay={() => {
+              // ✅ once it can play, safely seek then try to play again
+              requestSeekToTarget();
+              requestPlay();
+            }}
+          />
           </motion.div>
 
           <div
