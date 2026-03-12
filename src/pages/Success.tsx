@@ -40,6 +40,9 @@ export default function Success() {
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
 
+  const passwordTooShort = password.length > 0 && password.length < 6;
+  const passwordsMismatch = confirm.length > 0 && password !== confirm;
+
   const enter = (x = 0, y = 18, d = 0) => ({
     initial: { opacity: 0, x, y, filter: "blur(10px)" },
     animate: { opacity: 1, x: 0, y: 0, filter: "blur(0px)" },
@@ -180,7 +183,6 @@ export default function Success() {
                   Your account is created. Set a password now to log in instantly — or use the magic link in your email.
                 </p>
 
-                {/* ✅ instruction block */}
                 <div className="mt-6 rounded-2xl border border-white/10 bg-white/[0.03] p-4">
                   <div className="flex items-start gap-3">
                     <span className="mt-0.5 inline-flex h-9 w-9 items-center justify-center rounded-xl border border-white/10 bg-white/[0.03]">
@@ -190,7 +192,9 @@ export default function Success() {
                       <div className="text-sm font-semibold text-white/85">Best TradingView experience</div>
                       <ol className="mt-2 space-y-1 text-[13px] text-white/60 leading-relaxed list-decimal pl-5">
                         <li>Open the indicator.</li>
-                        <li>Go to <span className="text-white/75 font-medium">Settings → Style</span>.</li>
+                        <li>
+                          Go to <span className="text-white/75 font-medium">Settings → Style</span>.
+                        </li>
                         <li>Scroll to the bottom.</li>
                         <li>
                           Uncheck <span className="text-white/75 font-medium">“Filters in status line”</span>.
@@ -228,7 +232,6 @@ export default function Success() {
 
             {/* Right: password set card */}
             <motion.div {...enter(10, 8, 0.06)} className="lg:col-span-6">
-              {/* Loading / Error states inside the premium card */}
               <div className="rounded-[26px] p-[1px] bg-gradient-to-b from-white/12 via-white/8 to-emerald-500/10">
                 <div className="relative rounded-[26px] border border-white/10 bg-[#070707]/78 backdrop-blur-2xl p-7 md:p-8">
                   <div className="flex items-center justify-between gap-4">
@@ -247,7 +250,6 @@ export default function Success() {
                     </span>
                   </div>
 
-                  {/* states */}
                   {loading ? (
                     <div className="mt-6 rounded-2xl border border-white/10 bg-white/[0.02] px-4 py-4 text-sm text-white/70">
                       Processing your payment… please don’t close this page.
@@ -286,13 +288,31 @@ export default function Success() {
                         />
                       </div>
 
+                      {passwordTooShort && (
+                        <div className="text-xs text-red-400 mt-1">
+                          Password must be at least 6 characters.
+                        </div>
+                      )}
+
+                      {passwordsMismatch && (
+                        <div className="text-xs text-red-400 mt-1">
+                          Passwords do not match.
+                        </div>
+                      )}
+
                       {/* CTA */}
                       <motion.button
                         whileHover={reduceMotion ? {} : { scale: 1.01 }}
                         whileTap={{ scale: 0.985 }}
-                        disabled={busy || !password || !confirm}
+                        disabled={
+                          busy ||
+                          !password ||
+                          !confirm ||
+                          password.length < 6 ||
+                          password !== confirm
+                        }
                         onClick={handleSetPasswordAndLogin}
-                        className="group w-full inline-flex items-center justify-center gap-3 px-6 py-4 text-base font-semibold rounded-2xl transition border border-emerald-300/25 bg-emerald-400/90 hover:bg-emerald-300 text-black shadow-[0_0_20px_rgba(16,185,129,0.16)] disabled:opacity-60"
+                        className="group w-full inline-flex items-center justify-center gap-3 px-6 py-4 text-base font-semibold rounded-2xl transition border border-emerald-300/25 bg-emerald-400/90 hover:bg-emerald-300 text-black shadow-[0_0_20px_rgba(16,185,129,0.16)] disabled:opacity-60 disabled:cursor-not-allowed"
                       >
                         {busy ? "Setting up..." : "Set Password & Log In"}
                         <ArrowRight className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1" />
