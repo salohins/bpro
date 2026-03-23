@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { motion, useReducedMotion } from "framer-motion";
-import { ArrowRight, Play, Map, Filter, Target, ShieldCheck } from "lucide-react";
+import { ArrowRight, Play } from "lucide-react";
 import tradingVideo from "../../assets/trading.mp4";
 
 /** Simple media query hook (no deps) */
@@ -167,10 +167,12 @@ export default function HeroSection() {
           relative w-full min-h-[100svh] overflow-hidden bg-[#060606] text-white flex
           items-end md:items-center
         "
-        style={{
-          "--font-display": `"Space Grotesk", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial`,
-          "--font-body": `"Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial`,
-        } as React.CSSProperties}
+        style={
+          {
+            "--font-display": `"Space Grotesk", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial`,
+            "--font-body": `"Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial`,
+          } as React.CSSProperties
+        }
       >
         <div className="absolute inset-0">
           <motion.div
@@ -184,30 +186,26 @@ export default function HeroSection() {
             }
           >
             <video
-            ref={videoRef}
-            className="absolute inset-0 w-full h-full object-cover"
-            src={tradingVideo}
-            autoPlay
-            loop
-            muted
-            defaultMuted
-            playsInline
-            // @ts-ignore
-            webkit-playsinline="true"
-            // ✅ Mobile perf: don’t force full download immediately
-            preload={isMdUp ? "auto" : "metadata"}
-            controls={false}
-            // ✅ don't seek+play here (can be blocked on Opera mobile)
-            onLoadedMetadata={() => {
-              // best effort: try playing once metadata is ready
-              requestPlay();
-            }}
-            onCanPlay={() => {
-              // ✅ once it can play, safely seek then try to play again
-              requestSeekToTarget();
-              requestPlay();
-            }}
-          />
+              ref={videoRef}
+              className="absolute inset-0 w-full h-full object-cover"
+              src={tradingVideo}
+              autoPlay
+              loop
+              muted
+              defaultMuted
+              playsInline
+              // @ts-ignore
+              webkit-playsinline="true"
+              preload={isMdUp ? "auto" : "metadata"}
+              controls={false}
+              onLoadedMetadata={() => {
+                requestPlay();
+              }}
+              onCanPlay={() => {
+                requestSeekToTarget();
+                requestPlay();
+              }}
+            />
           </motion.div>
 
           <div
@@ -279,16 +277,12 @@ export default function HeroSection() {
           <div className="mx-auto max-w-[1760px] px-6 sm:px-10 lg:px-16 2xl:px-20">
             <div className="pt-10 pb-10 sm:pt-12 sm:pb-12 md:py-20 lg:py-20 2xl:py-24">
               <div className="max-w-[920px] space-y-6 md:space-y-8 font-[var(--font-body)]">
-                <motion.h1
-                  variants={item}
-                  className="font-[var(--font-display)] font-semibold tracking-[-0.05em] leading-[0.95]
-                  text-[clamp(40px,4.4vw,76px)] text-white "
-                >
+                <motion.div variants={item} className="space-y-3 max-w-xl">
                   <div
                     className="
-      mb-5 w-max rounded-full p-[3px]
-      bg-gradient-to-r from-emerald-500 via-emerald-400 to-emerald-300
-    "
+                      w-max rounded-full p-[3px]
+                      bg-gradient-to-r from-emerald-500 via-emerald-400 to-emerald-300
+                    "
                   >
                     <div className="rounded-full bg-black/90 px-6 py-3">
                       <img
@@ -299,7 +293,20 @@ export default function HeroSection() {
                     </div>
                   </div>
 
-                  <span className="text-white/92 text-bold " style={{ textShadow: "0 2px 10px rgba(0,0,0,1)" }}>
+                  <div className="text-xs text-white/45 tracking-widest uppercase">
+                    Suite for discretionary traders
+                  </div>
+                </motion.div>
+
+                <motion.h1
+                  variants={item}
+                  className="font-[var(--font-display)] font-semibold tracking-[-0.05em] leading-[0.95]
+                  text-[clamp(40px,4.4vw,76px)] text-white "
+                >
+                  <span
+                    className="text-white/92 text-bold "
+                    style={{ textShadow: "0 2px 10px rgba(0,0,0,1)" }}
+                  >
                     All-in-one
                     <br /> breakout system.
                   </span>
@@ -329,7 +336,7 @@ export default function HeroSection() {
                         : undefined
                     }
                     whileTap={{ scale: 0.985 }}
-                    onClick={() => navigate("/subscribe")}
+                    onClick={() => navigate("/pricing")}
                     className="group relative inline-flex items-center justify-center gap-3 px-8 py-[16px]
                     text-[14.5px] sm:text-[15.5px] font-semibold rounded-2xl
                     bg-gradient-to-r from-emerald-500 via-emerald-400 to-emerald-300 bg-[length:220%_auto]

@@ -137,7 +137,7 @@ export default function AdaptiveTrendCloud() {
               <motion.li variants={bullet} className="flex gap-3">
                 <span className="mt-1.5 w-2 h-2 rounded-full bg-emerald-400 shrink-0" />
                 <div className="text-[13.5px] sm:text-sm text-white/75 leading-relaxed">
-                  <span className="text-white/90 font-semibold">3-layer EMA geometry</span> - fast/mid/slow stack defines regime.
+                  <span className="text-white/90 font-semibold">4-layer EMA geometry</span> - fast/mid/slow stack defines regime.
                 </div>
               </motion.li>
 

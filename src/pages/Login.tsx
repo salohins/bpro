@@ -134,23 +134,7 @@ export default function Login() {
                     : "Log in to manage your access and account settings."}
                 </p>
 
-                <div className="mt-7 flex items-center gap-3 text-sm">
-                  <button
-                    type="button"
-                    onClick={() => navigate("/pricing")}
-                    className="text-white/60 hover:text-white transition"
-                  >
-                    View pricing →
-                  </button>
-                  <span className="text-white/15">•</span>
-                  <button
-                    type="button"
-                    onClick={() => navigate("/support")}
-                    className="text-white/60 hover:text-white transition"
-                  >
-                    Support →
-                  </button>
-                </div>
+
               </div>
             </motion.div>
 

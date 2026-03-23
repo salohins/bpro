@@ -54,7 +54,7 @@ export default function WorkflowBPro() {
       {
         icon: Layers,
         title: "2) Read the cloud first",
-        desc: "The 3-layer EMA Cloud tells you the regime: Bull / Bear / Neutral — and defines future target lines.",
+        desc: "The 4-layer EMA Cloud tells you the regime: Bull / Bear / Neutral — and defines future target lines.",
         bullets: [
           "Bull: stacked + cloud supports price",
           "Bear: stacked + cloud resists price",

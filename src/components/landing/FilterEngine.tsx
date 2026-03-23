@@ -246,7 +246,7 @@ export default function FilterEngine() {
                   </div>
 
                   <div className="mt-4 text-xs text-white/45 flex items-center gap-2">
-                    <ArrowRight className="w-3.5 h-3.5 text-emerald-300/70" />
+                    <ArrowRight className="w-3.5 h-3.5 text-emerald-300/70 relative top-[-10px] md:top-0" />
                     Correlation: structure shows where → filters decide if it’s worth acting.
                   </div>
                 </div>

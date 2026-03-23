@@ -1,6 +1,6 @@
 import React, { useMemo, useState, useEffect } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { ChevronUp, ChevronDown } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 import breakoutLogicImg from "../../assets/breakoutLogic.png";
 
@@ -197,7 +197,7 @@ export default function SignalLanguageSection() {
 
                         {/* RIGHT (slightly later) */}
                         <motion.div {...enter(1, 0.12)} className="lg:col-span-5 w-full lg:pl-6 lg:border-l lg:border-white/10">
-                            <VerticalLegendSlider items={signalLegend} perPage={4} />
+                            <HorizontalLegendSlider items={signalLegend} perPage={4} />
                         </motion.div>
                     </div>
                 </div>
@@ -210,7 +210,7 @@ export default function SignalLanguageSection() {
     );
 }
 
-/* ===================== Legend Slider (fixed height + arrows + swipe) ===================== */
+/* ===================== Horizontal Legend Slider ===================== */
 
 function chunk(arr: any[], size: number) {
     const out: any[] = [];
@@ -218,7 +218,7 @@ function chunk(arr: any[], size: number) {
     return out;
 }
 
-function VerticalLegendSlider({ items, perPage = 6 }: { items: any[]; perPage?: number }) {
+function HorizontalLegendSlider({ items, perPage = 6 }: { items: any[]; perPage?: number }) {
     const reduceMotion = useReducedMotion();
     const pages = useMemo(() => chunk(items, perPage), [items, perPage]);
     const [page, setPage] = useState(0);
@@ -235,11 +235,11 @@ function VerticalLegendSlider({ items, perPage = 6 }: { items: any[]; perPage?: 
     };
 
     const variants = {
-        enter: (d: number) => ({ opacity: 0, y: reduceMotion ? 0 : d * 18 }),
-        center: { opacity: 1, y: 0, transition: { duration: 0.55, ease: easePremium } },
+        enter: (d: number) => ({ opacity: 0, x: reduceMotion ? 0 : d * 28 }),
+        center: { opacity: 1, x: 0, transition: { duration: 0.55, ease: easePremium } },
         exit: (d: number) => ({
             opacity: 0,
-            y: reduceMotion ? 0 : d * -18,
+            x: reduceMotion ? 0 : d * -28,
             transition: { duration: 0.45, ease: easePremium },
         }),
     };
@@ -265,7 +265,7 @@ function VerticalLegendSlider({ items, perPage = 6 }: { items: any[]; perPage?: 
                                 aria-label="Previous"
                                 className="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.03] hover:bg-white/[0.08] transition"
                             >
-                                <ChevronUp className="h-5 w-5 text-white/70" />
+                                <ChevronLeft className="h-5 w-5 text-white/70" />
                             </button>
                             <button
                                 type="button"
@@ -273,7 +273,7 @@ function VerticalLegendSlider({ items, perPage = 6 }: { items: any[]; perPage?: 
                                 aria-label="Next"
                                 className="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.03] hover:bg-white/[0.08] transition"
                             >
-                                <ChevronDown className="h-5 w-5 text-white/70" />
+                                <ChevronRight className="h-5 w-5 text-white/70" />
                             </button>
                         </div>
                     </div>
@@ -289,13 +289,13 @@ function VerticalLegendSlider({ items, perPage = 6 }: { items: any[]; perPage?: 
                             initial="enter"
                             animate="center"
                             exit="exit"
-                            drag={reduceMotion ? false : "y"}
-                            dragConstraints={{ top: 0, bottom: 0 }}
+                            drag={reduceMotion ? false : "x"}
+                            dragConstraints={{ left: 0, right: 0 }}
                             dragElastic={0.1}
                             onDragEnd={(_, info) => {
                                 const t = 70;
-                                if (info.offset.y < -t) next();
-                                if (info.offset.y > t) prev();
+                                if (info.offset.x < -t) next();
+                                if (info.offset.x > t) prev();
                             }}
                             className="absolute inset-0 p-6 space-y-1.5 md:space-y-2"
                         >
@@ -421,7 +421,6 @@ function CinematicImage({
         </div>
     );
 }
-
 
 function TagChip({ children, tone = "neutral" }: { children: React.ReactNode; tone?: string }) {
     const tones =

@@ -180,7 +180,7 @@ export default function Success() {
                 </h1>
 
                 <p className="mt-3 text-white/60 text-[clamp(14px,1.05vw,17px)] leading-relaxed">
-                  Your account is created. Set a password now to log in instantly — or use the magic link in your email.
+                  Your account is created. Set a password now to log in instantly - or use the magic link in your email.
                 </p>
 
                 <div className="mt-6 rounded-2xl border border-white/10 bg-white/[0.03] p-4">

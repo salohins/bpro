@@ -71,7 +71,6 @@ export default function CookieBanner() {
     <AnimatePresence>
       {open && (
         <>
-          {/* subtle overlay */}
           <motion.div
             {...variants.overlay}
             className="fixed inset-0 z-[9998] bg-black/20"
@@ -79,11 +78,6 @@ export default function CookieBanner() {
             aria-hidden="true"
           />
 
-          {/* Mobile-optimized banner:
-              - full-width with safe padding
-              - bottom "sheet" style on mobile, floating card on sm+
-              - actions become full-width stacked on mobile
-          */}
           <motion.div
             {...variants.panel}
             className="fixed inset-x-0 bottom-0 z-[9999] px-3 pb-3 sm:px-6 sm:pb-6"
@@ -93,7 +87,6 @@ export default function CookieBanner() {
           >
             <div className="mx-auto w-full max-w-[980px] rounded-[22px] sm:rounded-[26px] p-[1px] bg-gradient-to-b from-white/12 via-white/8 to-emerald-500/10 shadow-[0_22px_70px_rgba(0,0,0,0.55)]">
               <div className="relative overflow-hidden rounded-[22px] sm:rounded-[26px] border border-white/10 bg-[#070707]">
-                {/* ambient */}
                 <div aria-hidden className="absolute inset-0 pointer-events-none">
                   <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_25%,rgba(16,185,129,0.10),transparent_60%)]" />
                   <div className="absolute inset-0 bg-[radial-gradient(circle_at_85%_80%,rgba(255,255,255,0.05),transparent_60%)]" />
@@ -101,7 +94,6 @@ export default function CookieBanner() {
                 </div>
 
                 <div className="relative p-4 sm:p-6">
-                  {/* header */}
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex items-start gap-3 min-w-0">
                       <span className="shrink-0 inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.03]">
@@ -114,7 +106,7 @@ export default function CookieBanner() {
                           <span className="text-white/55 font-medium">You’re in control</span>
                         </div>
                         <p className="mt-1 text-[12.5px] sm:text-[13px] leading-relaxed text-white/60">
-                          Essential cookies keep the site working. Optional cookies help analytics and marketing — only if you allow them.
+                          Essential cookies keep the site working. Optional cookies help analytics and marketing - only if you allow them.
                         </p>
                       </div>
                     </div>
@@ -129,9 +121,7 @@ export default function CookieBanner() {
                     </button>
                   </div>
 
-                  {/* toggles (mobile-first) */}
                   <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
-                    {/* Necessary */}
                     <div className="rounded-2xl border border-white/10 bg-white/[0.02] px-4 py-3">
                       <div className="flex items-center justify-between gap-3">
                         <div className="flex items-center gap-2">
@@ -147,7 +137,6 @@ export default function CookieBanner() {
                       </div>
                     </div>
 
-                    {/* Analytics */}
                     <label className="rounded-2xl border border-white/10 bg-white/[0.02] px-4 py-3 cursor-pointer hover:bg-white/[0.04] transition">
                       <div className="flex items-center justify-between gap-3">
                         <div className="min-w-0">
@@ -168,7 +157,6 @@ export default function CookieBanner() {
                       </div>
                     </label>
 
-                    {/* Marketing */}
                     <label className="rounded-2xl border border-white/10 bg-white/[0.02] px-4 py-3 cursor-pointer hover:bg-white/[0.04] transition">
                       <div className="flex items-center justify-between gap-3">
                         <div className="min-w-0">
@@ -190,29 +178,12 @@ export default function CookieBanner() {
                     </label>
                   </div>
 
-                  {/* actions (mobile stacked, desktop inline) */}
                   <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                     <div className="text-[12px] text-white/45">
                       You can change this later in <span className="text-white/60 font-medium">Settings</span>.
                     </div>
 
                     <div className="grid grid-cols-1 gap-2 sm:flex sm:gap-2 sm:justify-end">
-                      <button
-                        type="button"
-                        onClick={rejectAll}
-                        className="w-full sm:w-auto px-4 py-2.5 rounded-2xl text-[13px] font-semibold text-white/70 bg-white/[0.03] hover:bg-white/[0.06] transition border border-white/10"
-                      >
-                        Reject all
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={acceptSelected}
-                        className="w-full sm:w-auto px-4 py-2.5 rounded-2xl text-[13px] font-semibold text-white/85 bg-white/[0.05] hover:bg-white/[0.08] transition border border-white/10 inline-flex items-center justify-center gap-2"
-                      >
-                        Save preferences <ChevronRight className="w-4 h-4 text-white/55" />
-                      </button>
-
                       <motion.button
                         whileHover={reduceMotion ? {} : { scale: 1.01 }}
                         whileTap={{ scale: 0.985 }}
@@ -222,6 +193,22 @@ export default function CookieBanner() {
                       >
                         Accept all <ChevronRight className="w-4 h-4" />
                       </motion.button>
+
+                      <button
+                        type="button"
+                        onClick={acceptSelected}
+                        className="w-full sm:w-auto px-4 py-2.5 rounded-2xl text-[13px] font-semibold text-white/85 bg-white/[0.05] hover:bg-white/[0.08] transition border border-white/10 inline-flex items-center justify-center gap-2"
+                      >
+                        Save preferences <ChevronRight className="w-4 h-4 text-white/55" />
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={rejectAll}
+                        className="w-full sm:w-auto px-4 py-2.5 rounded-2xl text-[13px] font-semibold text-white/70 bg-white/[0.03] hover:bg-white/[0.06] transition border border-white/10"
+                      >
+                        Reject all
+                      </button>
                     </div>
                   </div>
                 </div>

@@ -146,7 +146,7 @@ export default function FutureTargets() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-10 lg:gap-14 items-start lg:items-center">
           {/* ✅ RIGHT COPY (but on MOBILE it comes FIRST) */}
           <motion.div
-            {...enter(1)}
+            {...enter(0.1)}
             className="lg:col-span-5 space-y-5 sm:space-y-6 order-1 lg:order-2"
           >
             <div className="flex flex-wrap items-center justify-center md:justify-start gap-2 w-full">
@@ -180,7 +180,7 @@ export default function FutureTargets() {
 
 
             <div className="pt-1 text-xs text-white/45 max-w-xl flex items-center gap-2">
-              <ArrowRight className="w-3.5 h-3.5 text-emerald-300/70" />
+              <ArrowRight className="w-3.5 h-3.5 text-emerald-300/70 translate-y-[-8px] md:translate-y-[0]" />
               Correlation: breakouts trigger → lines manage the move → exits become objective.
             </div>
           </motion.div>

@@ -20,7 +20,6 @@ export default function Subscribe() {
   const location = useLocation();
   const reduceMotion = useReducedMotion();
 
-  // ✅ read plan from PricingPage navigation (fallback for direct visits)
   const plan: PlanKey = (location.state as any)?.plan ?? "monthly";
 
   const [email, setEmail] = useState("");
@@ -84,12 +83,14 @@ export default function Subscribe() {
     setExisting(false);
 
     try {
-      if (!email) throw new Error("Please enter your email.");
+      if (!email.trim()) {
+        throw new Error("Email is required.");
+      }
 
       const verifyRes = await fetch(`${import.meta.env.VITE_API_URL}/verify-user`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ email: email.trim() }),
       });
 
       const verifyData = await verifyRes.json();
@@ -106,10 +107,10 @@ export default function Subscribe() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          plan, // ✅ monthly/yearly/lifetime
-          price_id: planConfig.priceId, // fallback only
-          email,
-          tradingview_name: tradingview || undefined,
+          plan,
+          price_id: planConfig.priceId,
+          email: email.trim(),
+          tradingview_name: tradingview.trim() || undefined,
         }),
       });
 
@@ -137,11 +138,10 @@ export default function Subscribe() {
         <div className="absolute -bottom-24 left-0 right-0 h-40 bg-gradient-to-t from-black/80 to-transparent" />
       </div>
 
-      {/* ✅ TRUE CENTERING: vertically + horizontally */}
       <div className="relative z-10 min-h-[calc(100vh-76px)] flex items-center">
         <div className="w-full mx-auto max-w-[1400px] px-6 sm:px-10 lg:px-16 2xl:px-20 py-10 md:py-14">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 items-stretch">
-            {/* Left: Plan summary (wider) */}
+            {/* Left: Plan summary */}
             <motion.div {...enter(-14, 10, 0)} className="lg:col-span-7">
               <div className="h-full rounded-[30px] p-[1px] bg-gradient-to-b from-emerald-400/18 via-white/10 to-emerald-500/10">
                 <div className="relative h-full rounded-[30px] overflow-hidden border border-white/10 bg-[#070707]/75 backdrop-blur-2xl p-8 md:p-10">
@@ -185,7 +185,6 @@ export default function Subscribe() {
                       )}
                     </div>
 
-                    {/* ✅ less squeezed */}
                     <div className="mt-4 grid grid-cols-1 lg:grid-cols-2 gap-3">
                       <Feature
                         icon={<ShieldCheck className="w-4 h-4 text-emerald-300" />}
@@ -199,7 +198,7 @@ export default function Subscribe() {
                       />
                       <Feature
                         icon={<Sparkles className="w-4 h-4 text-emerald-300" />}
-                        title="Instant access"
+                        title="Fast access"
                         desc="Setup right after checkout."
                       />
                       <Feature
@@ -255,7 +254,10 @@ export default function Subscribe() {
                         type="email"
                         placeholder="Email"
                         value={email}
-                        onChange={(e) => setEmail(e.target.value)}
+                        onChange={(e) => {
+                          setEmail(e.target.value);
+                          if (error) setError("");
+                        }}
                         className="w-full bg-transparent text-white/90 placeholder:text-white/35 outline-none text-sm"
                       />
                     </div>
@@ -293,7 +295,7 @@ export default function Subscribe() {
                       <motion.button
                         whileHover={reduceMotion ? {} : { scale: 1.02, backgroundPosition: "right center" }}
                         whileTap={{ scale: 0.985 }}
-                        disabled={loading || !email}
+                        disabled={loading}
                         onClick={handleContinue}
                         className="group relative w-full inline-flex items-center justify-center gap-3 px-6 py-4 text-base font-semibold rounded-2xl transition-all duration-500 border border-emerald-300/30 bg-gradient-to-r from-emerald-500 via-emerald-400 to-emerald-300 bg-[length:220%_auto] text-black shadow-[0_0_28px_rgba(16,185,129,0.22)] disabled:opacity-60"
                       >
@@ -321,7 +323,7 @@ export default function Subscribe() {
                     </div>
                   </div>
 
-                  <div className="absolute -bottom-16 left-0 w-full h-40 bg-gradient-to-t from-emerald-500/10 to-transparent blur-3xl" />
+
                 </div>
               </div>
             </motion.div>
